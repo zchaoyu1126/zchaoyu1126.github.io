@@ -1,0 +1,309 @@
+<!doctype html><html lang=zh-cn>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=robots content="noodp">
+<title>使用Github Action自动部署Hugo - Chao's Blog</title><meta name=Description content="程序猿的学习和日常"><meta property="og:title" content="使用Github Action自动部署Hugo">
+<meta property="og:description" content="使用Loveit主题的拓展short codes之后，由于在markdown之中引入了{{}}语法，使得Liquid在解析markdown中的代码块时出错，采用的解决方法是禁用Jekyll，因为hugo已经生成了静态站点所需的文件，不需要再使用Jekyll。在解决此问题的同时，学习于了解了Github上的Action功能，并使用Github Action完成了站点的自动部署。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://zchaoyu1126.github.io/2022/06/github-action-deploy-hugo/"><meta property="og:image" content="https://zchaoyu1126.github.io/logo.png"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2022-06-29T20:03:12+08:00">
+<meta property="article:modified_time" content="2022-06-29T20:03:12+08:00"><meta property="og:site_name" content="Chao's Blog">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image content="https://zchaoyu1126.github.io/logo.png">
+<meta name=twitter:title content="使用Github Action自动部署Hugo">
+<meta name=twitter:description content="使用Loveit主题的拓展short codes之后，由于在markdown之中引入了{{}}语法，使得Liquid在解析markdown中的代码块时出错，采用的解决方法是禁用Jekyll，因为hugo已经生成了静态站点所需的文件，不需要再使用Jekyll。在解决此问题的同时，学习于了解了Github上的Action功能，并使用Github Action完成了站点的自动部署。">
+<meta name=application-name content="Chao's Blog">
+<meta name=apple-mobile-web-app-title content="Chao's Blog"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://zchaoyu1126.github.io/2022/06/github-action-deploy-hugo/><link rel=prev href=https://zchaoyu1126.github.io/2022/06/means/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css as=style onload="this.onload=null,this.rel='stylesheet'">
+<noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css></noscript><link rel=preload href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css as=style onload="this.onload=null,this.rel='stylesheet'">
+<noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"使用Github Action自动部署Hugo","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/zchaoyu1126.github.io\/2022\/06\/github-action-deploy-hugo\/"},"image":[{"@type":"ImageObject","url":"https:\/\/zchaoyu1126.github.io\/images\/Apple-Devices-Preview.png","width":3200,"height":2048}],"genre":"posts","keywords":"github action, hugo, loveit","wordcount":1723,"url":"https:\/\/zchaoyu1126.github.io\/2022\/06\/github-action-deploy-hugo\/","datePublished":"2022-06-29T20:03:12+08:00","dateModified":"2022-06-29T20:03:12+08:00","license":"This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher":{"@type":"Organization","name":"xxxx","logo":{"@type":"ImageObject","url":"https:\/\/zchaoyu1126.github.io\/images\/avatar.png","width":528,"height":560}},"author":{"@type":"Person","name":"chao"},"description":""}</script></head>
+<body data-header-desktop=fixed data-header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':'auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark')&&document.body.setAttribute('theme','dark')</script>
+<div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title="Chao's Blog"><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw" aria-hidden=true></i></span>Chao's Blog</a>
+</div>
+<div class=menu>
+<div class=menu-inner><a class=menu-item href=/posts/> 文章
+</a><a class=menu-item href=/tags/> 标签
+</a><a class=menu-item href=/categories/> 分类
+</a>
+<div class=dropdown>
+<a href=javascript:void(0); class="menu-item menu-more dropbtn" title> 归档
+</a>
+<div class="menu-more-content dropdown-content"><a href=/documentation/golang/ title><i class="fa fa-book" aria-hidden=true></i> Golang </a><a href=/documentation/csbase/ title><i class="fa fa-laptop" aria-hidden=true></i> 计算机基础 </a><a href=/documentation/algorithm/ title><i class="fa fa-bookmark" aria-hidden=true></i> 数据结构与算法 </a></div>
+</div>
+<a class=menu-item href=/about/> 关于
+</a><a class=menu-item href=https://github.com/zchaoyu1126 title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw" aria-hidden=true></i>
+</a><span class="menu-item delimiter"></span><a href=javascript:void(0); class="menu-item language" title=选择语言>简体中文<i class="fas fa-chevron-right fa-fw" aria-hidden=true></i>
+<select class=language-select id=language-select-desktop onchange="location=this.value"><option value=/2022/06/github-action-deploy-hugo/ selected>简体中文</option></select>
+</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+</div>
+</div>
+</header><header class=mobile id=header-mobile>
+<div class=header-container>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title="Chao's Blog"><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw" aria-hidden=true></i></span>Chao's Blog</a>
+</div>
+<div class=menu-toggle id=menu-toggle-mobile>
+<span></span><span></span><span></span>
+</div>
+</div>
+<div class=menu id=menu-mobile><a class=menu-item href=/posts/> 文章
+</a><a class=menu-item href=/tags/> 标签
+</a><a class=menu-item href=/categories/> 分类
+</a>
+<div class=dropdown>
+<a href=javascript:void(0); class="menu-item menu-more dropbtn" title> 归档
+</a>
+<div class="menu-more-content dropdown-content"><a href=/documentation/golang/ title><i class="fa fa-book" aria-hidden=true></i> Golang </a><a href=/documentation/csbase/ title><i class="fa fa-laptop" aria-hidden=true></i> 计算机基础 </a><a href=/documentation/algorithm/ title><i class="fa fa-bookmark" aria-hidden=true></i> 数据结构与算法 </a></div>
+</div>
+<a class=menu-item href=/about/> 关于
+</a><a class=menu-item href=https://github.com/zchaoyu1126 title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class=menu-item title=选择语言>简体中文<i class="fas fa-chevron-right fa-fw" aria-hidden=true></i>
+<select class=language-select onchange="location=this.value"><option value=/2022/06/github-action-deploy-hugo/ selected>简体中文</option></select>
+</a></div>
+</div>
+</header><main class=main>
+<div class=container><div class=toc id=toc-auto>
+<h2 class=toc-title>目录</h2>
+<div class=toc-content id=toc-content-auto></div>
+</div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">使用Github Action自动部署Hugo</h1><div class=post-meta>
+<div class=post-meta-line><span class=post-author><a href=https://github.com/zchaoyu1126 title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw" aria-hidden=true></i>chao</a></span>&nbsp;<span class=post-category>收录于 <a href=/categories/gitgithub/><i class="far fa-folder fa-fw" aria-hidden=true></i>git&github</a></span></div>
+<div class=post-meta-line><i class="far fa-calendar-alt fa-fw" aria-hidden=true></i>&nbsp;<time datetime=2022-06-29>2022-06-29</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden=true></i>&nbsp;约 1723 字&nbsp;
+<i class="far fa-clock fa-fw" aria-hidden=true></i>&nbsp;预计阅读 4 分钟&nbsp;<span id=/2022/06/github-action-deploy-hugo/ class=leancloud_visitors data-flag-title="使用Github Action自动部署Hugo">
+<i class="far fa-eye fa-fw" aria-hidden=true></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+</span>&nbsp;</div>
+</div><div class="details toc" id=toc-static data-kept>
+<div class="details-summary toc-title">
+<span>目录</span>
+<span><i class="details-icon fas fa-angle-right" aria-hidden=true></i></span>
+</div>
+<div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents>
+<ul>
+<li><a href=#0-前言>0 前言</a></li>
+<li><a href=#1-hugo的使用>1 Hugo的使用</a></li>
+<li><a href=#2-使用github-action部署hugo>2 使用Github Action部署Hugo</a>
+<ul>
+<li><a href=#21-建立仓库>2.1 建立仓库</a></li>
+<li><a href=#22-gitignore文件>2.2 .gitignore文件</a></li>
+<li><a href=#23-添加公钥和私钥>2.3 添加公钥和私钥</a></li>
+<li><a href=#24-禁用jekyll>2.4 禁用Jekyll</a></li>
+<li><a href=#25-添加github-action>2.5 添加Github Action</a></li>
+<li><a href=#26-git-push>2.6 Git Push</a></li>
+</ul>
+</li>
+<li><a href=#3-参考资料>3 参考资料</a></li>
+</ul>
+</nav></div>
+</div><div class=content id=content><p>使用Loveit主题的拓展short codes之后，由于在markdown之中引入了<code>{{}}</code>语法，使得Liquid在解析markdown中的代码块时出错，采用的解决方法是禁用Jekyll，因为hugo已经生成了静态站点所需的文件，不需要再使用Jekyll。在解决此问题的同时，学习于了解了Github上的Action功能，并使用Github Action完成了站点的自动部署。</p>
+<h2 id=0-前言>0 前言</h2>
+<p>在未引入Github Action时，我部署在Github上的静态网站直接将Hugo生成的public目录直接上传至zchaoyu1126.github.io仓库中，然后自动触发pages build and deployment Action。等待一段时间后，就能通过访问zchaoyu1126.github.io查看效果。</p>
+<p>但是，我在使用Loveit主题的拓展short codes之后，由于在markdown之中引入了<code>{{}}</code>语法，使得Liquid在解析markdown中的代码块时出错。</p>
+<blockquote>
+<p>具体的原因，不是很清楚并没有深究。</p>
+</blockquote>
+<figure><a class=lightgallery href=/2022/06/github-action-deploy-hugo/img7.png title=/2022/06/github-action-deploy-hugo/img7.png data-thumbnail=/2022/06/github-action-deploy-hugo/img7.png data-sub-html="<h2>Build with Jekyll 失败</h2>">
+<img class=lazyload src=/svg/loading.min.svg data-src=/2022/06/github-action-deploy-hugo/img7.png data-srcset="/2022/06/github-action-deploy-hugo/img7.png, /2022/06/github-action-deploy-hugo/img7.png 1.5x, /2022/06/github-action-deploy-hugo/img7.png 2x" data-sizes=auto alt=/2022/06/github-action-deploy-hugo/img7.png width=1886 height=711>
+</a><figcaption class=image-caption>Build with Jekyll 失败</figcaption>
+</figure>
+<figure><a class=lightgallery href=/2022/06/github-action-deploy-hugo/img1.png title=/2022/06/github-action-deploy-hugo/img1.png data-thumbnail=/2022/06/github-action-deploy-hugo/img1.png data-sub-html="<h2>Liquid syntax error</h2>">
+<img class=lazyload src=/svg/loading.min.svg data-src=/2022/06/github-action-deploy-hugo/img1.png data-srcset="/2022/06/github-action-deploy-hugo/img1.png, /2022/06/github-action-deploy-hugo/img1.png 1.5x, /2022/06/github-action-deploy-hugo/img1.png 2x" data-sizes=auto alt=/2022/06/github-action-deploy-hugo/img1.png width=1183 height=152>
+</a><figcaption class=image-caption>Liquid syntax error</figcaption>
+</figure>
+<p>为了解决本问题我做了一些探索，百般曲折过后，还是在<a href=https://docs.github.com/cn/pages/getting-started-with-github-pages/about-github-pages#static-site-generators target=_blank rel="noopener noreffer">官方文档</a>中找到了解决办法。</p>
+<figure><a class=lightgallery href=/2022/06/github-action-deploy-hugo/img2.png title=/2022/06/github-action-deploy-hugo/img2.png data-thumbnail=/2022/06/github-action-deploy-hugo/img2.png data-sub-html="<h2>官方文档中的说明</h2>">
+<img class=lazyload src=/svg/loading.min.svg data-src=/2022/06/github-action-deploy-hugo/img2.png data-srcset="/2022/06/github-action-deploy-hugo/img2.png, /2022/06/github-action-deploy-hugo/img2.png 1.5x, /2022/06/github-action-deploy-hugo/img2.png 2x" data-sizes=auto alt=/2022/06/github-action-deploy-hugo/img2.png width=946 height=449>
+</a><figcaption class=image-caption>官方文档中的说明</figcaption>
+</figure>
+<p>禁用Jekyll有效的原因：hugo已经为我们生成了静态站点所需的文件，不需要再使用Jekyll。</p>
+<h2 id=1-hugo的使用>1 Hugo的使用</h2>
+<p>Hugo的基础使用：<a href=https://www.gohugo.org/ target=_blank rel="noopener noreffer">https://www.gohugo.org/</a></p>
+<h2 id=2-使用github-action部署hugo>2 使用Github Action部署Hugo</h2>
+<p>关于Github Action，请参考<a href=https://www.ruanyifeng.com/blog/2019/09/getting-started-with-github-actions.html target=_blank rel="noopener noreffer">阮一峰老师的博客</a></p>
+<p>以下内容参考：<a href=https://tianhui.xin/blog/2019/11/17/hugousegithubactionstopages/ target=_blank rel="noopener noreffer">https://tianhui.xin/blog/2019/11/17/hugousegithubactionstopages/</a></p>
+<h3 id=21-建立仓库>2.1 建立仓库</h3>
+<p>首先在github上建立两个仓库，</p>
+<ul>
+<li>zchaoyu1126/zchaoyu1126.github.io：public目录的远端仓库（静态网页部署站点）</li>
+<li>zchaoyu1126/blog：hugo工作目录的远端仓库</li>
+</ul>
+<h3 id=22-gitignore文件>2.2 .gitignore文件</h3>
+<p>在hugo的工作目录中新建一个.gitignore文件，从而将public文件夹排除在git仓库管理范围外。.gitignore内容如下，</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>public/
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=23-添加公钥和私钥>2.3 添加公钥和私钥</h3>
+<p><strong>2.3.1</strong> 打开命令行，输入如下命令会在当前文件夹下生成一组密钥</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>ssh-keygen -t ed25519 -b <span class=m>4096</span> -C <span class=s2>&#34;</span><span class=k>$(</span>git config user.email<span class=k>)</span><span class=s2>&#34;</span> -f gh-pages -N <span class=s2>&#34;&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>pub后缀为公钥，另一个为私钥</p>
+<figure><a class=lightgallery href=/2022/06/github-action-deploy-hugo/img3.png title=/2022/06/github-action-deploy-hugo/img3.png data-thumbnail=/2022/06/github-action-deploy-hugo/img3.png data-sub-html="<h2>公钥与私钥</h2>">
+<img class=lazyload src=/svg/loading.min.svg data-src=/2022/06/github-action-deploy-hugo/img3.png data-srcset="/2022/06/github-action-deploy-hugo/img3.png, /2022/06/github-action-deploy-hugo/img3.png 1.5x, /2022/06/github-action-deploy-hugo/img3.png 2x" data-sizes=auto alt=/2022/06/github-action-deploy-hugo/img3.png width=766 height=99>
+</a><figcaption class=image-caption>公钥与私钥</figcaption>
+</figure>
+<p><strong>2.3.2</strong> 在zchaoyu1126/zchaoyu1126.github.io仓库中，点击Settings，添加Depoly keys</p>
+<figure><a class=lightgallery href=/2022/06/github-action-deploy-hugo/img4.png title=/2022/06/github-action-deploy-hugo/img4.png data-thumbnail=/2022/06/github-action-deploy-hugo/img4.png data-sub-html="<h2>添加公钥</h2>">
+<img class=lazyload src=/svg/loading.min.svg data-src=/2022/06/github-action-deploy-hugo/img4.png data-srcset="/2022/06/github-action-deploy-hugo/img4.png, /2022/06/github-action-deploy-hugo/img4.png 1.5x, /2022/06/github-action-deploy-hugo/img4.png 2x" data-sizes=auto alt=/2022/06/github-action-deploy-hugo/img4.png width=1760 height=837>
+</a><figcaption class=image-caption>添加公钥</figcaption>
+</figure>
+<p><strong>2.3.3</strong> 在zchaoyu1126/blog仓库中，点击Settings，添加Secrets</p>
+<figure><a class=lightgallery href=/2022/06/github-action-deploy-hugo/img5.png title=/2022/06/github-action-deploy-hugo/img5.png data-thumbnail=/2022/06/github-action-deploy-hugo/img5.png data-sub-html="<h2>添加私钥</h2>">
+<img class=lazyload src=/svg/loading.min.svg data-src=/2022/06/github-action-deploy-hugo/img5.png data-srcset="/2022/06/github-action-deploy-hugo/img5.png, /2022/06/github-action-deploy-hugo/img5.png 1.5x, /2022/06/github-action-deploy-hugo/img5.png 2x" data-sizes=auto alt=/2022/06/github-action-deploy-hugo/img5.png width=1686 height=840>
+</a><figcaption class=image-caption>添加私钥</figcaption>
+</figure>
+<div class="details admonition info open">
+<div class="details-summary admonition-title">
+<i class="icon fas fa-info-circle fa-fw" aria-hidden=true></i>关于公钥密钥的解释<i class="details-icon fas fa-angle-right fa-fw" aria-hidden=true></i>
+</div>
+<div class=details-content>
+<div class=admonition-content>当我们在本地写完markdown文件之后向远程仓库提交，也就是zchaoyu1126/blog，远程仓库会自动触发Github Action，这个Action会自动向zchaoyu1126/zchaoyu1126.github.io仓库部署静态网站。这二者之间的安全交互便是通过这一组密钥。</div>
+</div>
+</div>
+<h3 id=24-禁用jekyll>2.4 禁用Jekyll</h3>
+<p>在zchaoyu1126/zchaoyu1126.github.io仓库中新建一个.nojekyll文件。其内容为空，表示禁用jekyll。</p>
+<figure><a class=lightgallery href=/2022/06/github-action-deploy-hugo/img6.png title=/2022/06/github-action-deploy-hugo/img6.png data-thumbnail=/2022/06/github-action-deploy-hugo/img6.png data-sub-html="<h2>禁用Jekyll</h2>">
+<img class=lazyload src=/svg/loading.min.svg data-src=/2022/06/github-action-deploy-hugo/img6.png data-srcset="/2022/06/github-action-deploy-hugo/img6.png, /2022/06/github-action-deploy-hugo/img6.png 1.5x, /2022/06/github-action-deploy-hugo/img6.png 2x" data-sizes=auto alt=/2022/06/github-action-deploy-hugo/img6.png width=1333 height=84>
+</a><figcaption class=image-caption>禁用Jekyll</figcaption>
+</figure>
+<h3 id=25-添加github-action>2.5 添加Github Action</h3>
+<p>在zchaoyu1126/blog中新建一个Action，其内容如下：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=c># ACTIONS_DEPLOY_KEY  根据自身情况进行修改，即2.3.3中输入的Name</span><span class=w>
+</span><span class=w></span><span class=c># EXTERNAL_REPOSITORY 根据自身情况进行修改</span><span class=w>
+</span><span class=w>
+</span><span class=w></span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>GitHub Pages Deploy</span><span class=w> </span><span class=c>#自动化的名称</span><span class=w>
+</span><span class=w></span><span class=nt>on</span><span class=p>:</span><span class=w>
+</span><span class=w>  </span><span class=nt>push</span><span class=p>:</span><span class=w> </span><span class=c># push的时候触发</span><span class=w>
+</span><span class=w>    </span><span class=nt>branches</span><span class=p>:</span><span class=w> </span><span class=c># 那些分支需要触发</span><span class=w>
+</span><span class=w>      </span>- <span class=l>master</span><span class=w>
+</span><span class=w></span><span class=nt>jobs</span><span class=p>:</span><span class=w>
+</span><span class=w>  </span><span class=nt>build</span><span class=p>:</span><span class=w>
+</span><span class=w>    </span><span class=nt>runs-on</span><span class=p>:</span><span class=w> </span><span class=l>ubuntu-latest</span><span class=w> </span><span class=c># 镜像市场</span><span class=w>
+</span><span class=w>    </span><span class=nt>steps</span><span class=p>:</span><span class=w>
+</span><span class=w>      </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>checkout</span><span class=w> </span><span class=c># 步骤的名称</span><span class=w>
+</span><span class=w>        </span><span class=nt>uses</span><span class=p>:</span><span class=w> </span><span class=l>actions/checkout@master</span><span class=w> </span><span class=c>#软件市场的名称</span><span class=w>
+</span><span class=w>        </span><span class=nt>with</span><span class=p>:</span><span class=w> </span><span class=c># 参数</span><span class=w>
+</span><span class=w>          </span><span class=nt>submodules</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>
+</span><span class=w>          
+</span><span class=w>      </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Setup Hugo</span><span class=w>
+</span><span class=w>        </span><span class=nt>uses</span><span class=p>:</span><span class=w> </span><span class=l>peaceiris/actions-hugo@v2</span><span class=w>
+</span><span class=w>        </span><span class=nt>with</span><span class=p>:</span><span class=w>
+</span><span class=w>          </span><span class=nt>hugo-version</span><span class=p>:</span><span class=w> </span><span class=s1>&#39;0.91.2&#39;</span><span class=w>
+</span><span class=w>          </span><span class=nt>extended</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>
+</span><span class=w>          
+</span><span class=w>      </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Build</span><span class=w>
+</span><span class=w>        </span><span class=nt>run</span><span class=p>:</span><span class=w> </span><span class=l>hugo --minify</span><span class=w>
+</span><span class=w>        
+</span><span class=w>      </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Deploy</span><span class=w>
+</span><span class=w>        </span><span class=nt>uses</span><span class=p>:</span><span class=w> </span><span class=l>peaceiris/actions-gh-pages@v2.5.1</span><span class=w>
+</span><span class=w>        </span><span class=nt>env</span><span class=p>:</span><span class=w>
+</span><span class=w>          </span><span class=nt>ACTIONS_DEPLOY_KEY</span><span class=p>:</span><span class=w> </span><span class=l>${{ secrets.ACTIONS_DEPLOY_KEY }}</span><span class=w>
+</span><span class=w>          </span><span class=nt>EXTERNAL_REPOSITORY</span><span class=p>:</span><span class=w> </span><span class=l>zchaoyu1126/zchaoyu1126.github.io</span><span class=w>
+</span><span class=w>          </span><span class=nt>PUBLISH_BRANCH</span><span class=p>:</span><span class=w> </span><span class=l>master</span><span class=w>
+</span><span class=w>          </span><span class=nt>PUBLISH_DIR</span><span class=p>:</span><span class=w> </span><span class=l>./public</span><span class=w>
+</span></code></pre></td></tr></table>
+</div>
+</div><h3 id=26-git-push>2.6 Git Push</h3>
+<p>创建完Action之后，会执行一次push并触发action。</p>
+<p>将本地的hugo目录同步至远程仓库(zchaoyu1126/blog)后，访问zchaoyu1126.github.io即可看到效果。</p>
+<h2 id=3-参考资料>3 参考资料</h2>
+<p><a href=https://www.gohugo.org/ target=_blank rel="noopener noreffer">https://www.gohugo.org/</a></p>
+<p><a href=https://hugoloveit.com/zh-cn/theme-documentation-extended-shortcodes/ target=_blank rel="noopener noreffer">https://hugoloveit.com/zh-cn/theme-documentation-extended-shortcodes/</a></p>
+<p><a href=https://tianhui.xin/blog/2019/11/17/hugousegithubactionstopages/ target=_blank rel="noopener noreffer">https://tianhui.xin/blog/2019/11/17/hugousegithubactionstopages/</a></p>
+<p><a href=https://www.ruanyifeng.com/blog/2019/09/getting-started-with-github-actions.html target=_blank rel="noopener noreffer">https://www.ruanyifeng.com/blog/2019/09/getting-started-with-github-actions.html</a></p>
+<p><a href=https://docs.github.com/cn/pages/getting-started-with-github-pages/about-github-pages#static-site-generators target=_blank rel="noopener noreffer">https://docs.github.com/cn/pages/getting-started-with-github-pages/about-github-pages#static-site-generators</a></p></div><div class=post-footer id=post-footer>
+<div class=post-info>
+<div class=post-info-line>
+<div class=post-info-mod>
+<span>更新于 2022-06-29</span>
+</div></div>
+<div class=post-info-line>
+<div class=post-info-md><span>
+<a class=link-to-markdown href=/2022/06/github-action-deploy-hugo/index.md target=_blank>阅读原始文档</a>
+</span></div>
+<div class=post-info-share>
+<span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=https://zchaoyu1126.github.io/2022/06/github-action-deploy-hugo/ data-title="使用Github Action自动部署Hugo" data-hashtags="github action,hugo,loveit"><i class="fab fa-twitter fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=https://zchaoyu1126.github.io/2022/06/github-action-deploy-hugo/ data-hashtag="github action"><i class="fab fa-facebook-square fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 Hacker News" data-sharer=hackernews data-url=https://zchaoyu1126.github.io/2022/06/github-action-deploy-hugo/ data-title="使用Github Action自动部署Hugo"><i class="fab fa-hacker-news fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 Line" data-sharer=line data-url=https://zchaoyu1126.github.io/2022/06/github-action-deploy-hugo/ data-title="使用Github Action自动部署Hugo"><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@6.20.0/icons/line.svg aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=https://zchaoyu1126.github.io/2022/06/github-action-deploy-hugo/ data-title="使用Github Action自动部署Hugo" data-ralateuid=xxxx><i class="fab fa-weibo fa-fw" aria-hidden=true></i></a></span>
+</div>
+</div>
+</div>
+<div class=post-info-more>
+<section class=post-tags><i class="fas fa-tags fa-fw" aria-hidden=true></i>&nbsp;<a href=/tags/github-action/>github action</a>,&nbsp;<a href=/tags/hugo/>hugo</a>,&nbsp;<a href=/tags/loveit/>loveit</a></section>
+<section>
+<span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span>
+</section>
+</div>
+<div class=post-nav><a href=/2022/06/means/ class=prev rel=prev title=Go语言学习资料><i class="fas fa-angle-left fa-fw" aria-hidden=true></i>Go语言学习资料</a></div>
+</div>
+<div id=comments><div id=valine class=comment></div><noscript>
+Please enable JavaScript to view the comments powered by <a href=https://valine.js.org/>Valine</a>.
+</noscript></div></article></div>
+</main><footer class=footer>
+<div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.91.2">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden=true></i> LoveIt</a>
+</div><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright fa-fw" aria-hidden=true></i><span itemprop=copyrightYear>2021 - 2022</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://github.com/zchaoyu1126 target=_blank>chao</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div>
+</div>
+</footer></div>
+<div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部>
+<i class="fas fa-arrow-up fa-fw" aria-hidden=true></i>
+</a><a href=# id=view-comments class=fixed-button title=查看评论>
+<i class="fas fa-comment fa-fw" aria-hidden=true></i>
+</a>
+</div><link rel=stylesheet href=/lib/valine/valine.min.css><script type=text/javascript src=https://cdn.jsdelivr.net/npm/valine@1.4.18/dist/Valine.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.3.1/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:50},comment:{valine:{appId:"QGzwQXOqs5JOhN4RGPOkR2mR-MdYXbMMI",appKey:"WBmoGyJtbqUswvfLh6L8iEBr",avatar:"mp",el:"#valine",emojiCDN:"https://cdn.jsdelivr.net/npm/emoji-datasource-google@14.0.0/img/google/64/",emojiMaps:{100:"1f4af.png",alien:"1f47d.png",anger:"1f4a2.png",angry:"1f620.png",anguished:"1f627.png",astonished:"1f632.png",black_heart:"1f5a4.png",blue_heart:"1f499.png",blush:"1f60a.png",bomb:"1f4a3.png",boom:"1f4a5.png",broken_heart:"1f494.png",brown_heart:"1f90e.png",clown_face:"1f921.png",cold_face:"1f976.png",cold_sweat:"1f630.png",confounded:"1f616.png",confused:"1f615.png",cry:"1f622.png",crying_cat_face:"1f63f.png",cupid:"1f498.png",dash:"1f4a8.png",disappointed:"1f61e.png",disappointed_relieved:"1f625.png",dizzy:"1f4ab.png",dizzy_face:"1f635.png",drooling_face:"1f924.png",exploding_head:"1f92f.png",expressionless:"1f611.png",face_vomiting:"1f92e.png",face_with_cowboy_hat:"1f920.png",face_with_hand_over_mouth:"1f92d.png",face_with_head_bandage:"1f915.png",face_with_monocle:"1f9d0.png",face_with_raised_eyebrow:"1f928.png",face_with_rolling_eyes:"1f644.png",face_with_symbols_on_mouth:"1f92c.png",face_with_thermometer:"1f912.png",fearful:"1f628.png",flushed:"1f633.png",frowning:"1f626.png",ghost:"1f47b.png",gift_heart:"1f49d.png",green_heart:"1f49a.png",grimacing:"1f62c.png",grin:"1f601.png",grinning:"1f600.png",hankey:"1f4a9.png",hear_no_evil:"1f649.png",heart:"2764-fe0f.png",heart_decoration:"1f49f.png",heart_eyes:"1f60d.png",heart_eyes_cat:"1f63b.png",heartbeat:"1f493.png",heartpulse:"1f497.png",heavy_heart_exclamation_mark_ornament:"2763-fe0f.png",hole:"1f573-fe0f.png",hot_face:"1f975.png",hugging_face:"1f917.png",hushed:"1f62f.png",imp:"1f47f.png",innocent:"1f607.png",japanese_goblin:"1f47a.png",japanese_ogre:"1f479.png",joy:"1f602.png",joy_cat:"1f639.png",kiss:"1f48b.png",kissing:"1f617.png",kissing_cat:"1f63d.png",kissing_closed_eyes:"1f61a.png",kissing_heart:"1f618.png",kissing_smiling_eyes:"1f619.png",laughing:"1f606.png",left_speech_bubble:"1f5e8-fe0f.png",love_letter:"1f48c.png",lying_face:"1f925.png",mask:"1f637.png",money_mouth_face:"1f911.png",nauseated_face:"1f922.png",nerd_face:"1f913.png",neutral_face:"1f610.png",no_mouth:"1f636.png",open_mouth:"1f62e.png",orange_heart:"1f9e1.png",partying_face:"1f973.png",pensive:"1f614.png",persevere:"1f623.png",pleading_face:"1f97a.png",pouting_cat:"1f63e.png",purple_heart:"1f49c.png",rage:"1f621.png",relaxed:"263a-fe0f.png",relieved:"1f60c.png",revolving_hearts:"1f49e.png",right_anger_bubble:"1f5ef-fe0f.png",robot_face:"1f916.png",rolling_on_the_floor_laughing:"1f923.png",scream:"1f631.png",scream_cat:"1f640.png",see_no_evil:"1f648.png",shushing_face:"1f92b.png",skull:"1f480.png",skull_and_crossbones:"2620-fe0f.png",sleeping:"1f634.png",sleepy:"1f62a.png",slightly_frowning_face:"1f641.png",slightly_smiling_face:"1f642.png",smile:"1f604.png",smile_cat:"1f638.png",smiley:"1f603.png",smiley_cat:"1f63a.png",smiling_face_with_3_hearts:"1f970.png",smiling_imp:"1f608.png",smirk:"1f60f.png",smirk_cat:"1f63c.png",sneezing_face:"1f927.png",sob:"1f62d.png",space_invader:"1f47e.png",sparkling_heart:"1f496.png",speak_no_evil:"1f64a.png",speech_balloon:"1f4ac.png","star-struck":"1f929.png",stuck_out_tongue:"1f61b.png",stuck_out_tongue_closed_eyes:"1f61d.png",stuck_out_tongue_winking_eye:"1f61c.png",sunglasses:"1f60e.png",sweat:"1f613.png",sweat_drops:"1f4a6.png",sweat_smile:"1f605.png",thinking_face:"1f914.png",thought_balloon:"1f4ad.png",tired_face:"1f62b.png",triumph:"1f624.png",two_hearts:"1f495.png",unamused:"1f612.png",upside_down_face:"1f643.png",weary:"1f629.png",white_frowning_face:"2639-fe0f.png",white_heart:"1f90d.png",wink:"1f609.png",woozy_face:"1f974.png",worried:"1f61f.png",yawning_face:"1f971.png",yellow_heart:"1f49b.png",yum:"1f60b.png",zany_face:"1f92a.png",zipper_mouth_face:"1f910.png",zzz:"1f4a4.png"},enableQQ:!1,highlight:!0,lang:"zh-CN",pageSize:10,placeholder:"你的评论 ...",recordIP:!0,serverURLs:"https://leancloud.hugoloveit.com",visitor:!0}}}</script><script type=text/javascript src=/js/theme.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/jquery@2.1.3/dist/jquery.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/jquery@2.1.3/dist/jquery.min.js></script>
+<script type=text/javascript src=https://cdn.jsdelivr.net/npm/jquery-backstretch@2.1.18/jquery.backstretch.min.js></script>
+<script type=text/javascript src=/js/custom.js></script></body>
+</html>
