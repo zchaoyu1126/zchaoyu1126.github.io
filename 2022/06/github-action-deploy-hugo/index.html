@@ -18,7 +18,7 @@
 <link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
 <link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://zchaoyu1126.github.io/2022/06/github-action-deploy-hugo/><link rel=prev href=https://zchaoyu1126.github.io/2022/06/means/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css as=style onload="this.onload=null,this.rel='stylesheet'">
 <noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css></noscript><link rel=preload href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css as=style onload="this.onload=null,this.rel='stylesheet'">
-<noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"使用Github Action自动部署Hugo","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/zchaoyu1126.github.io\/2022\/06\/github-action-deploy-hugo\/"},"image":[{"@type":"ImageObject","url":"https:\/\/zchaoyu1126.github.io\/images\/Apple-Devices-Preview.png","width":3200,"height":2048}],"genre":"posts","keywords":"github action, hugo, loveit","wordcount":1723,"url":"https:\/\/zchaoyu1126.github.io\/2022\/06\/github-action-deploy-hugo\/","datePublished":"2022-06-29T20:03:12+08:00","dateModified":"2022-06-29T20:03:12+08:00","license":"This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher":{"@type":"Organization","name":"xxxx","logo":{"@type":"ImageObject","url":"https:\/\/zchaoyu1126.github.io\/images\/avatar.png","width":528,"height":560}},"author":{"@type":"Person","name":"chao"},"description":""}</script></head>
+<noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"使用Github Action自动部署Hugo","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/zchaoyu1126.github.io\/2022\/06\/github-action-deploy-hugo\/"},"image":[{"@type":"ImageObject","url":"https:\/\/zchaoyu1126.github.io\/images\/Apple-Devices-Preview.png","width":3200,"height":2048}],"genre":"posts","keywords":"github action, hugo, loveit","wordcount":1826,"url":"https:\/\/zchaoyu1126.github.io\/2022\/06\/github-action-deploy-hugo\/","datePublished":"2022-06-29T20:03:12+08:00","dateModified":"2022-06-29T20:03:12+08:00","license":"This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher":{"@type":"Organization","name":"xxxx","logo":{"@type":"ImageObject","url":"https:\/\/zchaoyu1126.github.io\/images\/avatar.png","width":528,"height":560}},"author":{"@type":"Person","name":"chao"},"description":""}</script></head>
 <body data-header-desktop=fixed data-header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':'auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark')&&document.body.setAttribute('theme','dark')</script>
 <div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
 <div class=header-wrapper>
@@ -78,7 +78,7 @@
 <div class=toc-content id=toc-content-auto></div>
 </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">使用Github Action自动部署Hugo</h1><div class=post-meta>
 <div class=post-meta-line><span class=post-author><a href=https://github.com/zchaoyu1126 title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw" aria-hidden=true></i>chao</a></span>&nbsp;<span class=post-category>收录于 <a href=/categories/gitgithub/><i class="far fa-folder fa-fw" aria-hidden=true></i>git&github</a></span></div>
-<div class=post-meta-line><i class="far fa-calendar-alt fa-fw" aria-hidden=true></i>&nbsp;<time datetime=2022-06-29>2022-06-29</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden=true></i>&nbsp;约 1723 字&nbsp;
+<div class=post-meta-line><i class="far fa-calendar-alt fa-fw" aria-hidden=true></i>&nbsp;<time datetime=2022-06-29>2022-06-29</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden=true></i>&nbsp;约 1826 字&nbsp;
 <i class="far fa-clock fa-fw" aria-hidden=true></i>&nbsp;预计阅读 4 分钟&nbsp;<span id=/2022/06/github-action-deploy-hugo/ class=leancloud_visitors data-flag-title="使用Github Action自动部署Hugo">
 <i class="far fa-eye fa-fw" aria-hidden=true></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
 </span>&nbsp;</div>
@@ -180,11 +180,19 @@
 </div>
 </div>
 <h3 id=24-禁用jekyll>2.4 禁用Jekyll</h3>
-<p>在zchaoyu1126/zchaoyu1126.github.io仓库中新建一个.nojekyll文件。其内容为空，表示禁用jekyll。</p>
+<p><del>在zchaoyu1126/zchaoyu1126.github.io仓库中新建一个.nojekyll文件。其内容为空，表示禁用jekyll。</del></p>
 <figure><a class=lightgallery href=/2022/06/github-action-deploy-hugo/img6.png title=/2022/06/github-action-deploy-hugo/img6.png data-thumbnail=/2022/06/github-action-deploy-hugo/img6.png data-sub-html="<h2>禁用Jekyll</h2>">
 <img class=lazyload src=/svg/loading.min.svg data-src=/2022/06/github-action-deploy-hugo/img6.png data-srcset="/2022/06/github-action-deploy-hugo/img6.png, /2022/06/github-action-deploy-hugo/img6.png 1.5x, /2022/06/github-action-deploy-hugo/img6.png 2x" data-sizes=auto alt=/2022/06/github-action-deploy-hugo/img6.png width=1333 height=84>
 </a><figcaption class=image-caption>禁用Jekyll</figcaption>
 </figure>
+<div class="details admonition info open">
+<div class="details-summary admonition-title">
+<i class="icon fas fa-info-circle fa-fw" aria-hidden=true></i>血泪史<i class="details-icon fas fa-angle-right fa-fw" aria-hidden=true></i>
+</div>
+<div class=details-content>
+<div class=admonition-content>事实证明，这种方法不可行，2.5中的部署过程中向github写数据时，会把原有的.nojekyll文件删掉。</div>
+</div>
+</div>
 <h3 id=25-添加github-action>2.5 添加Github Action</h3>
 <p>在zchaoyu1126/blog中新建一个Action，其内容如下：</p>
 <div class=highlight><div class=chroma>
@@ -222,6 +230,9 @@
 </span><span class=lnt>31
 </span><span class=lnt>32
 </span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
 </span></code></pre></td>
 <td class=lntd>
 <pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=c># ACTIONS_DEPLOY_KEY  根据自身情况进行修改，即2.3.3中输入的Name</span><span class=w>
@@ -237,7 +248,7 @@
 </span><span class=w>    </span><span class=nt>runs-on</span><span class=p>:</span><span class=w> </span><span class=l>ubuntu-latest</span><span class=w> </span><span class=c># 镜像市场</span><span class=w>
 </span><span class=w>    </span><span class=nt>steps</span><span class=p>:</span><span class=w>
 </span><span class=w>      </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>checkout</span><span class=w> </span><span class=c># 步骤的名称</span><span class=w>
-</span><span class=w>        </span><span class=nt>uses</span><span class=p>:</span><span class=w> </span><span class=l>actions/checkout@master</span><span class=w> </span><span class=c>#软件市场的名称</span><span class=w>
+</span><span class=w>        </span><span class=nt>uses</span><span class=p>:</span><span class=w> </span><span class=l>actions/checkout@master</span><span class=w> </span><span class=c># 软件市场的名称</span><span class=w>
 </span><span class=w>        </span><span class=nt>with</span><span class=p>:</span><span class=w> </span><span class=c># 参数</span><span class=w>
 </span><span class=w>          </span><span class=nt>submodules</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>
 </span><span class=w>          
@@ -249,6 +260,9 @@
 </span><span class=w>          
 </span><span class=w>      </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Build</span><span class=w>
 </span><span class=w>        </span><span class=nt>run</span><span class=p>:</span><span class=w> </span><span class=l>hugo --minify</span><span class=w>
+</span><span class=w>        
+</span><span class=w>      </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Forbid Jekyll           </span><span class=w> </span><span class=c># 由于2.4节的方法失效，所以在这里生成.nojekyll文件</span><span class=w>
+</span><span class=w>        </span><span class=nt>run</span><span class=p>:</span><span class=w> </span><span class=l>touch ./public/.nojekyll</span><span class=w>
 </span><span class=w>        
 </span><span class=w>      </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Deploy</span><span class=w>
 </span><span class=w>        </span><span class=nt>uses</span><span class=p>:</span><span class=w> </span><span class=l>peaceiris/actions-gh-pages@v2.5.1</span><span class=w>

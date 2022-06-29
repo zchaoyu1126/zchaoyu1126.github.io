@@ -80,9 +80,15 @@ pub后缀为公钥，另一个为私钥
 
 ### 2.4 禁用Jekyll
 
-在zchaoyu1126/zchaoyu1126.github.io仓库中新建一个.nojekyll文件。其内容为空，表示禁用jekyll。
+~~在zchaoyu1126/zchaoyu1126.github.io仓库中新建一个.nojekyll文件。其内容为空，表示禁用jekyll。~~
 
 {{< image src="img6.png" caption="禁用Jekyll" src_s="img6.png" src_l="img6.png" >}}
+
+{{< admonition info "血泪史" >}}
+
+事实证明，这种方法不可行，2.5中的部署过程中向github写数据时，会把原有的.nojekyll文件删掉。
+
+{{< /admonition >}}
 
 ### 2.5 添加Github Action
 
@@ -102,7 +108,7 @@ jobs:
     runs-on: ubuntu-latest # 镜像市场
     steps:
       - name: checkout # 步骤的名称
-        uses: actions/checkout@master #软件市场的名称
+        uses: actions/checkout@master # 软件市场的名称
         with: # 参数
           submodules: true
           
@@ -114,6 +120,9 @@ jobs:
           
       - name: Build
         run: hugo --minify
+        
+      - name: Forbid Jekyll            # 由于2.4节的方法失效，所以在这里生成.nojekyll文件
+        run: touch ./public/.nojekyll
         
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v2.5.1
