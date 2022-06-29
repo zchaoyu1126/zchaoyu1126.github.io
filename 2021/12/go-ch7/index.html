@@ -1,0 +1,442 @@
+<!doctype html><html lang=zh-cn>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=robots content="noodp">
+<title>Ch7 输入与输出 - Chao's Blog</title><meta name=Description content="程序猿的学习和日常"><meta property="og:title" content="Ch7 输入与输出">
+<meta property="og:description" content="在初学时，初步掌握命令行参数、使用Scan族函数读取Stdin，使用Print族函数向Stdout输出即可，关于输入输出更多的操作，请参考c">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://zchaoyu1126.github.io/2021/12/go-ch7/"><meta property="og:image" content="https://zchaoyu1126.github.io/logo.png"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2021-12-14T20:18:12+08:00">
+<meta property="article:modified_time" content="2022-05-29T22:23:21+08:00"><meta property="og:site_name" content="Chao's Blog">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image content="https://zchaoyu1126.github.io/logo.png">
+<meta name=twitter:title content="Ch7 输入与输出">
+<meta name=twitter:description content="在初学时，初步掌握命令行参数、使用Scan族函数读取Stdin，使用Print族函数向Stdout输出即可，关于输入输出更多的操作，请参考c">
+<meta name=application-name content="Chao's Blog">
+<meta name=apple-mobile-web-app-title content="Chao's Blog"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://zchaoyu1126.github.io/2021/12/go-ch7/><link rel=prev href=https://zchaoyu1126.github.io/2021/12/go-ch6/><link rel=next href=https://zchaoyu1126.github.io/2021/12/go-ch8/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css as=style onload="this.onload=null,this.rel='stylesheet'">
+<noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css></noscript><link rel=preload href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css as=style onload="this.onload=null,this.rel='stylesheet'">
+<noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Ch7 输入与输出","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/zchaoyu1126.github.io\/2021\/12\/go-ch7\/"},"image":[{"@type":"ImageObject","url":"https:\/\/zchaoyu1126.github.io\/images\/Apple-Devices-Preview.png","width":3200,"height":2048}],"genre":"posts","wordcount":1210,"url":"https:\/\/zchaoyu1126.github.io\/2021\/12\/go-ch7\/","datePublished":"2021-12-14T20:18:12+08:00","dateModified":"2022-05-29T22:23:21+08:00","license":"This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher":{"@type":"Organization","name":"xxxx","logo":{"@type":"ImageObject","url":"https:\/\/zchaoyu1126.github.io\/images\/avatar.png","width":528,"height":560}},"author":{"@type":"Person","name":"chao"},"description":""}</script></head>
+<body data-header-desktop=fixed data-header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':'auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark')&&document.body.setAttribute('theme','dark')</script>
+<div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title="Chao's Blog"><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw" aria-hidden=true></i></span>Chao's Blog</a>
+</div>
+<div class=menu>
+<div class=menu-inner><a class=menu-item href=/posts/> 文章
+</a><a class=menu-item href=/tags/> 标签
+</a><a class=menu-item href=/categories/> 分类
+</a>
+<div class=dropdown>
+<a href=javascript:void(0); class="menu-item menu-more dropbtn" title> 归档
+</a>
+<div class="menu-more-content dropdown-content"><a href=/documentation/golang/ title><i class="fa fa-book" aria-hidden=true></i> Golang </a><a href=/documentation/csbase/ title><i class="fa fa-laptop" aria-hidden=true></i> 计算机基础 </a><a href=/documentation/algorithm/ title><i class="fa fa-bookmark" aria-hidden=true></i> 数据结构与算法 </a></div>
+</div>
+<a class=menu-item href=/about/> 关于
+</a><a class=menu-item href=https://github.com/zchaoyu1126 title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw" aria-hidden=true></i>
+</a><span class="menu-item delimiter"></span><a href=javascript:void(0); class="menu-item language" title=选择语言>简体中文<i class="fas fa-chevron-right fa-fw" aria-hidden=true></i>
+<select class=language-select id=language-select-desktop onchange="location=this.value"><option value=/2021/12/go-ch7/ selected>简体中文</option></select>
+</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+</div>
+</div>
+</header><header class=mobile id=header-mobile>
+<div class=header-container>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title="Chao's Blog"><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw" aria-hidden=true></i></span>Chao's Blog</a>
+</div>
+<div class=menu-toggle id=menu-toggle-mobile>
+<span></span><span></span><span></span>
+</div>
+</div>
+<div class=menu id=menu-mobile><a class=menu-item href=/posts/> 文章
+</a><a class=menu-item href=/tags/> 标签
+</a><a class=menu-item href=/categories/> 分类
+</a>
+<div class=dropdown>
+<a href=javascript:void(0); class="menu-item menu-more dropbtn" title> 归档
+</a>
+<div class="menu-more-content dropdown-content"><a href=/documentation/golang/ title><i class="fa fa-book" aria-hidden=true></i> Golang </a><a href=/documentation/csbase/ title><i class="fa fa-laptop" aria-hidden=true></i> 计算机基础 </a><a href=/documentation/algorithm/ title><i class="fa fa-bookmark" aria-hidden=true></i> 数据结构与算法 </a></div>
+</div>
+<a class=menu-item href=/about/> 关于
+</a><a class=menu-item href=https://github.com/zchaoyu1126 title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class=menu-item title=选择语言>简体中文<i class="fas fa-chevron-right fa-fw" aria-hidden=true></i>
+<select class=language-select onchange="location=this.value"><option value=/2021/12/go-ch7/ selected>简体中文</option></select>
+</a></div>
+</div>
+</header><main class=main>
+<div class=container><div class=toc id=toc-auto>
+<h2 class=toc-title>目录</h2>
+<div class=toc-content id=toc-content-auto></div>
+</div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Ch7 输入与输出</h1><div class=post-meta>
+<div class=post-meta-line><span class=post-author><a href=https://github.com/zchaoyu1126 title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw" aria-hidden=true></i>chao</a></span>&nbsp;<span class=post-category>收录于 <a href=/categories/golang/><i class="far fa-folder fa-fw" aria-hidden=true></i>golang</a></span></div>
+<div class=post-meta-line><i class="far fa-calendar-alt fa-fw" aria-hidden=true></i>&nbsp;<time datetime=2021-12-14>2021-12-14</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden=true></i>&nbsp;约 1210 字&nbsp;
+<i class="far fa-clock fa-fw" aria-hidden=true></i>&nbsp;预计阅读 3 分钟&nbsp;<span id=/2021/12/go-ch7/ class=leancloud_visitors data-flag-title="Ch7 输入与输出">
+<i class="far fa-eye fa-fw" aria-hidden=true></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+</span>&nbsp;</div>
+</div><div class="details toc" id=toc-static data-kept>
+<div class="details-summary toc-title">
+<span>目录</span>
+<span><i class="details-icon fas fa-angle-right" aria-hidden=true></i></span>
+</div>
+<div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents>
+<ul>
+<li><a href=#1-命令行参数>1 命令行参数</a></li>
+<li><a href=#2-scan族函数>2 Scan族函数</a></li>
+<li><a href=#3-print族函数>3 Print族函数</a></li>
+</ul>
+</nav></div>
+</div><div class=content id=content><p>在初学时，初步掌握命令行参数、使用<code>Scan</code>族函数读取<code>Stdin</code>，使用<code>Print</code>族函数向<code>Stdout</code>输出即可，关于输入输出更多的操作，请参考<a href=http://zchaoyu1126.github.io/go-ch28.html target=_blank rel="noopener noreffer">ch28 进阶输入输出</a></p>
+<h2 id=1-命令行参数>1 命令行参数</h2>
+<p><code>os</code>以跨平台的方式，提供了一些与操作系统交互的函数和变量，程序的命令行参数可以从os包中的Args变量获取。<code>os.Args</code>是一个字符串类型的切片<code>[]string</code>，其中<code>os.Args[0]</code>是文件名，其他元素是程序启动时传给它的参数。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+    <span class=s>&#34;os&#34;</span>
+    <span class=s>&#34;fmt&#34;</span>
+<span class=p>)</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>str</span> <span class=o>:=</span> <span class=s>&#34;&#34;</span>
+    <span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>v</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>os</span><span class=p>.</span><span class=nx>Args</span> <span class=p>{</span>
+        <span class=nx>str</span> <span class=o>+=</span> <span class=s>&#34; &#34;</span>
+        <span class=nx>str</span> <span class=o>+=</span> <span class=nx>v</span>
+    <span class=p>}</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>str</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id=2-scan族函数>2 Scan族函数</h2>
+<p>可使用<code>fmt</code>包提供的<code>Scan</code>开头的函数，从键盘和标准输入<code>os.Stdin</code>中读取输入</p>
+<p>注意！<code>Scan类无法读取空格</code>，空格会被视为两个参数之间的分隔</p>
+<ul>
+<li><code>Scan</code>: 读入，直到全部得到参数</li>
+</ul>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=kd>var</span> <span class=nx>a</span> <span class=kt>string</span>
+    <span class=kd>var</span> <span class=nx>b</span> <span class=kt>int</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Scan</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>a</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>b</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>a</span><span class=p>,</span> <span class=nx>b</span><span class=p>)</span>
+<span class=p>}</span>
+<span class=c1>// input: hello world 直接结束了，不给输入int值的机会
+</span><span class=c1>// output: hello 0
+</span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>
+<p><code>Scanf</code>：必须严格按照此输入模式</p>
+<p>若格式化串内含有回车，则在键盘输入时，必须有相应的回车相对应。</p>
+<p>格式化串内的空格数目和输入中的空格数目没有影响。</p>
+</li>
+</ul>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=kd>var</span> <span class=nx>a</span> <span class=kt>string</span>
+    <span class=kd>var</span> <span class=nx>b</span> <span class=kt>int</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Scanf</span><span class=p>(</span><span class=s>&#34;%s \n %d&#34;</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>a</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>b</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>a</span><span class=p>,</span> <span class=nx>b</span><span class=p>)</span>
+<span class=p>}</span>
+<span class=c1>// input: hello
+</span><span class=c1>//        1
+</span><span class=c1>// output: hello 1
+</span><span class=c1></span>
+<span class=c1>// input: hello 1
+</span><span class=c1>// output: hello 0
+</span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>
+<p><code>Scanln</code>扫描来自标准输入中一行的文本，将空格分隔的值依次存放到后续的参数内，直到碰到换行。</p>
+<p>如果扫描到的值小于参数数目，则直接结束，未被赋值的参数仍为原来的值（或默认值）。</p>
+<p>如果扫描到的值多于参数数目，会出现奇怪的问题，见下文代码。</p>
+</li>
+</ul>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=kd>var</span> <span class=nx>a</span><span class=p>,</span> <span class=nx>b</span><span class=p>,</span> <span class=nx>c</span> <span class=kt>int</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Scanln</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>a</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>b</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>c</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>a</span><span class=p>,</span> <span class=nx>b</span><span class=p>,</span> <span class=nx>c</span><span class=p>)</span>
+<span class=p>}</span>
+<span class=c1>// input: 1 2
+</span><span class=c1>// output: 1 2 0  2之后遇到回车不会继续等待输入，结束Scanln语句
+</span><span class=c1></span>
+<span class=c1>// input: 1 2 3
+</span><span class=c1>// output: 1 2 3
+</span><span class=c1></span>
+<span class=c1>// input: 1 2 3 4
+</span><span class=c1>// output: 1 2 3
+</span></code></pre></td></tr></table>
+</div>
+</div><div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=kd>var</span> <span class=nx>a</span><span class=p>,</span> <span class=nx>b</span><span class=p>,</span> <span class=nx>c</span><span class=p>,</span> <span class=nx>d</span><span class=p>,</span> <span class=nx>e</span> <span class=kt>int</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Scanln</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>a</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>b</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>c</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>a</span><span class=p>,</span> <span class=nx>b</span><span class=p>,</span> <span class=nx>c</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Scanln</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>d</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>e</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>d</span><span class=p>,</span> <span class=nx>e</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=c1>// input: 1 2 3 4 5
+</span><span class=c1>// output: 1 2 3
+</span><span class=c1>//         5 0
+</span><span class=c1>// 出现此结果的原因，可能是Scanln将输入缓冲区中的4修改成为了换行符
+</span><span class=c1>// 因此，为了正确的输入，输入4，5时必须在换行符之后
+</span></code></pre></td></tr></table>
+</div>
+</div><h2 id=3-print族函数>3 Print族函数</h2>
+<p>可使用<code>fmt</code>包提供的<code>Print</code>开头的函数，可向键盘和标准输出<code>os.Stdout</code>中进行输出</p>
+<ul>
+<li>
+<p><code>Printf</code>，输出格式化的字符串</p>
+<p>常见占位符如下，</p>
+<p><code>%b</code>、<code>%d</code>、<code>%o</code>、<code>%x(%X)</code>：二进制、十进制、八进制、十六进制表示</p>
+<p><code>%c</code>：相应Unciode码点所表示的字符</p>
+<p><code>%s</code>：字符串</p>
+<p><code>%t</code>：布尔</p>
+<p><code>%g</code>：浮点数</p>
+<p><code>%p</code>：指针，十六进制表示</p>
+<p><code>%T</code>：值的类型</p>
+<p><code>%v</code>：值的默认格式</p>
+</li>
+</ul>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kt>bool</span><span class=p>:</span>                    <span class=o>%</span><span class=nx>t</span>
+<span class=kt>int</span><span class=p>,</span> <span class=kt>int8</span> <span class=nx>etc</span><span class=p>.:</span>          <span class=o>%</span><span class=nx>d</span>
+<span class=kt>uint</span><span class=p>,</span> <span class=kt>uint8</span> <span class=nx>etc</span><span class=p>.:</span>        <span class=o>%</span><span class=nx>d</span><span class=p>,</span> <span class=o>%</span><span class=nx>x</span> <span class=k>if</span> <span class=nx>printed</span> <span class=nx>with</span> <span class=o>%</span><span class=err>#</span><span class=nx>v</span>
+<span class=kt>float32</span><span class=p>,</span> <span class=kt>complex64</span><span class=p>,</span> <span class=nx>etc</span><span class=p>:</span> <span class=o>%</span><span class=nx>g</span>
+<span class=kt>string</span><span class=p>:</span>                  <span class=o>%</span><span class=nx>s</span>
+<span class=kd>chan</span><span class=p>:</span>                    <span class=o>%</span><span class=nx>p</span>
+<span class=nx>pointer</span><span class=p>:</span>                 <span class=o>%</span><span class=nx>p</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>​
+具体示例如下：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>a</span> <span class=o>:=</span> <span class=mi>20</span>
+    <span class=nx>b</span> <span class=o>:=</span> <span class=mf>3.14</span>
+    <span class=nx>c</span> <span class=o>:=</span> <span class=s>&#34;hi, Bruce&#34;</span>
+    <span class=nx>d</span> <span class=o>:=</span> <span class=kc>true</span>
+    <span class=nx>e</span> <span class=o>:=</span> <span class=mi>3</span> <span class=o>+</span> <span class=m>4i</span>
+    <span class=nx>f</span> <span class=o>:=</span> <span class=sc>&#39;s&#39;</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;a:%v, %T, %d\n&#34;</span><span class=p>,</span> <span class=nx>a</span><span class=p>,</span> <span class=nx>a</span><span class=p>,</span> <span class=nx>a</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;b:%v, %T, %f\n&#34;</span><span class=p>,</span> <span class=nx>b</span><span class=p>,</span> <span class=nx>b</span><span class=p>,</span> <span class=nx>b</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;c:%v, %T, %s\n&#34;</span><span class=p>,</span> <span class=nx>c</span><span class=p>,</span> <span class=nx>c</span><span class=p>,</span> <span class=nx>c</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;d:%v, %T, %t\n&#34;</span><span class=p>,</span> <span class=nx>d</span><span class=p>,</span> <span class=nx>d</span><span class=p>,</span> <span class=nx>d</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;e:%v, %T, %g\n&#34;</span><span class=p>,</span> <span class=nx>e</span><span class=p>,</span> <span class=nx>e</span><span class=p>,</span> <span class=nx>e</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;f:%v, %T, %c\n&#34;</span><span class=p>,</span> <span class=nx>f</span><span class=p>,</span> <span class=nx>f</span><span class=p>,</span> <span class=nx>f</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=c1>// a:20, int, 20
+</span><span class=c1>// b:3.14, float64, 3.140000
+</span><span class=c1>// c:hi, Bruce, string, hi, Bruce
+</span><span class=c1>// d:true, bool, true
+</span><span class=c1>// e:(3+4i), complex128, (3+4i)
+</span><span class=c1>// f:115, int32, s
+</span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><code>Print</code>等价于对每一个操作数都应用<code>%v</code></li>
+<li><code>Println</code> 应用<code>%v</code>输出到控制台并换行</li>
+</ul>
+</div><div class=post-footer id=post-footer>
+<div class=post-info>
+<div class=post-info-line>
+<div class=post-info-mod>
+<span>更新于 2022-05-29</span>
+</div></div>
+<div class=post-info-line>
+<div class=post-info-md><span>
+<a class=link-to-markdown href=/2021/12/go-ch7/index.md target=_blank>阅读原始文档</a>
+</span></div>
+<div class=post-info-share>
+<span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=https://zchaoyu1126.github.io/2021/12/go-ch7/ data-title="Ch7 输入与输出"><i class="fab fa-twitter fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=https://zchaoyu1126.github.io/2021/12/go-ch7/><i class="fab fa-facebook-square fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 Hacker News" data-sharer=hackernews data-url=https://zchaoyu1126.github.io/2021/12/go-ch7/ data-title="Ch7 输入与输出"><i class="fab fa-hacker-news fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 Line" data-sharer=line data-url=https://zchaoyu1126.github.io/2021/12/go-ch7/ data-title="Ch7 输入与输出"><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@6.20.0/icons/line.svg aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=https://zchaoyu1126.github.io/2021/12/go-ch7/ data-title="Ch7 输入与输出" data-ralateuid=xxxx><i class="fab fa-weibo fa-fw" aria-hidden=true></i></a></span>
+</div>
+</div>
+</div>
+<div class=post-info-more>
+<section class=post-tags></section>
+<section>
+<span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span>
+</section>
+</div>
+<div class=post-nav><a href=/2021/12/go-ch6/ class=prev rel=prev title="Ch6 常量与变量"><i class="fas fa-angle-left fa-fw" aria-hidden=true></i>Ch6 常量与变量</a>
+<a href=/2021/12/go-ch8/ class=next rel=next title="Ch8 控制结构">Ch8 控制结构<i class="fas fa-angle-right fa-fw" aria-hidden=true></i></a></div>
+</div>
+<div id=comments><div id=valine class=comment></div><noscript>
+Please enable JavaScript to view the comments powered by <a href=https://valine.js.org/>Valine</a>.
+</noscript></div></article></div>
+</main><footer class=footer>
+<div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.91.2">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden=true></i> LoveIt</a>
+</div><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright fa-fw" aria-hidden=true></i><span itemprop=copyrightYear>2021 - 2022</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://github.com/zchaoyu1126 target=_blank>chao</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div>
+</div>
+</footer></div>
+<div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部>
+<i class="fas fa-arrow-up fa-fw" aria-hidden=true></i>
+</a><a href=# id=view-comments class=fixed-button title=查看评论>
+<i class="fas fa-comment fa-fw" aria-hidden=true></i>
+</a>
+</div><link rel=stylesheet href=/lib/valine/valine.min.css><script type=text/javascript src=https://cdn.jsdelivr.net/npm/valine@1.4.18/dist/Valine.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.3.1/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:50},comment:{valine:{appId:"QGzwQXOqs5JOhN4RGPOkR2mR-MdYXbMMI",appKey:"WBmoGyJtbqUswvfLh6L8iEBr",avatar:"mp",el:"#valine",emojiCDN:"https://cdn.jsdelivr.net/npm/emoji-datasource-google@14.0.0/img/google/64/",emojiMaps:{100:"1f4af.png",alien:"1f47d.png",anger:"1f4a2.png",angry:"1f620.png",anguished:"1f627.png",astonished:"1f632.png",black_heart:"1f5a4.png",blue_heart:"1f499.png",blush:"1f60a.png",bomb:"1f4a3.png",boom:"1f4a5.png",broken_heart:"1f494.png",brown_heart:"1f90e.png",clown_face:"1f921.png",cold_face:"1f976.png",cold_sweat:"1f630.png",confounded:"1f616.png",confused:"1f615.png",cry:"1f622.png",crying_cat_face:"1f63f.png",cupid:"1f498.png",dash:"1f4a8.png",disappointed:"1f61e.png",disappointed_relieved:"1f625.png",dizzy:"1f4ab.png",dizzy_face:"1f635.png",drooling_face:"1f924.png",exploding_head:"1f92f.png",expressionless:"1f611.png",face_vomiting:"1f92e.png",face_with_cowboy_hat:"1f920.png",face_with_hand_over_mouth:"1f92d.png",face_with_head_bandage:"1f915.png",face_with_monocle:"1f9d0.png",face_with_raised_eyebrow:"1f928.png",face_with_rolling_eyes:"1f644.png",face_with_symbols_on_mouth:"1f92c.png",face_with_thermometer:"1f912.png",fearful:"1f628.png",flushed:"1f633.png",frowning:"1f626.png",ghost:"1f47b.png",gift_heart:"1f49d.png",green_heart:"1f49a.png",grimacing:"1f62c.png",grin:"1f601.png",grinning:"1f600.png",hankey:"1f4a9.png",hear_no_evil:"1f649.png",heart:"2764-fe0f.png",heart_decoration:"1f49f.png",heart_eyes:"1f60d.png",heart_eyes_cat:"1f63b.png",heartbeat:"1f493.png",heartpulse:"1f497.png",heavy_heart_exclamation_mark_ornament:"2763-fe0f.png",hole:"1f573-fe0f.png",hot_face:"1f975.png",hugging_face:"1f917.png",hushed:"1f62f.png",imp:"1f47f.png",innocent:"1f607.png",japanese_goblin:"1f47a.png",japanese_ogre:"1f479.png",joy:"1f602.png",joy_cat:"1f639.png",kiss:"1f48b.png",kissing:"1f617.png",kissing_cat:"1f63d.png",kissing_closed_eyes:"1f61a.png",kissing_heart:"1f618.png",kissing_smiling_eyes:"1f619.png",laughing:"1f606.png",left_speech_bubble:"1f5e8-fe0f.png",love_letter:"1f48c.png",lying_face:"1f925.png",mask:"1f637.png",money_mouth_face:"1f911.png",nauseated_face:"1f922.png",nerd_face:"1f913.png",neutral_face:"1f610.png",no_mouth:"1f636.png",open_mouth:"1f62e.png",orange_heart:"1f9e1.png",partying_face:"1f973.png",pensive:"1f614.png",persevere:"1f623.png",pleading_face:"1f97a.png",pouting_cat:"1f63e.png",purple_heart:"1f49c.png",rage:"1f621.png",relaxed:"263a-fe0f.png",relieved:"1f60c.png",revolving_hearts:"1f49e.png",right_anger_bubble:"1f5ef-fe0f.png",robot_face:"1f916.png",rolling_on_the_floor_laughing:"1f923.png",scream:"1f631.png",scream_cat:"1f640.png",see_no_evil:"1f648.png",shushing_face:"1f92b.png",skull:"1f480.png",skull_and_crossbones:"2620-fe0f.png",sleeping:"1f634.png",sleepy:"1f62a.png",slightly_frowning_face:"1f641.png",slightly_smiling_face:"1f642.png",smile:"1f604.png",smile_cat:"1f638.png",smiley:"1f603.png",smiley_cat:"1f63a.png",smiling_face_with_3_hearts:"1f970.png",smiling_imp:"1f608.png",smirk:"1f60f.png",smirk_cat:"1f63c.png",sneezing_face:"1f927.png",sob:"1f62d.png",space_invader:"1f47e.png",sparkling_heart:"1f496.png",speak_no_evil:"1f64a.png",speech_balloon:"1f4ac.png","star-struck":"1f929.png",stuck_out_tongue:"1f61b.png",stuck_out_tongue_closed_eyes:"1f61d.png",stuck_out_tongue_winking_eye:"1f61c.png",sunglasses:"1f60e.png",sweat:"1f613.png",sweat_drops:"1f4a6.png",sweat_smile:"1f605.png",thinking_face:"1f914.png",thought_balloon:"1f4ad.png",tired_face:"1f62b.png",triumph:"1f624.png",two_hearts:"1f495.png",unamused:"1f612.png",upside_down_face:"1f643.png",weary:"1f629.png",white_frowning_face:"2639-fe0f.png",white_heart:"1f90d.png",wink:"1f609.png",woozy_face:"1f974.png",worried:"1f61f.png",yawning_face:"1f971.png",yellow_heart:"1f49b.png",yum:"1f60b.png",zany_face:"1f92a.png",zipper_mouth_face:"1f910.png",zzz:"1f4a4.png"},enableQQ:!1,highlight:!0,lang:"zh-CN",pageSize:10,placeholder:"你的评论 ...",recordIP:!0,serverURLs:"https://leancloud.hugoloveit.com",visitor:!0}}}</script><script type=text/javascript src=/js/theme.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/jquery@2.1.3/dist/jquery.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/jquery@2.1.3/dist/jquery.min.js></script>
+<script type=text/javascript src=https://cdn.jsdelivr.net/npm/jquery-backstretch@2.1.18/jquery.backstretch.min.js></script>
+<script type=text/javascript src=/js/custom.js></script></body>
+</html>

@@ -1,0 +1,344 @@
+<!doctype html><html lang=zh-cn>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=robots content="noodp">
+<title>Ch9 指针 - Chao's Blog</title><meta name=Description content="程序猿的学习和日常"><meta property="og:title" content="Ch9 指针">
+<meta property="og:description" content="与C++不同的是，Go语言为程序员提供了控制数据结构指针的能力，但却不支持指针运算。 通过给予程序员基本内存布局，Go 语言允许控制特定集合的数">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://zchaoyu1126.github.io/2021/12/go-ch9/"><meta property="og:image" content="https://zchaoyu1126.github.io/logo.png"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2021-12-19T20:22:12+08:00">
+<meta property="article:modified_time" content="2022-05-29T22:50:21+08:00"><meta property="og:site_name" content="Chao's Blog">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image content="https://zchaoyu1126.github.io/logo.png">
+<meta name=twitter:title content="Ch9 指针">
+<meta name=twitter:description content="与C++不同的是，Go语言为程序员提供了控制数据结构指针的能力，但却不支持指针运算。 通过给予程序员基本内存布局，Go 语言允许控制特定集合的数">
+<meta name=application-name content="Chao's Blog">
+<meta name=apple-mobile-web-app-title content="Chao's Blog"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://zchaoyu1126.github.io/2021/12/go-ch9/><link rel=prev href=https://zchaoyu1126.github.io/2021/12/go-ch8/><link rel=next href=https://zchaoyu1126.github.io/2021/12/go-ch10/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css as=style onload="this.onload=null,this.rel='stylesheet'">
+<noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css></noscript><link rel=preload href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css as=style onload="this.onload=null,this.rel='stylesheet'">
+<noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Ch9 指针","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/zchaoyu1126.github.io\/2021\/12\/go-ch9\/"},"image":[{"@type":"ImageObject","url":"https:\/\/zchaoyu1126.github.io\/images\/Apple-Devices-Preview.png","width":3200,"height":2048}],"genre":"posts","wordcount":1214,"url":"https:\/\/zchaoyu1126.github.io\/2021\/12\/go-ch9\/","datePublished":"2021-12-19T20:22:12+08:00","dateModified":"2022-05-29T22:50:21+08:00","license":"This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher":{"@type":"Organization","name":"xxxx","logo":{"@type":"ImageObject","url":"https:\/\/zchaoyu1126.github.io\/images\/avatar.png","width":528,"height":560}},"author":{"@type":"Person","name":"chao"},"description":""}</script></head>
+<body data-header-desktop=fixed data-header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':'auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark')&&document.body.setAttribute('theme','dark')</script>
+<div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title="Chao's Blog"><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw" aria-hidden=true></i></span>Chao's Blog</a>
+</div>
+<div class=menu>
+<div class=menu-inner><a class=menu-item href=/posts/> 文章
+</a><a class=menu-item href=/tags/> 标签
+</a><a class=menu-item href=/categories/> 分类
+</a>
+<div class=dropdown>
+<a href=javascript:void(0); class="menu-item menu-more dropbtn" title> 归档
+</a>
+<div class="menu-more-content dropdown-content"><a href=/documentation/golang/ title><i class="fa fa-book" aria-hidden=true></i> Golang </a><a href=/documentation/csbase/ title><i class="fa fa-laptop" aria-hidden=true></i> 计算机基础 </a><a href=/documentation/algorithm/ title><i class="fa fa-bookmark" aria-hidden=true></i> 数据结构与算法 </a></div>
+</div>
+<a class=menu-item href=/about/> 关于
+</a><a class=menu-item href=https://github.com/zchaoyu1126 title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw" aria-hidden=true></i>
+</a><span class="menu-item delimiter"></span><a href=javascript:void(0); class="menu-item language" title=选择语言>简体中文<i class="fas fa-chevron-right fa-fw" aria-hidden=true></i>
+<select class=language-select id=language-select-desktop onchange="location=this.value"><option value=/2021/12/go-ch9/ selected>简体中文</option></select>
+</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+</div>
+</div>
+</header><header class=mobile id=header-mobile>
+<div class=header-container>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title="Chao's Blog"><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw" aria-hidden=true></i></span>Chao's Blog</a>
+</div>
+<div class=menu-toggle id=menu-toggle-mobile>
+<span></span><span></span><span></span>
+</div>
+</div>
+<div class=menu id=menu-mobile><a class=menu-item href=/posts/> 文章
+</a><a class=menu-item href=/tags/> 标签
+</a><a class=menu-item href=/categories/> 分类
+</a>
+<div class=dropdown>
+<a href=javascript:void(0); class="menu-item menu-more dropbtn" title> 归档
+</a>
+<div class="menu-more-content dropdown-content"><a href=/documentation/golang/ title><i class="fa fa-book" aria-hidden=true></i> Golang </a><a href=/documentation/csbase/ title><i class="fa fa-laptop" aria-hidden=true></i> 计算机基础 </a><a href=/documentation/algorithm/ title><i class="fa fa-bookmark" aria-hidden=true></i> 数据结构与算法 </a></div>
+</div>
+<a class=menu-item href=/about/> 关于
+</a><a class=menu-item href=https://github.com/zchaoyu1126 title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class=menu-item title=选择语言>简体中文<i class="fas fa-chevron-right fa-fw" aria-hidden=true></i>
+<select class=language-select onchange="location=this.value"><option value=/2021/12/go-ch9/ selected>简体中文</option></select>
+</a></div>
+</div>
+</header><main class=main>
+<div class=container><div class=toc id=toc-auto>
+<h2 class=toc-title>目录</h2>
+<div class=toc-content id=toc-content-auto></div>
+</div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Ch9 指针</h1><div class=post-meta>
+<div class=post-meta-line><span class=post-author><a href=https://github.com/zchaoyu1126 title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw" aria-hidden=true></i>chao</a></span>&nbsp;<span class=post-category>收录于 <a href=/categories/golang/><i class="far fa-folder fa-fw" aria-hidden=true></i>golang</a></span></div>
+<div class=post-meta-line><i class="far fa-calendar-alt fa-fw" aria-hidden=true></i>&nbsp;<time datetime=2021-12-19>2021-12-19</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden=true></i>&nbsp;约 1214 字&nbsp;
+<i class="far fa-clock fa-fw" aria-hidden=true></i>&nbsp;预计阅读 3 分钟&nbsp;<span id=/2021/12/go-ch9/ class=leancloud_visitors data-flag-title="Ch9 指针">
+<i class="far fa-eye fa-fw" aria-hidden=true></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+</span>&nbsp;</div>
+</div><div class="details toc" id=toc-static data-kept>
+<div class="details-summary toc-title">
+<span>目录</span>
+<span><i class="details-icon fas fa-angle-right" aria-hidden=true></i></span>
+</div>
+<div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents>
+<ul>
+<li><a href=#1-指针的含义>1 指针的含义</a></li>
+<li><a href=#2-指针的利弊>2 指针的利弊</a></li>
+<li><a href=#3-语法糖>3 语法糖</a></li>
+</ul>
+</nav></div>
+</div><div class=content id=content><p>与C++不同的是，Go语言为程序员提供了控制数据结构指针的能力，但却不支持指针运算。</p>
+<p>通过给予程序员基本内存布局，Go 语言允许控制特定集合的数据结构、分配的数量以及内存访问模式，这些对构建运行良好的系统是非常重要的。</p>
+<h2 id=1-指针的含义>1 指针的含义</h2>
+<p>声明变量的过程就是向系统申请内存的过程。如果在程序中声明了一个变量，那么操作系统会分配一块内存，此后就可以通过变量名在这块内存中存储、修改值。</p>
+<p>该内存在操作系统中是有地址的，可以通过取地址符<code>&</code>来获得这个地址，把这个地址信息存在另一个变量中，这个变量就叫做指针。</p>
+<ul>
+<li>内存地址通常用十六进制表示，32位机器4个字节，64位机器8个字节</li>
+<li>当一个指针被定义后没有分配到任何变量时，它的值位<code>nil</code></li>
+<li><code>*ptr</code>，可获得<code>ptr</code>指向地址上所存储的值，这被称为反引用或解引用（dereference）</li>
+</ul>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=kd>var</span> <span class=nx>num</span> <span class=p>=</span> <span class=mi>5</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;An integer: %d, its location in memory: %p\n&#34;</span><span class=p>,</span> <span class=nx>num</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>num</span><span class=p>)</span>
+
+    <span class=kd>var</span> <span class=nx>numPtr</span> <span class=o>*</span><span class=kt>int</span>
+    <span class=nx>numPtr</span> <span class=p>=</span> <span class=o>&amp;</span><span class=nx>i1</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;The value at memory location %p is %d\n&#34;</span><span class=p>,</span> <span class=nx>numPtr</span><span class=p>,</span> <span class=o>*</span><span class=nx>numPtr</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=c1>//An integer: 5, its location in memory: 0x24f0820
+</span><span class=c1>//The value at memory location 0x24f0820 is 5
+</span></code></pre></td></tr></table>
+</div>
+</div><p>下面的程序，通过指针修改了原字符串<code>s</code></p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>s</span> <span class=o>:=</span> <span class=s>&#34;good bye&#34;</span>
+    <span class=kd>var</span> <span class=nx>p</span> <span class=o>*</span><span class=kt>string</span> <span class=p>=</span> <span class=o>&amp;</span><span class=nx>s</span>
+    <span class=o>*</span><span class=nx>p</span> <span class=p>=</span> <span class=s>&#34;ciao&#34;</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;Here is the pointer p: %p\n&#34;</span><span class=p>,</span> <span class=nx>p</span><span class=p>)</span> <span class=c1>// prints address
+</span><span class=c1></span>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;Here is the string *p: %s\n&#34;</span><span class=p>,</span> <span class=o>*</span><span class=nx>p</span><span class=p>)</span> <span class=c1>// prints string
+</span><span class=c1></span>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;Here is the string s: %s\n&#34;</span><span class=p>,</span> <span class=nx>s</span><span class=p>)</span> <span class=c1>// prints same string
+</span><span class=c1></span><span class=p>}</span>
+
+<span class=c1>//Here is the pointer p: 0x2540820
+</span><span class=c1>//Here is the string *p: ciao
+</span><span class=c1>//Here is the string s: ciao
+</span></code></pre></td></tr></table>
+</div>
+</div><p>在本节开头提到<code>不支持指针运算</code>指的是<code>p++,p--</code>这种,这些运算是不被允许的。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
+</span><span class=cp></span><span class=k>using</span> <span class=k>namespace</span> <span class=n>std</span><span class=p>;</span>
+
+<span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=kt>int</span> <span class=n>arr</span><span class=p>[</span><span class=mi>5</span><span class=p>]</span> <span class=o>=</span> <span class=p>{</span><span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=mi>3</span><span class=p>,</span> <span class=mi>4</span> <span class=p>,</span><span class=mi>5</span><span class=p>};</span>
+    <span class=k>for</span><span class=p>(</span><span class=kt>int</span> <span class=o>*</span><span class=n>p</span> <span class=o>=</span> <span class=n>arr</span><span class=p>;</span> <span class=n>p</span> <span class=o>&lt;</span> <span class=n>arr</span><span class=o>+</span><span class=mi>5</span><span class=p>;</span> <span class=n>p</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
+        <span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=o>*</span><span class=n>p</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span>
+    <span class=p>}</span>
+    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>注意事项</strong>
+<div class="details admonition warning open">
+<div class="details-summary admonition-title">
+<i class="icon fas fa-exclamation-triangle fa-fw" aria-hidden=true></i>警告<i class="details-icon fas fa-angle-right fa-fw" aria-hidden=true></i>
+</div>
+<div class=details-content>
+<div class=admonition-content>不能获取常量（字面量也是常量）的地址。</div>
+</div>
+</div></p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kd>const</span> <span class=nx>i</span> <span class=p>=</span> <span class=mi>5</span>
+<span class=nx>ptr</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>i</span> <span class=c1>//error: cannot take the address of i
+</span><span class=c1></span><span class=nx>ptr2</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=mi>10</span> <span class=c1>//error: cannot take the address of 10
+</span></code></pre></td></tr></table>
+</div>
+</div><div class="details admonition warning open">
+<div class="details-summary admonition-title">
+<i class="icon fas fa-exclamation-triangle fa-fw" aria-hidden=true></i>警告<i class="details-icon fas fa-angle-right fa-fw" aria-hidden=true></i>
+</div>
+<div class=details-content>
+<div class=admonition-content>对空指针的解引用不合法，会使程序崩溃。</div>
+</div>
+</div>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=kd>var</span> <span class=nx>p</span> <span class=o>*</span><span class=kt>int</span> <span class=p>=</span> <span class=kc>nil</span>
+    <span class=o>*</span><span class=nx>p</span> <span class=p>=</span> <span class=mi>0</span>
+<span class=p>}</span>
+<span class=c1>// in Windows: stops only with: &lt;exit code=&#34;-1073741819&#34; msg=&#34;process crashed&#34;/&gt;
+</span><span class=c1>// runtime error: invalid memory address or nil pointer dereference
+</span></code></pre></td></tr></table>
+</div>
+</div><h2 id=2-指针的利弊>2 指针的利弊</h2>
+<p><strong>好处</strong>：传参时，可以传一个指针，而不是变量的拷贝，可以减少内存占用和提高效率。</p>
+<p><strong>坏处</strong>：指针的过度频繁使用也可能导致性能下降。指针也可以指向另一个指针，并且可以进行任意深度的嵌套，导致可以有多级的间接引用，但在大多数情况这会使代码结构不清晰。</p>
+<h2 id=3-语法糖>3 语法糖</h2>
+<blockquote>
+<p>语法糖（Syntactic sugar），也译为糖衣语法，是由英国计算机科学家彼得·约翰·兰达（Peter J. Landin）发明的一个术语，指计算机语言中添加的某种语法，这种语法对语言的功能并没有影响，但是更方便程序员使用。通常来说使用语法糖能够增加程序的可读性，从而减少程序代码出错的机会。</p>
+</blockquote>
+<p>在大多数情况下 Go 语言可以使程序员轻松创建指针，并且隐藏间接引用，即自动解引用。在之后的结构体之中体现的更加明显，这是Go语言支持的一个语法糖。</p>
+<p>stu是一个student结构体的指针，要调用成员变量，应为(*stu).age，但Go语言内部支持stu.age这种方式，能支持这种方式调用的本质原因是Go不支持对指针的修改，具体会在结构一章再次进行说明。</p>
+<p><a href=http://zchaoyu1126.github.io target=_blank rel="noopener noreffer">ch18 自定义类型与结构体</a></p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=nx>packge</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+
+<span class=kd>type</span> <span class=nx>Student</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>Age</span>  <span class=kt>int</span>
+    <span class=nx>Name</span> <span class=kt>string</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>stu</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>Student</span><span class=p>{</span><span class=mi>19</span><span class=p>,</span> <span class=s>&#34;Tony&#34;</span><span class=p>}</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>stu</span><span class=p>.</span><span class=nx>age</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>((</span><span class=o>*</span><span class=nx>stu</span><span class=p>).</span><span class=nx>age</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div></div><div class=post-footer id=post-footer>
+<div class=post-info>
+<div class=post-info-line>
+<div class=post-info-mod>
+<span>更新于 2022-05-29</span>
+</div></div>
+<div class=post-info-line>
+<div class=post-info-md><span>
+<a class=link-to-markdown href=/2021/12/go-ch9/index.md target=_blank>阅读原始文档</a>
+</span></div>
+<div class=post-info-share>
+<span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=https://zchaoyu1126.github.io/2021/12/go-ch9/ data-title="Ch9 指针"><i class="fab fa-twitter fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=https://zchaoyu1126.github.io/2021/12/go-ch9/><i class="fab fa-facebook-square fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 Hacker News" data-sharer=hackernews data-url=https://zchaoyu1126.github.io/2021/12/go-ch9/ data-title="Ch9 指针"><i class="fab fa-hacker-news fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 Line" data-sharer=line data-url=https://zchaoyu1126.github.io/2021/12/go-ch9/ data-title="Ch9 指针"><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@6.20.0/icons/line.svg aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=https://zchaoyu1126.github.io/2021/12/go-ch9/ data-title="Ch9 指针" data-ralateuid=xxxx><i class="fab fa-weibo fa-fw" aria-hidden=true></i></a></span>
+</div>
+</div>
+</div>
+<div class=post-info-more>
+<section class=post-tags></section>
+<section>
+<span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span>
+</section>
+</div>
+<div class=post-nav><a href=/2021/12/go-ch8/ class=prev rel=prev title="Ch8 控制结构"><i class="fas fa-angle-left fa-fw" aria-hidden=true></i>Ch8 控制结构</a>
+<a href=/2021/12/go-ch10/ class=next rel=next title="Ch10 值类型与引用类型">Ch10 值类型与引用类型<i class="fas fa-angle-right fa-fw" aria-hidden=true></i></a></div>
+</div>
+<div id=comments><div id=valine class=comment></div><noscript>
+Please enable JavaScript to view the comments powered by <a href=https://valine.js.org/>Valine</a>.
+</noscript></div></article></div>
+</main><footer class=footer>
+<div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.91.2">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden=true></i> LoveIt</a>
+</div><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright fa-fw" aria-hidden=true></i><span itemprop=copyrightYear>2021 - 2022</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://github.com/zchaoyu1126 target=_blank>chao</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div>
+</div>
+</footer></div>
+<div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部>
+<i class="fas fa-arrow-up fa-fw" aria-hidden=true></i>
+</a><a href=# id=view-comments class=fixed-button title=查看评论>
+<i class="fas fa-comment fa-fw" aria-hidden=true></i>
+</a>
+</div><link rel=stylesheet href=/lib/valine/valine.min.css><script type=text/javascript src=https://cdn.jsdelivr.net/npm/valine@1.4.18/dist/Valine.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.3.1/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:50},comment:{valine:{appId:"QGzwQXOqs5JOhN4RGPOkR2mR-MdYXbMMI",appKey:"WBmoGyJtbqUswvfLh6L8iEBr",avatar:"mp",el:"#valine",emojiCDN:"https://cdn.jsdelivr.net/npm/emoji-datasource-google@14.0.0/img/google/64/",emojiMaps:{100:"1f4af.png",alien:"1f47d.png",anger:"1f4a2.png",angry:"1f620.png",anguished:"1f627.png",astonished:"1f632.png",black_heart:"1f5a4.png",blue_heart:"1f499.png",blush:"1f60a.png",bomb:"1f4a3.png",boom:"1f4a5.png",broken_heart:"1f494.png",brown_heart:"1f90e.png",clown_face:"1f921.png",cold_face:"1f976.png",cold_sweat:"1f630.png",confounded:"1f616.png",confused:"1f615.png",cry:"1f622.png",crying_cat_face:"1f63f.png",cupid:"1f498.png",dash:"1f4a8.png",disappointed:"1f61e.png",disappointed_relieved:"1f625.png",dizzy:"1f4ab.png",dizzy_face:"1f635.png",drooling_face:"1f924.png",exploding_head:"1f92f.png",expressionless:"1f611.png",face_vomiting:"1f92e.png",face_with_cowboy_hat:"1f920.png",face_with_hand_over_mouth:"1f92d.png",face_with_head_bandage:"1f915.png",face_with_monocle:"1f9d0.png",face_with_raised_eyebrow:"1f928.png",face_with_rolling_eyes:"1f644.png",face_with_symbols_on_mouth:"1f92c.png",face_with_thermometer:"1f912.png",fearful:"1f628.png",flushed:"1f633.png",frowning:"1f626.png",ghost:"1f47b.png",gift_heart:"1f49d.png",green_heart:"1f49a.png",grimacing:"1f62c.png",grin:"1f601.png",grinning:"1f600.png",hankey:"1f4a9.png",hear_no_evil:"1f649.png",heart:"2764-fe0f.png",heart_decoration:"1f49f.png",heart_eyes:"1f60d.png",heart_eyes_cat:"1f63b.png",heartbeat:"1f493.png",heartpulse:"1f497.png",heavy_heart_exclamation_mark_ornament:"2763-fe0f.png",hole:"1f573-fe0f.png",hot_face:"1f975.png",hugging_face:"1f917.png",hushed:"1f62f.png",imp:"1f47f.png",innocent:"1f607.png",japanese_goblin:"1f47a.png",japanese_ogre:"1f479.png",joy:"1f602.png",joy_cat:"1f639.png",kiss:"1f48b.png",kissing:"1f617.png",kissing_cat:"1f63d.png",kissing_closed_eyes:"1f61a.png",kissing_heart:"1f618.png",kissing_smiling_eyes:"1f619.png",laughing:"1f606.png",left_speech_bubble:"1f5e8-fe0f.png",love_letter:"1f48c.png",lying_face:"1f925.png",mask:"1f637.png",money_mouth_face:"1f911.png",nauseated_face:"1f922.png",nerd_face:"1f913.png",neutral_face:"1f610.png",no_mouth:"1f636.png",open_mouth:"1f62e.png",orange_heart:"1f9e1.png",partying_face:"1f973.png",pensive:"1f614.png",persevere:"1f623.png",pleading_face:"1f97a.png",pouting_cat:"1f63e.png",purple_heart:"1f49c.png",rage:"1f621.png",relaxed:"263a-fe0f.png",relieved:"1f60c.png",revolving_hearts:"1f49e.png",right_anger_bubble:"1f5ef-fe0f.png",robot_face:"1f916.png",rolling_on_the_floor_laughing:"1f923.png",scream:"1f631.png",scream_cat:"1f640.png",see_no_evil:"1f648.png",shushing_face:"1f92b.png",skull:"1f480.png",skull_and_crossbones:"2620-fe0f.png",sleeping:"1f634.png",sleepy:"1f62a.png",slightly_frowning_face:"1f641.png",slightly_smiling_face:"1f642.png",smile:"1f604.png",smile_cat:"1f638.png",smiley:"1f603.png",smiley_cat:"1f63a.png",smiling_face_with_3_hearts:"1f970.png",smiling_imp:"1f608.png",smirk:"1f60f.png",smirk_cat:"1f63c.png",sneezing_face:"1f927.png",sob:"1f62d.png",space_invader:"1f47e.png",sparkling_heart:"1f496.png",speak_no_evil:"1f64a.png",speech_balloon:"1f4ac.png","star-struck":"1f929.png",stuck_out_tongue:"1f61b.png",stuck_out_tongue_closed_eyes:"1f61d.png",stuck_out_tongue_winking_eye:"1f61c.png",sunglasses:"1f60e.png",sweat:"1f613.png",sweat_drops:"1f4a6.png",sweat_smile:"1f605.png",thinking_face:"1f914.png",thought_balloon:"1f4ad.png",tired_face:"1f62b.png",triumph:"1f624.png",two_hearts:"1f495.png",unamused:"1f612.png",upside_down_face:"1f643.png",weary:"1f629.png",white_frowning_face:"2639-fe0f.png",white_heart:"1f90d.png",wink:"1f609.png",woozy_face:"1f974.png",worried:"1f61f.png",yawning_face:"1f971.png",yellow_heart:"1f49b.png",yum:"1f60b.png",zany_face:"1f92a.png",zipper_mouth_face:"1f910.png",zzz:"1f4a4.png"},enableQQ:!1,highlight:!0,lang:"zh-CN",pageSize:10,placeholder:"你的评论 ...",recordIP:!0,serverURLs:"https://leancloud.hugoloveit.com",visitor:!0}}}</script><script type=text/javascript src=/js/theme.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/jquery@2.1.3/dist/jquery.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/jquery@2.1.3/dist/jquery.min.js></script>
+<script type=text/javascript src=https://cdn.jsdelivr.net/npm/jquery-backstretch@2.1.18/jquery.backstretch.min.js></script>
+<script type=text/javascript src=/js/custom.js></script></body>
+</html>

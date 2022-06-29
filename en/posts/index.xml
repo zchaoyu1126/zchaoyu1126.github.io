@@ -1,0 +1,10 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>All Posts - Chao's Blog</title><link>https://zchaoyu1126.github.io/en/posts/</link><description>All Posts | Chao's Blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>zchaoyu1126@gmail.com (chao)</managingEditor><webMaster>zchaoyu1126@gmail.com (chao)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 05 Dec 2021 20:03:12 +0800</lastBuildDate><atom:link href="https://zchaoyu1126.github.io/en/posts/" rel="self" type="application/rss+xml"/><item><title>ch1 安装与环境配置</title><link>https://zchaoyu1126.github.io/en/2021/12/go-ch1/</link><pubDate>Sun, 05 Dec 2021 20:03:12 +0800</pubDate><author>chao</author><guid>https://zchaoyu1126.github.io/en/2021/12/go-ch1/</guid><description>1 下载 下载地址：https://golang.google.cn/dl/
+根据环境，下载所需版本
+2 配置环境变量 GOROOT
+GOROOT表示Go语言的安装目录，将GOROOT的值设置为对应的安装目录。 此外，GOROOT/bin则包含GO提供的工具链，应将GOROOT/bin配置到环境变量PATH中，从而能够在全局中使用GO工具链。 GOPATH
+Go1.8版本之前，GOPATH环境变量默认是空的，从Go1.8版本之后，Go开发包会在安装完成之后为GOPATH设置一个默认目录，如果是windows系统，打开环境变量可看到默认目录，如有需要可进行修改。 在Go较老的版本中，除了Go的SDK外，所有代码都推荐放置在GOPATH目录下。此时GOROOT和GOPATH分别指向系统安装路径和工作路径，这样的好处是自己编写的代码与系统文件分离。 在Go1.11版本中推出了Go Modules，使用Go Module模式以后可以不用将代码放置在$GOPATH/src下了。 在较新的版本中，会自动启用Go Module模式，可通过输入go env -w GO111MODULE=off关闭，或者输入go env -w GO111MODULE=on 开启 配置完环境变量后，打开终端输入go version，若看到输出go的版本信息则证明配置成功。
+3 Go PATH 与 Go Module Info 由于Go PATH的局限性，该模式几乎已不再使用 在进行Go语言开发的时候，代码总是会保存在$GOPATH/src目录下。在工程经过go build、go install或go get等指令后之后，
+会将下载的第三方包源代码文件放在$GOPATH/src目录下 产生的二进制可执行文件放在 $GOPATH/bin目录下 生成的中间缓存文件会被保存在 $GOPATH/pkg 下。 如果使用版本管理工具（Version Control System，VCS。常用如Git）来管理项目代码，只需要添加$GOPATH/src目录的源代码即可。bin 和 pkg 目录的内容无需进行版本控制。
+但在Go1.11引入Go Modules之后，代码不必强制放置在$GOPATH/src下了，可以是任意一个文件夹。
+关于Go的相关命令的更多信息请参考Go依赖管理
+4 Hello World程序 1 2 3 4 5 6 7 8 E: mkdir workspace_go cd workspace_go mkdir helloworld cd helloworld // helloword是这个模块的名字，可任意指定 go mod init helloworld go mod tidy 新建main.</description></item></channel></rss>

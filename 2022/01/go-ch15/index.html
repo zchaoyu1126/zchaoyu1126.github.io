@@ -1,0 +1,894 @@
+<!doctype html><html lang=zh-cn>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=robots content="noodp">
+<title>Ch15 匿名函数与闭包 - Chao's Blog</title><meta name=Description content="程序猿的学习和日常"><meta property="og:title" content="Ch15 匿名函数与闭包">
+<meta property="og:description" content="ch15 匿名函数与闭包 第一类值 在Go语言中，函数被看作第一类值(first-class values)：①函数拥有类型，可以②被赋值给其他变量，③作">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://zchaoyu1126.github.io/2022/01/go-ch15/"><meta property="og:image" content="https://zchaoyu1126.github.io/logo.png"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2022-01-24T20:26:12+08:00">
+<meta property="article:modified_time" content="2022-05-29T23:03:21+08:00"><meta property="og:site_name" content="Chao's Blog">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image content="https://zchaoyu1126.github.io/logo.png">
+<meta name=twitter:title content="Ch15 匿名函数与闭包">
+<meta name=twitter:description content="ch15 匿名函数与闭包 第一类值 在Go语言中，函数被看作第一类值(first-class values)：①函数拥有类型，可以②被赋值给其他变量，③作">
+<meta name=application-name content="Chao's Blog">
+<meta name=apple-mobile-web-app-title content="Chao's Blog"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://zchaoyu1126.github.io/2022/01/go-ch15/><link rel=prev href=https://zchaoyu1126.github.io/2022/01/go-ch14/><link rel=next href=https://zchaoyu1126.github.io/2022/01/go-ch16/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css as=style onload="this.onload=null,this.rel='stylesheet'">
+<noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css></noscript><link rel=preload href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css as=style onload="this.onload=null,this.rel='stylesheet'">
+<noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Ch15 匿名函数与闭包","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/zchaoyu1126.github.io\/2022\/01\/go-ch15\/"},"image":[{"@type":"ImageObject","url":"https:\/\/zchaoyu1126.github.io\/images\/Apple-Devices-Preview.png","width":3200,"height":2048}],"genre":"posts","wordcount":3226,"url":"https:\/\/zchaoyu1126.github.io\/2022\/01\/go-ch15\/","datePublished":"2022-01-24T20:26:12+08:00","dateModified":"2022-05-29T23:03:21+08:00","license":"This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher":{"@type":"Organization","name":"xxxx","logo":{"@type":"ImageObject","url":"https:\/\/zchaoyu1126.github.io\/images\/avatar.png","width":528,"height":560}},"author":{"@type":"Person","name":"chao"},"description":""}</script></head>
+<body data-header-desktop=fixed data-header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':'auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark')&&document.body.setAttribute('theme','dark')</script>
+<div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title="Chao's Blog"><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw" aria-hidden=true></i></span>Chao's Blog</a>
+</div>
+<div class=menu>
+<div class=menu-inner><a class=menu-item href=/posts/> 文章
+</a><a class=menu-item href=/tags/> 标签
+</a><a class=menu-item href=/categories/> 分类
+</a>
+<div class=dropdown>
+<a href=javascript:void(0); class="menu-item menu-more dropbtn" title> 归档
+</a>
+<div class="menu-more-content dropdown-content"><a href=/documentation/golang/ title><i class="fa fa-book" aria-hidden=true></i> Golang </a><a href=/documentation/csbase/ title><i class="fa fa-laptop" aria-hidden=true></i> 计算机基础 </a><a href=/documentation/algorithm/ title><i class="fa fa-bookmark" aria-hidden=true></i> 数据结构与算法 </a></div>
+</div>
+<a class=menu-item href=/about/> 关于
+</a><a class=menu-item href=https://github.com/zchaoyu1126 title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw" aria-hidden=true></i>
+</a><span class="menu-item delimiter"></span><a href=javascript:void(0); class="menu-item language" title=选择语言>简体中文<i class="fas fa-chevron-right fa-fw" aria-hidden=true></i>
+<select class=language-select id=language-select-desktop onchange="location=this.value"><option value=/2022/01/go-ch15/ selected>简体中文</option></select>
+</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+</div>
+</div>
+</header><header class=mobile id=header-mobile>
+<div class=header-container>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title="Chao's Blog"><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw" aria-hidden=true></i></span>Chao's Blog</a>
+</div>
+<div class=menu-toggle id=menu-toggle-mobile>
+<span></span><span></span><span></span>
+</div>
+</div>
+<div class=menu id=menu-mobile><a class=menu-item href=/posts/> 文章
+</a><a class=menu-item href=/tags/> 标签
+</a><a class=menu-item href=/categories/> 分类
+</a>
+<div class=dropdown>
+<a href=javascript:void(0); class="menu-item menu-more dropbtn" title> 归档
+</a>
+<div class="menu-more-content dropdown-content"><a href=/documentation/golang/ title><i class="fa fa-book" aria-hidden=true></i> Golang </a><a href=/documentation/csbase/ title><i class="fa fa-laptop" aria-hidden=true></i> 计算机基础 </a><a href=/documentation/algorithm/ title><i class="fa fa-bookmark" aria-hidden=true></i> 数据结构与算法 </a></div>
+</div>
+<a class=menu-item href=/about/> 关于
+</a><a class=menu-item href=https://github.com/zchaoyu1126 title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class=menu-item title=选择语言>简体中文<i class="fas fa-chevron-right fa-fw" aria-hidden=true></i>
+<select class=language-select onchange="location=this.value"><option value=/2022/01/go-ch15/ selected>简体中文</option></select>
+</a></div>
+</div>
+</header><main class=main>
+<div class=container><div class=toc id=toc-auto>
+<h2 class=toc-title>目录</h2>
+<div class=toc-content id=toc-content-auto></div>
+</div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Ch15 匿名函数与闭包</h1><div class=post-meta>
+<div class=post-meta-line><span class=post-author><a href=https://github.com/zchaoyu1126 title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw" aria-hidden=true></i>chao</a></span>&nbsp;<span class=post-category>收录于 <a href=/categories/golang/><i class="far fa-folder fa-fw" aria-hidden=true></i>golang</a></span></div>
+<div class=post-meta-line><i class="far fa-calendar-alt fa-fw" aria-hidden=true></i>&nbsp;<time datetime=2022-01-24>2022-01-24</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden=true></i>&nbsp;约 3226 字&nbsp;
+<i class="far fa-clock fa-fw" aria-hidden=true></i>&nbsp;预计阅读 7 分钟&nbsp;<span id=/2022/01/go-ch15/ class=leancloud_visitors data-flag-title="Ch15 匿名函数与闭包">
+<i class="far fa-eye fa-fw" aria-hidden=true></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+</span>&nbsp;</div>
+</div><div class="details toc" id=toc-static data-kept>
+<div class="details-summary toc-title">
+<span>目录</span>
+<span><i class="details-icon fas fa-angle-right" aria-hidden=true></i></span>
+</div>
+<div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents>
+<ul>
+<li><a href=#第一类值><strong>第一类值</strong></a></li>
+<li><a href=#匿名函数><strong>匿名函数</strong></a></li>
+<li><a href=#闭包><strong>闭包</strong></a>
+<ul>
+<li><a href=#捕获外部变量><strong>捕获外部变量</strong></a></li>
+<li><a href=#记忆效应><strong>记忆效应</strong></a></li>
+<li><a href=#记忆效应的-底层原理>记忆效应的 <strong>底层原理</strong></a></li>
+</ul>
+</li>
+</ul>
+</nav></div>
+</div><div class=content id=content><h1 id=ch15-匿名函数与闭包>ch15 匿名函数与闭包</h1>
+<h2 id=第一类值><strong>第一类值</strong></h2>
+<p>在Go语言中，函数被看作第一类值(first-class values)：<strong>①函数拥有类型</strong>，可以<strong>②被赋值给其他变量</strong>，<strong>③作为参数传递给函数</strong>，<strong>④作为参数被返回</strong>。</p>
+<blockquote>
+<p>第一类值（一等公民）概念出自函数式编程，在此不做介绍</p>
+</blockquote>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=c1>// 函数的类型
+</span><span class=c1></span><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;%T\n&#34;</span><span class=p>,</span> <span class=nx>addInt</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;%T\n&#34;</span><span class=p>,</span> <span class=nx>addFloat64</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>addInt</span><span class=p>(</span><span class=nx>x</span><span class=p>,</span> <span class=nx>y</span> <span class=kt>int</span><span class=p>)</span> <span class=kt>int</span> <span class=p>{</span>
+    <span class=k>return</span> <span class=nx>x</span> <span class=o>+</span> <span class=nx>y</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>addFloat64</span><span class=p>(</span><span class=nx>x</span><span class=p>,</span> <span class=nx>y</span> <span class=kt>float64</span><span class=p>)</span> <span class=kt>float64</span> <span class=p>{</span>
+    <span class=k>return</span> <span class=nx>x</span> <span class=o>+</span> <span class=nx>y</span>
+<span class=p>}</span>
+<span class=c1>// func(int, int) int
+</span><span class=c1>// func(float64, float64) float64
+</span></code></pre></td></tr></table>
+</div>
+</div><div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=c1>// 作为返回值，赋值给其他变量
+</span><span class=c1></span>    <span class=nx>op1</span> <span class=o>:=</span> <span class=nf>selector</span><span class=p>(</span><span class=sc>&#39;+&#39;</span><span class=p>)</span>
+    <span class=nx>op2</span> <span class=o>:=</span> <span class=nf>selector</span><span class=p>(</span><span class=sc>&#39;-&#39;</span><span class=p>)</span>
+    <span class=c1>// 作为参数
+</span><span class=c1></span>    <span class=nf>calculator</span><span class=p>(</span><span class=mi>20</span><span class=p>,</span> <span class=mi>30</span><span class=p>,</span> <span class=nx>op1</span><span class=p>)</span>
+    <span class=nf>calculator</span><span class=p>(</span><span class=mi>20</span><span class=p>,</span> <span class=mi>30</span><span class=p>,</span> <span class=nx>op2</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>add</span><span class=p>(</span><span class=nx>a</span><span class=p>,</span> <span class=nx>b</span> <span class=kt>int</span><span class=p>)</span> <span class=kt>int</span> <span class=p>{</span>
+    <span class=k>return</span> <span class=nx>a</span> <span class=o>+</span> <span class=nx>b</span>
+<span class=p>}</span>
+<span class=kd>func</span> <span class=nf>sub</span><span class=p>(</span><span class=nx>a</span><span class=p>,</span> <span class=nx>b</span> <span class=kt>int</span><span class=p>)</span> <span class=kt>int</span> <span class=p>{</span>
+    <span class=k>return</span> <span class=nx>a</span> <span class=o>-</span> <span class=nx>b</span>
+<span class=p>}</span>
+<span class=kd>func</span> <span class=nf>selector</span><span class=p>(</span><span class=nx>op</span> <span class=kt>byte</span><span class=p>)</span> <span class=kd>func</span><span class=p>(</span><span class=kt>int</span><span class=p>,</span> <span class=kt>int</span><span class=p>)</span> <span class=kt>int</span> <span class=p>{</span>
+    <span class=k>switch</span> <span class=nx>op</span> <span class=p>{</span>
+        <span class=k>case</span> <span class=sc>&#39;+&#39;</span><span class=p>:</span>
+        <span class=k>return</span> <span class=nx>add</span>
+        <span class=k>case</span> <span class=sc>&#39;-&#39;</span><span class=p>:</span>
+        <span class=k>return</span> <span class=nx>sub</span>
+        <span class=k>default</span><span class=p>:</span>
+        <span class=k>return</span> <span class=kc>nil</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>calculator</span><span class=p>(</span><span class=nx>x</span><span class=p>,</span> <span class=nx>y</span> <span class=kt>int</span><span class=p>,</span> <span class=nx>f</span> <span class=kd>func</span><span class=p>(</span><span class=kt>int</span><span class=p>,</span> <span class=kt>int</span><span class=p>)</span> <span class=kt>int</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>res</span> <span class=o>:=</span> <span class=nf>f</span><span class=p>(</span><span class=nx>x</span><span class=p>,</span> <span class=nx>y</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>res</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id=匿名函数><strong>匿名函数</strong></h2>
+<p>匿名函数与之前提到的函数区别在于没有函数名，只有函数体。</p>
+<p>例如，</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kd>func</span> <span class=p>(</span><span class=nx>x</span><span class=p>,</span> <span class=nx>y</span> <span class=kt>int</span><span class=p>)</span> <span class=kt>int</span> <span class=p>{</span>
+    <span class=k>return</span> <span class=nx>x</span> <span class=o>+</span> <span class=nx>y</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>匿名函数不能单独存在，一般有如下的使用方式</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=c1>//1.加上括号，直接调用
+</span><span class=c1></span>    <span class=nf>fun</span> <span class=p>()</span> <span class=p>{</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;hi&#34;</span><span class=p>)</span>
+    <span class=p>}()</span>
+    <span class=c1>//2.赋值给变量、作为参数或返回值等
+</span><span class=c1></span>    <span class=c1>//2.1函数字面量复制给变量
+</span><span class=c1></span>    <span class=c1>//:=之后是一个寻找`nums`数组中第一个大于等于`target`的函数字面量
+</span><span class=c1></span>    <span class=c1>//将其赋值给`binarySearchFirst`，编译器会自动推导`binarySearchFirst`的类型。
+</span><span class=c1></span>    <span class=nx>binarySearchFirst</span> <span class=o>:=</span> <span class=kd>func</span><span class=p>(</span><span class=nx>nums</span> <span class=p>[]</span><span class=kt>int</span><span class=p>,</span> <span class=nx>target</span> <span class=kt>int</span><span class=p>)</span> <span class=kt>int</span> <span class=p>{</span>
+        <span class=nx>low</span><span class=p>,</span> <span class=nx>high</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>,</span> <span class=nb>len</span><span class=p>(</span><span class=nx>nums</span><span class=p>)</span><span class=o>-</span><span class=mi>1</span>
+        <span class=k>for</span> <span class=nx>low</span> <span class=o>&lt;=</span> <span class=nx>high</span> <span class=p>{</span>
+            <span class=nx>mid</span> <span class=o>:=</span> <span class=p>(</span><span class=nx>low</span> <span class=o>+</span> <span class=nx>high</span><span class=p>)</span> <span class=o>/</span> <span class=mi>2</span>
+            <span class=k>if</span> <span class=nx>nums</span><span class=p>[</span><span class=nx>mid</span><span class=p>]</span> <span class=o>&gt;=</span> <span class=nx>target</span> <span class=p>{</span>
+                <span class=nx>high</span> <span class=p>=</span> <span class=nx>mid</span> <span class=o>-</span> <span class=mi>1</span>
+            <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+                <span class=nx>low</span> <span class=p>=</span> <span class=nx>mid</span> <span class=o>+</span> <span class=mi>1</span>
+            <span class=p>}</span>
+        <span class=p>}</span>
+        <span class=k>return</span> <span class=nx>low</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>一个返回值为另一个函数的函数可以被称之为工厂函数，这在需要创建一系列相似的函数时非常有用。书写一个工厂函数而不是针对每种情况都书写一个函数。</p>
+<blockquote>
+<p>此代码涉及了闭包的概念，见下一小节</p>
+</blockquote>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=c1>//2.2作为返回值
+</span><span class=c1></span><span class=kd>func</span> <span class=nf>MakeAddSuffix</span><span class=p>(</span><span class=nx>suffix</span> <span class=kt>string</span><span class=p>)</span> <span class=kd>func</span><span class=p>(</span><span class=kt>string</span><span class=p>)</span> <span class=kt>string</span> <span class=p>{</span>
+    <span class=k>return</span> <span class=kd>func</span><span class=p>(</span><span class=nx>name</span> <span class=kt>string</span><span class=p>)</span> <span class=kt>string</span> <span class=p>{</span>
+        <span class=k>if</span> <span class=p>!</span><span class=nx>strings</span><span class=p>.</span><span class=nf>HasSuffix</span><span class=p>(</span><span class=nx>name</span><span class=p>,</span> <span class=nx>suffix</span><span class=p>)</span> <span class=p>{</span>
+            <span class=k>return</span> <span class=nx>name</span> <span class=o>+</span> <span class=nx>suffix</span>
+        <span class=p>}</span>
+        <span class=k>return</span> <span class=nx>name</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>addBmp</span> <span class=o>:=</span> <span class=nf>MakeAddSuffix</span><span class=p>(</span><span class=s>&#34;.bmp&#34;</span><span class=p>)</span>
+    <span class=nx>addJpeg</span> <span class=o>:=</span> <span class=nf>MakeAddSuffix</span><span class=p>(</span><span class=s>&#34;.jpeg&#34;</span><span class=p>)</span>
+    <span class=nf>addBmp</span><span class=p>(</span><span class=s>&#34;file&#34;</span><span class=p>)</span> <span class=c1>//file.bmp
+</span><span class=c1></span>    <span class=nf>addJpeg</span><span class=p>(</span><span class=s>&#34;file&#34;</span><span class=p>)</span> <span class=c1>//file.jpeg
+</span><span class=c1></span><span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=c1>//2.3作为参数
+</span><span class=c1></span><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nf>calculate</span><span class=p>(</span><span class=mi>20</span><span class=p>,</span> <span class=mi>30</span><span class=p>,</span> <span class=kd>func</span><span class=p>(</span><span class=nx>a</span><span class=p>,</span> <span class=nx>b</span> <span class=kt>int</span><span class=p>)</span> <span class=p>{</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>a</span> <span class=o>+</span> <span class=nx>b</span><span class=p>)</span>
+    <span class=p>})</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>calculate</span><span class=p>(</span><span class=nx>x</span><span class=p>,</span> <span class=nx>y</span> <span class=kt>int</span><span class=p>,</span> <span class=nx>f</span> <span class=kd>func</span><span class=p>(</span><span class=kt>int</span><span class=p>,</span> <span class=kt>int</span><span class=p>))</span> <span class=p>{</span>
+    <span class=nf>f</span><span class=p>(</span><span class=nx>x</span><span class=p>,</span> <span class=nx>y</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>观察可得，<strong>匿名函数</strong>与<strong>函数</strong>的用途非常相似，如何将二者联系起来？</p>
+<p>在<strong>ch6常量与变量</strong>中曾提及有名常量和无名常量，无名常量例如<code>2</code>，有名常量即通过const 定义的有名常量<code>const num int = 2</code>。因此，使用如下形式声明函数时，可以理解为一个匿名函数绑定一个唯一的名字。这个过程就类似于声明一个有名常量，为无名常量<code>2</code>绑定一个名称，之后就可以使用名称来代指<code>2</code>。</p>
+<blockquote>
+<p>这里的描述为个人理解，具体还有待商榷，对结构体中的方法是否适用？要验证其正确性，需要去了解函数与结构体中的方法底层实现的差别。未完待续</p>
+</blockquote>
+<p>常量有时称为字面量（literal），基于二者的相似性，匿名函数也可被称为函数字面量</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kd>func</span> <span class=nf>functionName</span><span class=p>(</span><span class=nx>param1</span> <span class=nx>type1</span><span class=p>,</span> <span class=nx>param2</span> <span class=nx>type2</span><span class=p>)</span> <span class=p>(</span><span class=nx>type3</span><span class=p>)</span> <span class=p>{</span>
+    <span class=o>...</span>
+    <span class=k>return</span> <span class=nx>res</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id=闭包><strong>闭包</strong></h2>
+<p>拥有函数名的函数只能在包级声明，不能在函数内部声明，但可以引入函数字面量（匿名函数）来解决此需求。</p>
+<p>例如，在函数中想要对一棵树进行遍历，但又不想在函数外另外再声明一个函数，可以使用匿名函数的方式，将匿名函数赋值给<code>traverse</code>，之后便可以向正常调用函数一样，使用<code>traverse</code>函数。</p>
+<p><strong>leetcode 563</strong> 求解一棵二叉树的坡度</p>
+<ul>
+<li>一棵树的坡度定义为，所有节点的坡度之和。</li>
+<li>树中一个节点<code>Node</code>的坡度定义为，<code>Sum(Node.Left)</code>与<code>Sum(Node.Right)</code>差的绝对值。</li>
+<li><code>Sum</code>函数是以该节点为根的树中所有节点的值之和。</li>
+</ul>
+<p>在函数内部引入了匿名函数辅助解决一些模块化的问题时，免不了需要进行数据的交互，例如在上述问题中需要考虑如何记录各个节点的坡度之和。问题的难点在于<code>traverse</code>函数如何在递归遍历的过程中，将计算得到的各节点坡度信息传递给<code>FindTilt</code>函数。</p>
+<p>使用<code>C++</code>解决的方法可以是，①设置一个成员变量（或者全局变量），令<code>dfs</code>函数在递归遍历的过程中修改<code>ans</code>值，②修改dfs函数的定义，额外传入一个int类型的引用，用于记录结果。</p>
+<ul>
+<li>
+<p>C++解决办法</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=c1>// 成员变量
+</span><span class=c1></span><span class=k>class</span> <span class=nc>Solution</span> <span class=p>{</span>
+<span class=k>public</span><span class=o>:</span>
+    <span class=kt>int</span> <span class=n>ans</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+
+    <span class=kt>int</span> <span class=nf>findTilt</span><span class=p>(</span><span class=n>TreeNode</span><span class=o>*</span> <span class=n>root</span><span class=p>)</span> <span class=p>{</span>
+        <span class=n>dfs</span><span class=p>(</span><span class=n>root</span><span class=p>,</span> <span class=n>ans</span><span class=p>);</span>
+        <span class=k>return</span> <span class=n>ans</span><span class=p>;</span>
+    <span class=p>}</span>
+
+    <span class=kt>int</span> <span class=nf>dfs</span><span class=p>(</span><span class=n>TreeNode</span><span class=o>*</span> <span class=n>node</span><span class=p>,</span> <span class=o>&amp;</span><span class=kt>int</span> <span class=n>ans</span><span class=p>)</span> <span class=p>{</span>
+        <span class=k>if</span> <span class=p>(</span><span class=n>node</span> <span class=o>==</span> <span class=k>nullptr</span><span class=p>)</span> <span class=p>{</span>
+            <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+        <span class=p>}</span>
+        <span class=kt>int</span> <span class=n>sumLeft</span> <span class=o>=</span> <span class=n>dfs</span><span class=p>(</span><span class=n>node</span><span class=o>-&gt;</span><span class=n>left</span><span class=p>);</span>
+        <span class=kt>int</span> <span class=n>sumRight</span> <span class=o>=</span> <span class=n>dfs</span><span class=p>(</span><span class=n>node</span><span class=o>-&gt;</span><span class=n>right</span><span class=p>);</span>
+        <span class=n>ans</span> <span class=o>+=</span> <span class=n>abs</span><span class=p>(</span><span class=n>sumLeft</span> <span class=o>-</span> <span class=n>sumRight</span><span class=p>);</span>
+        <span class=k>return</span> <span class=n>sumLeft</span> <span class=o>+</span> <span class=n>sumRight</span> <span class=o>+</span> <span class=n>node</span><span class=o>-&gt;</span><span class=n>val</span><span class=p>;</span>
+    <span class=p>}</span>
+<span class=p>};</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=k>class</span> <span class=nc>Solution</span> <span class=p>{</span>
+<span class=k>public</span><span class=o>:</span>
+    <span class=kt>int</span> <span class=n>findTilt</span><span class=p>(</span><span class=n>TreeNode</span><span class=o>*</span> <span class=n>root</span><span class=p>)</span> <span class=p>{</span>
+        <span class=kt>int</span> <span class=n>ans</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+        <span class=n>dfs</span><span class=p>(</span><span class=n>root</span><span class=p>,</span> <span class=n>ans</span><span class=p>);</span>
+        <span class=k>return</span> <span class=n>ans</span><span class=p>;</span>
+    <span class=p>}</span>
+
+    <span class=kt>int</span> <span class=nf>dfs</span><span class=p>(</span><span class=n>TreeNode</span><span class=o>*</span> <span class=n>node</span><span class=p>,</span> <span class=kt>int</span><span class=o>&amp;</span> <span class=n>ans</span><span class=p>)</span> <span class=p>{</span>
+        <span class=k>if</span> <span class=p>(</span><span class=n>node</span> <span class=o>==</span> <span class=k>nullptr</span><span class=p>)</span> <span class=p>{</span>
+            <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+        <span class=p>}</span>
+        <span class=kt>int</span> <span class=n>sumLeft</span> <span class=o>=</span> <span class=n>dfs</span><span class=p>(</span><span class=n>node</span><span class=o>-&gt;</span><span class=n>left</span><span class=p>,</span> <span class=n>ans</span><span class=p>);</span>
+        <span class=kt>int</span> <span class=n>sumRight</span> <span class=o>=</span> <span class=n>dfs</span><span class=p>(</span><span class=n>node</span><span class=o>-&gt;</span><span class=n>right</span><span class=p>,</span> <span class=n>ans</span><span class=p>);</span>
+        <span class=n>ans</span> <span class=o>+=</span> <span class=n>abs</span><span class=p>(</span><span class=n>sumLeft</span> <span class=o>-</span> <span class=n>sumRight</span><span class=p>);</span>
+        <span class=k>return</span> <span class=n>sumLeft</span> <span class=o>+</span> <span class=n>sumRight</span> <span class=o>+</span> <span class=n>node</span><span class=o>-&gt;</span><span class=n>val</span><span class=p>;</span>
+    <span class=p>}</span>
+<span class=p>};</span>
+</code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>Go通过增加返回值，或者使用指针</p>
+<p>在<code>leetcode563v1</code>中令遍历函数<code>traverse</code>每次都返回两个值，<code>sum</code>和<code>lValue+rValue+root.Val</code>分别用于自底向上遍历树时，对坡度与节点值之和进行累记。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=c1>// leetcode563v1
+</span><span class=c1></span><span class=kd>func</span> <span class=nf>FindTilt</span><span class=p>(</span><span class=nx>root</span> <span class=o>*</span><span class=nx>utils</span><span class=p>.</span><span class=nx>TreeNode</span><span class=p>)</span> <span class=kt>int</span> <span class=p>{</span>
+    <span class=kd>var</span> <span class=nx>traverse</span> <span class=kd>func</span><span class=p>(</span><span class=nx>root</span> <span class=o>*</span><span class=nx>utils</span><span class=p>.</span><span class=nx>TreeNode</span><span class=p>)</span> <span class=p>(</span><span class=kt>int</span><span class=p>,</span> <span class=kt>int</span><span class=p>)</span>
+    <span class=nx>traverse</span> <span class=p>=</span> <span class=kd>func</span><span class=p>(</span><span class=nx>root</span> <span class=o>*</span><span class=nx>utils</span><span class=p>.</span><span class=nx>TreeNode</span><span class=p>)</span> <span class=p>(</span><span class=kt>int</span><span class=p>,</span> <span class=kt>int</span><span class=p>)</span> <span class=p>{</span>
+        <span class=nx>sum</span> <span class=o>:=</span> <span class=mi>0</span>
+        <span class=k>if</span> <span class=nx>root</span> <span class=o>==</span> <span class=kc>nil</span> <span class=p>{</span>
+            <span class=k>return</span> <span class=mi>0</span><span class=p>,</span> <span class=mi>0</span>
+        <span class=p>}</span>
+        <span class=nx>sumL</span><span class=p>,</span> <span class=nx>lValue</span> <span class=o>:=</span> <span class=nf>traverse</span><span class=p>(</span><span class=nx>root</span><span class=p>.</span><span class=nx>Left</span><span class=p>)</span>
+        <span class=nx>sumR</span><span class=p>,</span> <span class=nx>rValue</span> <span class=o>:=</span> <span class=nf>traverse</span><span class=p>(</span><span class=nx>root</span><span class=p>.</span><span class=nx>Right</span><span class=p>)</span>
+        <span class=nx>sum</span> <span class=p>=</span> <span class=nf>abs</span><span class=p>(</span><span class=nx>rValue</span> <span class=o>-</span> <span class=nx>lValue</span><span class=p>)</span> <span class=o>+</span> <span class=nx>sumL</span> <span class=o>+</span> <span class=nx>sumR</span>
+        <span class=k>return</span> <span class=nx>sum</span><span class=p>,</span> <span class=nx>lValue</span> <span class=o>+</span> <span class=nx>rValue</span> <span class=o>+</span> <span class=nx>root</span><span class=p>.</span><span class=nx>Val</span>
+    <span class=p>}</span>
+    <span class=nx>res</span><span class=p>,</span> <span class=nx>_</span> <span class=o>:=</span> <span class=nf>traverse</span><span class=p>(</span><span class=nx>root</span><span class=p>)</span>
+    <span class=k>return</span> <span class=nx>res</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>此外，也可以使用传入<code>int</code>指针的方式解决。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=c1>// leetcode563v2
+</span><span class=c1></span><span class=kd>func</span> <span class=nf>FindTilt</span><span class=p>(</span><span class=nx>root</span> <span class=o>*</span><span class=nx>utils</span><span class=p>.</span><span class=nx>TreeNode</span><span class=p>)</span> <span class=kt>int</span> <span class=p>{</span>
+    <span class=kd>var</span> <span class=nx>traverse</span> <span class=kd>func</span><span class=p>(</span><span class=nx>root</span> <span class=o>*</span><span class=nx>utils</span><span class=p>.</span><span class=nx>TreeNode</span><span class=p>,</span> <span class=nx>sum</span> <span class=o>*</span><span class=kt>int</span><span class=p>)</span> <span class=kt>int</span>
+    <span class=nx>sum</span> <span class=o>:=</span> <span class=mi>0</span>
+    <span class=nx>traverse</span> <span class=p>=</span> <span class=kd>func</span><span class=p>(</span><span class=nx>root</span> <span class=o>*</span><span class=nx>utils</span><span class=p>.</span><span class=nx>TreeNode</span><span class=p>,</span> <span class=nx>sum</span> <span class=o>*</span><span class=kt>int</span><span class=p>)</span> <span class=kt>int</span> <span class=p>{</span>
+        <span class=k>if</span> <span class=nx>root</span> <span class=o>==</span> <span class=kc>nil</span> <span class=p>{</span>
+            <span class=k>return</span> <span class=mi>0</span>
+        <span class=p>}</span>
+        <span class=nx>lValue</span> <span class=o>:=</span> <span class=nf>traverse</span><span class=p>(</span><span class=nx>root</span><span class=p>.</span><span class=nx>Left</span><span class=p>,</span> <span class=nx>sum</span><span class=p>)</span>
+        <span class=nx>rValue</span> <span class=o>:=</span> <span class=nf>traverse</span><span class=p>(</span><span class=nx>root</span><span class=p>.</span><span class=nx>Right</span><span class=p>,</span> <span class=nx>sum</span><span class=p>)</span>
+        <span class=p>(</span><span class=o>*</span><span class=nx>sum</span><span class=p>)</span> <span class=o>+=</span> <span class=nf>abs_int</span><span class=p>(</span><span class=nx>rValue</span> <span class=o>-</span> <span class=nx>lValue</span><span class=p>)</span>
+        <span class=k>return</span> <span class=nx>lValue</span> <span class=o>+</span> <span class=nx>rValue</span> <span class=o>+</span> <span class=nx>root</span><span class=p>.</span><span class=nx>Val</span>
+    <span class=p>}</span>
+    <span class=nf>traverse</span><span class=p>(</span><span class=nx>root</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>sum</span><span class=p>)</span>
+    <span class=k>return</span> <span class=nx>sum</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<p>Go语言提供了一个非常优秀的特性，<strong>匿名函数可以捕获外部环境中的自由变量</strong>，并且<strong>具有记忆效应</strong>。</p>
+<p>一个匿名函数与外部环境相组合，便形成了<strong>闭包（Closure）</strong>。简单地，<strong>闭包可以理解为一个引用了外部变量的匿名函数</strong>。</p>
+<blockquote>
+<p>闭包应该也是一个函数式编程中的概念，在此不做过多解释</p>
+</blockquote>
+<h3 id=捕获外部变量><strong>捕获外部变量</strong></h3>
+<p>可以注意到<code>Accumulator</code>函数返回的是一个类型为<code>func() int</code>的函数值， 所以使用<code>return</code>返回一个类型符合的匿名函数。但<code>startValue</code>声明的位置在匿名函数外，而匿名函数中的逻辑却尝试对<code>startValue</code>进行了修改， 并且能够成功编译运行。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+
+<span class=kd>func</span> <span class=nf>Accumulator</span><span class=p>()</span> <span class=kd>func</span><span class=p>()</span> <span class=kt>int</span> <span class=p>{</span>
+    <span class=nx>startValue</span> <span class=o>:=</span> <span class=mi>1</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;The address of startValue is %x\n&#34;</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>startValue</span><span class=p>)</span>
+    <span class=k>return</span> <span class=kd>func</span><span class=p>()</span> <span class=kt>int</span> <span class=p>{</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;In annoymous function, address is %x\n&#34;</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>startValue</span><span class=p>)</span>
+        <span class=nx>startValue</span><span class=o>++</span>
+        <span class=k>return</span> <span class=nx>startValue</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>accumulator</span> <span class=o>:=</span> <span class=nf>Accumulator</span><span class=p>()</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nf>accumulator</span><span class=p>())</span>
+    <span class=nf>accumulator</span><span class=p>()</span>
+    <span class=nf>accumulator</span><span class=p>()</span>
+    <span class=nf>accumulator</span><span class=p>()</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nf>accumulator</span><span class=p>())</span>
+
+    <span class=nx>newAccumulator</span> <span class=o>:=</span> <span class=nf>Accumulator</span><span class=p>()</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nf>newAccumulator</span><span class=p>())</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>该代码能够成功运行的原因在于匿名函数可以捕获了外部环境中变量的特性。捕获之后，便可以将其视为一般的变量进行操作与修改，并且<strong>所有的修改操作均会反应在外部环境中</strong>。</p>
+<p>比如，匿名函数捕获了<code>sum</code>变量，然后将匿名函数本身的函数值赋值给<code>traverse</code>。在递归遍历的过程中，不断对<code>sum</code>进行修改，但在匿名函数外访问<code>sum</code>时，值不再是原来的<code>0</code>。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=c1>// leetcode563v3
+</span><span class=c1></span><span class=kd>func</span> <span class=nf>FindTilt</span><span class=p>(</span><span class=nx>root</span> <span class=o>*</span><span class=nx>utils</span><span class=p>.</span><span class=nx>TreeNode</span><span class=p>)</span> <span class=kt>int</span> <span class=p>{</span>
+    <span class=kd>var</span> <span class=nx>traverse</span> <span class=kd>func</span><span class=p>(</span><span class=nx>root</span> <span class=o>*</span><span class=nx>utils</span><span class=p>.</span><span class=nx>TreeNode</span><span class=p>)</span> <span class=kt>int</span>
+    <span class=nx>sum</span> <span class=o>:=</span> <span class=mi>0</span>
+    <span class=nx>traverse</span> <span class=p>=</span> <span class=kd>func</span><span class=p>(</span><span class=nx>root</span> <span class=o>*</span><span class=nx>utils</span><span class=p>.</span><span class=nx>TreeNode</span><span class=p>)</span> <span class=kt>int</span> <span class=p>{</span>
+        <span class=k>if</span> <span class=nx>root</span> <span class=o>==</span> <span class=kc>nil</span> <span class=p>{</span>
+            <span class=k>return</span> <span class=mi>0</span>
+        <span class=p>}</span>
+        <span class=nx>lValue</span> <span class=o>:=</span> <span class=nf>traverse</span><span class=p>(</span><span class=nx>root</span><span class=p>.</span><span class=nx>Left</span><span class=p>)</span>
+        <span class=nx>rValue</span> <span class=o>:=</span> <span class=nf>traverse</span><span class=p>(</span><span class=nx>root</span><span class=p>.</span><span class=nx>Right</span><span class=p>)</span>
+        <span class=nx>sum</span> <span class=o>+=</span> <span class=nf>abs</span><span class=p>(</span><span class=nx>rValue</span> <span class=o>-</span> <span class=nx>lValue</span><span class=p>)</span>
+        <span class=k>return</span> <span class=nx>lValue</span> <span class=o>+</span> <span class=nx>rValue</span> <span class=o>+</span> <span class=nx>root</span><span class=p>.</span><span class=nx>Val</span>
+    <span class=p>}</span>
+    <span class=nf>traverse</span><span class=p>(</span><span class=nx>root</span><span class=p>)</span>
+    <span class=k>return</span> <span class=nx>sum</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=记忆效应><strong>记忆效应</strong></h3>
+<p>被引用的自由变量和匿名函数一同存在，即使已经离开了自由变量的环境也不会被释放或者删除，在闭包中可以继续使用这个自由变量。</p>
+<p>被捕获到闭包中的变量让闭包本身拥有了记忆效应，闭包中的逻辑可以修改闭包捕获的变量，变量会跟随闭包生命周期一直存在，闭包本身就如同变量一样拥有了记忆效应。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+
+<span class=kd>func</span> <span class=nf>generator</span><span class=p>()</span> <span class=kd>func</span><span class=p>()</span> <span class=kt>int</span> <span class=p>{</span>
+    <span class=nx>value</span> <span class=o>:=</span> <span class=mi>0</span>
+    <span class=k>return</span> <span class=kd>func</span><span class=p>()</span> <span class=kt>int</span> <span class=p>{</span>
+        <span class=nx>value</span><span class=o>++</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>value</span><span class=p>)</span>
+        <span class=k>return</span> <span class=nx>value</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>f</span> <span class=o>:=</span> <span class=nf>generator</span><span class=p>()</span>
+    <span class=nf>f</span><span class=p>()</span>
+    <span class=nf>f</span><span class=p>()</span>
+    <span class=nf>f</span><span class=p>()</span>
+    <span class=nx>f</span> <span class=p>=</span> <span class=nf>generator</span><span class=p>()</span>
+    <span class=nf>f</span><span class=p>()</span>
+<span class=p>}</span>
+<span class=c1>//1
+</span><span class=c1>//2
+</span><span class=c1>//3
+</span><span class=c1>//1
+</span></code></pre></td></tr></table>
+</div>
+</div><p>这里<code>generator</code>函数返回的是函数<code>f</code>捕获了<code>value</code>变量，并且<code>f</code>在<code>main</code>函数中执行，已经离开了原来的环境，但是还能正常运行，且随着<code>f</code>的生命周期一直存在。</p>
+<h3 id=记忆效应的-底层原理>记忆效应的 <strong>底层原理</strong></h3>
+<blockquote>
+<p>变量逃逸分析</p>
+<p><a href=https://blog.csdn.net/weixin_42117918/article/details/90409744 target=_blank rel="noopener noreffer">https://blog.csdn.net/weixin_42117918/article/details/90409744</a></p>
+</blockquote>
+<p>简而言之，Go编译器检测到局部变量仍有指针指向访问，原本应该分配在<strong>栈</strong>内的局部变量放在<strong>堆</strong>中，这种情况称之为变量逃逸。</p>
+<p><a href=ch33%20%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E4%B8%8E%E5%8F%98%E9%87%8F%E9%80%83%E9%80%B8%E5%88%86%E6%9E%90%20860c699cfcf840f090738a8815ecfe8a.md rel>ch33 垃圾回收与变量逃逸分析</a></p>
+<p><code>go run -gcflags "-m -l" main.go</code>
+使用 <code>go run</code> 运行程序时，<code>-gcflags</code> 参数是编译参数。其中 <code>-m</code> 表示进行内存分配分析，<code>-l</code>表示避免程序内联，也就是避免进行程序优化。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+
+<span class=kd>func</span> <span class=nf>Accumulator</span><span class=p>()</span> <span class=kd>func</span><span class=p>()</span> <span class=kt>int</span> <span class=p>{</span>
+    <span class=nx>startValue</span> <span class=o>:=</span> <span class=mi>1</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;The address of startValue is %x\n&#34;</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>startValue</span><span class=p>)</span>
+    <span class=k>return</span> <span class=kd>func</span><span class=p>()</span> <span class=kt>int</span> <span class=p>{</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;In annoymous function, address is %x\n&#34;</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>startValue</span><span class=p>)</span>
+        <span class=nx>startValue</span><span class=o>++</span>
+        <span class=k>return</span> <span class=nx>startValue</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>accumulator</span> <span class=o>:=</span> <span class=nf>Accumulator</span><span class=p>()</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nf>accumulator</span><span class=p>())</span>
+    <span class=nf>accumulator</span><span class=p>()</span>
+    <span class=nf>accumulator</span><span class=p>()</span>
+    <span class=nf>accumulator</span><span class=p>()</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nf>accumulator</span><span class=p>())</span>
+
+    <span class=nx>newAccumulator</span> <span class=o>:=</span> <span class=nf>Accumulator</span><span class=p>()</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nf>newAccumulator</span><span class=p>())</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>go run -gcflags &#34;-m -l&#34; main.go
+# command-line-arguments
+.\main.go:6:2: moved to heap: startValue
+.\main.go:7:12: ... argument does not escape
+.\main.go:8:9: func literal escapes to heap
+.\main.go:9:13: ... argument does not escape
+.\main.go:17:13: ... argument does not escape
+.\main.go:17:25: accumulator() escapes to heap
+.\main.go:21:13: ... argument does not escape
+.\main.go:21:25: accumulator() escapes to heap
+.\main.go:24:13: ... argument does not escape
+.\main.go:24:28: newAccumulator() escapes to heap
+The address of startValue is c0000aa058
+In annoymous function, address is c0000aa058
+2
+In annoymous function, address is c0000aa058
+In annoymous function, address is c0000aa058
+In annoymous function, address is c0000aa058
+In annoymous function, address is c0000aa058
+6
+The address of startValue is c0000aa088
+In annoymous function, address is c0000aa088
+2
+</code></pre></td></tr></table>
+</div>
+</div></div><div class=post-footer id=post-footer>
+<div class=post-info>
+<div class=post-info-line>
+<div class=post-info-mod>
+<span>更新于 2022-05-29</span>
+</div></div>
+<div class=post-info-line>
+<div class=post-info-md><span>
+<a class=link-to-markdown href=/2022/01/go-ch15/index.md target=_blank>阅读原始文档</a>
+</span></div>
+<div class=post-info-share>
+<span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=https://zchaoyu1126.github.io/2022/01/go-ch15/ data-title="Ch15 匿名函数与闭包"><i class="fab fa-twitter fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=https://zchaoyu1126.github.io/2022/01/go-ch15/><i class="fab fa-facebook-square fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 Hacker News" data-sharer=hackernews data-url=https://zchaoyu1126.github.io/2022/01/go-ch15/ data-title="Ch15 匿名函数与闭包"><i class="fab fa-hacker-news fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 Line" data-sharer=line data-url=https://zchaoyu1126.github.io/2022/01/go-ch15/ data-title="Ch15 匿名函数与闭包"><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@6.20.0/icons/line.svg aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=https://zchaoyu1126.github.io/2022/01/go-ch15/ data-title="Ch15 匿名函数与闭包" data-ralateuid=xxxx><i class="fab fa-weibo fa-fw" aria-hidden=true></i></a></span>
+</div>
+</div>
+</div>
+<div class=post-info-more>
+<section class=post-tags></section>
+<section>
+<span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span>
+</section>
+</div>
+<div class=post-nav><a href=/2022/01/go-ch14/ class=prev rel=prev title="Ch14 包与变量作用域"><i class="fas fa-angle-left fa-fw" aria-hidden=true></i>Ch14 包与变量作用域</a>
+<a href=/2022/01/go-ch16/ class=next rel=next title="Ch16 defer">Ch16 defer<i class="fas fa-angle-right fa-fw" aria-hidden=true></i></a></div>
+</div>
+<div id=comments><div id=valine class=comment></div><noscript>
+Please enable JavaScript to view the comments powered by <a href=https://valine.js.org/>Valine</a>.
+</noscript></div></article></div>
+</main><footer class=footer>
+<div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.91.2">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden=true></i> LoveIt</a>
+</div><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright fa-fw" aria-hidden=true></i><span itemprop=copyrightYear>2021 - 2022</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://github.com/zchaoyu1126 target=_blank>chao</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div>
+</div>
+</footer></div>
+<div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部>
+<i class="fas fa-arrow-up fa-fw" aria-hidden=true></i>
+</a><a href=# id=view-comments class=fixed-button title=查看评论>
+<i class="fas fa-comment fa-fw" aria-hidden=true></i>
+</a>
+</div><link rel=stylesheet href=/lib/valine/valine.min.css><script type=text/javascript src=https://cdn.jsdelivr.net/npm/valine@1.4.18/dist/Valine.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.3.1/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:50},comment:{valine:{appId:"QGzwQXOqs5JOhN4RGPOkR2mR-MdYXbMMI",appKey:"WBmoGyJtbqUswvfLh6L8iEBr",avatar:"mp",el:"#valine",emojiCDN:"https://cdn.jsdelivr.net/npm/emoji-datasource-google@14.0.0/img/google/64/",emojiMaps:{100:"1f4af.png",alien:"1f47d.png",anger:"1f4a2.png",angry:"1f620.png",anguished:"1f627.png",astonished:"1f632.png",black_heart:"1f5a4.png",blue_heart:"1f499.png",blush:"1f60a.png",bomb:"1f4a3.png",boom:"1f4a5.png",broken_heart:"1f494.png",brown_heart:"1f90e.png",clown_face:"1f921.png",cold_face:"1f976.png",cold_sweat:"1f630.png",confounded:"1f616.png",confused:"1f615.png",cry:"1f622.png",crying_cat_face:"1f63f.png",cupid:"1f498.png",dash:"1f4a8.png",disappointed:"1f61e.png",disappointed_relieved:"1f625.png",dizzy:"1f4ab.png",dizzy_face:"1f635.png",drooling_face:"1f924.png",exploding_head:"1f92f.png",expressionless:"1f611.png",face_vomiting:"1f92e.png",face_with_cowboy_hat:"1f920.png",face_with_hand_over_mouth:"1f92d.png",face_with_head_bandage:"1f915.png",face_with_monocle:"1f9d0.png",face_with_raised_eyebrow:"1f928.png",face_with_rolling_eyes:"1f644.png",face_with_symbols_on_mouth:"1f92c.png",face_with_thermometer:"1f912.png",fearful:"1f628.png",flushed:"1f633.png",frowning:"1f626.png",ghost:"1f47b.png",gift_heart:"1f49d.png",green_heart:"1f49a.png",grimacing:"1f62c.png",grin:"1f601.png",grinning:"1f600.png",hankey:"1f4a9.png",hear_no_evil:"1f649.png",heart:"2764-fe0f.png",heart_decoration:"1f49f.png",heart_eyes:"1f60d.png",heart_eyes_cat:"1f63b.png",heartbeat:"1f493.png",heartpulse:"1f497.png",heavy_heart_exclamation_mark_ornament:"2763-fe0f.png",hole:"1f573-fe0f.png",hot_face:"1f975.png",hugging_face:"1f917.png",hushed:"1f62f.png",imp:"1f47f.png",innocent:"1f607.png",japanese_goblin:"1f47a.png",japanese_ogre:"1f479.png",joy:"1f602.png",joy_cat:"1f639.png",kiss:"1f48b.png",kissing:"1f617.png",kissing_cat:"1f63d.png",kissing_closed_eyes:"1f61a.png",kissing_heart:"1f618.png",kissing_smiling_eyes:"1f619.png",laughing:"1f606.png",left_speech_bubble:"1f5e8-fe0f.png",love_letter:"1f48c.png",lying_face:"1f925.png",mask:"1f637.png",money_mouth_face:"1f911.png",nauseated_face:"1f922.png",nerd_face:"1f913.png",neutral_face:"1f610.png",no_mouth:"1f636.png",open_mouth:"1f62e.png",orange_heart:"1f9e1.png",partying_face:"1f973.png",pensive:"1f614.png",persevere:"1f623.png",pleading_face:"1f97a.png",pouting_cat:"1f63e.png",purple_heart:"1f49c.png",rage:"1f621.png",relaxed:"263a-fe0f.png",relieved:"1f60c.png",revolving_hearts:"1f49e.png",right_anger_bubble:"1f5ef-fe0f.png",robot_face:"1f916.png",rolling_on_the_floor_laughing:"1f923.png",scream:"1f631.png",scream_cat:"1f640.png",see_no_evil:"1f648.png",shushing_face:"1f92b.png",skull:"1f480.png",skull_and_crossbones:"2620-fe0f.png",sleeping:"1f634.png",sleepy:"1f62a.png",slightly_frowning_face:"1f641.png",slightly_smiling_face:"1f642.png",smile:"1f604.png",smile_cat:"1f638.png",smiley:"1f603.png",smiley_cat:"1f63a.png",smiling_face_with_3_hearts:"1f970.png",smiling_imp:"1f608.png",smirk:"1f60f.png",smirk_cat:"1f63c.png",sneezing_face:"1f927.png",sob:"1f62d.png",space_invader:"1f47e.png",sparkling_heart:"1f496.png",speak_no_evil:"1f64a.png",speech_balloon:"1f4ac.png","star-struck":"1f929.png",stuck_out_tongue:"1f61b.png",stuck_out_tongue_closed_eyes:"1f61d.png",stuck_out_tongue_winking_eye:"1f61c.png",sunglasses:"1f60e.png",sweat:"1f613.png",sweat_drops:"1f4a6.png",sweat_smile:"1f605.png",thinking_face:"1f914.png",thought_balloon:"1f4ad.png",tired_face:"1f62b.png",triumph:"1f624.png",two_hearts:"1f495.png",unamused:"1f612.png",upside_down_face:"1f643.png",weary:"1f629.png",white_frowning_face:"2639-fe0f.png",white_heart:"1f90d.png",wink:"1f609.png",woozy_face:"1f974.png",worried:"1f61f.png",yawning_face:"1f971.png",yellow_heart:"1f49b.png",yum:"1f60b.png",zany_face:"1f92a.png",zipper_mouth_face:"1f910.png",zzz:"1f4a4.png"},enableQQ:!1,highlight:!0,lang:"zh-CN",pageSize:10,placeholder:"你的评论 ...",recordIP:!0,serverURLs:"https://leancloud.hugoloveit.com",visitor:!0}}}</script><script type=text/javascript src=/js/theme.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/jquery@2.1.3/dist/jquery.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/jquery@2.1.3/dist/jquery.min.js></script>
+<script type=text/javascript src=https://cdn.jsdelivr.net/npm/jquery-backstretch@2.1.18/jquery.backstretch.min.js></script>
+<script type=text/javascript src=/js/custom.js></script></body>
+</html>

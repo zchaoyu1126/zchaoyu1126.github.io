@@ -1,0 +1,1088 @@
+<!doctype html><html lang=zh-cn>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=robots content="noodp">
+<title>Ch19 接口 - Chao's Blog</title><meta name=Description content="程序猿的学习和日常"><meta property="og:title" content="Ch19 接口">
+<meta property="og:description" content="ch19 接口 传统的派生式接口及类关系构建的模式，让类型间拥有强耦合的父子关系。这种关系一般会以“类派生图”的方式进行。经常可以看到大型软件极为复杂">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://zchaoyu1126.github.io/2022/03/go-ch19/"><meta property="og:image" content="https://zchaoyu1126.github.io/logo.png"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2022-03-04T20:26:12+08:00">
+<meta property="article:modified_time" content="2022-05-29T23:03:21+08:00"><meta property="og:site_name" content="Chao's Blog">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image content="https://zchaoyu1126.github.io/logo.png">
+<meta name=twitter:title content="Ch19 接口">
+<meta name=twitter:description content="ch19 接口 传统的派生式接口及类关系构建的模式，让类型间拥有强耦合的父子关系。这种关系一般会以“类派生图”的方式进行。经常可以看到大型软件极为复杂">
+<meta name=application-name content="Chao's Blog">
+<meta name=apple-mobile-web-app-title content="Chao's Blog"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://zchaoyu1126.github.io/2022/03/go-ch19/><link rel=prev href=https://zchaoyu1126.github.io/2022/02/go-ch18/><link rel=next href=https://zchaoyu1126.github.io/2022/03/go-ch20/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css as=style onload="this.onload=null,this.rel='stylesheet'">
+<noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css></noscript><link rel=preload href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css as=style onload="this.onload=null,this.rel='stylesheet'">
+<noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Ch19 接口","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/zchaoyu1126.github.io\/2022\/03\/go-ch19\/"},"image":[{"@type":"ImageObject","url":"https:\/\/zchaoyu1126.github.io\/images\/Apple-Devices-Preview.png","width":3200,"height":2048}],"genre":"posts","wordcount":5119,"url":"https:\/\/zchaoyu1126.github.io\/2022\/03\/go-ch19\/","datePublished":"2022-03-04T20:26:12+08:00","dateModified":"2022-05-29T23:03:21+08:00","license":"This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher":{"@type":"Organization","name":"xxxx","logo":{"@type":"ImageObject","url":"https:\/\/zchaoyu1126.github.io\/images\/avatar.png","width":528,"height":560}},"author":{"@type":"Person","name":"chao"},"description":""}</script></head>
+<body data-header-desktop=fixed data-header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':'auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark')&&document.body.setAttribute('theme','dark')</script>
+<div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title="Chao's Blog"><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw" aria-hidden=true></i></span>Chao's Blog</a>
+</div>
+<div class=menu>
+<div class=menu-inner><a class=menu-item href=/posts/> 文章
+</a><a class=menu-item href=/tags/> 标签
+</a><a class=menu-item href=/categories/> 分类
+</a>
+<div class=dropdown>
+<a href=javascript:void(0); class="menu-item menu-more dropbtn" title> 归档
+</a>
+<div class="menu-more-content dropdown-content"><a href=/documentation/golang/ title><i class="fa fa-book" aria-hidden=true></i> Golang </a><a href=/documentation/csbase/ title><i class="fa fa-laptop" aria-hidden=true></i> 计算机基础 </a><a href=/documentation/algorithm/ title><i class="fa fa-bookmark" aria-hidden=true></i> 数据结构与算法 </a></div>
+</div>
+<a class=menu-item href=/about/> 关于
+</a><a class=menu-item href=https://github.com/zchaoyu1126 title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw" aria-hidden=true></i>
+</a><span class="menu-item delimiter"></span><a href=javascript:void(0); class="menu-item language" title=选择语言>简体中文<i class="fas fa-chevron-right fa-fw" aria-hidden=true></i>
+<select class=language-select id=language-select-desktop onchange="location=this.value"><option value=/2022/03/go-ch19/ selected>简体中文</option></select>
+</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+</div>
+</div>
+</header><header class=mobile id=header-mobile>
+<div class=header-container>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title="Chao's Blog"><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw" aria-hidden=true></i></span>Chao's Blog</a>
+</div>
+<div class=menu-toggle id=menu-toggle-mobile>
+<span></span><span></span><span></span>
+</div>
+</div>
+<div class=menu id=menu-mobile><a class=menu-item href=/posts/> 文章
+</a><a class=menu-item href=/tags/> 标签
+</a><a class=menu-item href=/categories/> 分类
+</a>
+<div class=dropdown>
+<a href=javascript:void(0); class="menu-item menu-more dropbtn" title> 归档
+</a>
+<div class="menu-more-content dropdown-content"><a href=/documentation/golang/ title><i class="fa fa-book" aria-hidden=true></i> Golang </a><a href=/documentation/csbase/ title><i class="fa fa-laptop" aria-hidden=true></i> 计算机基础 </a><a href=/documentation/algorithm/ title><i class="fa fa-bookmark" aria-hidden=true></i> 数据结构与算法 </a></div>
+</div>
+<a class=menu-item href=/about/> 关于
+</a><a class=menu-item href=https://github.com/zchaoyu1126 title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class=menu-item title=选择语言>简体中文<i class="fas fa-chevron-right fa-fw" aria-hidden=true></i>
+<select class=language-select onchange="location=this.value"><option value=/2022/03/go-ch19/ selected>简体中文</option></select>
+</a></div>
+</div>
+</header><main class=main>
+<div class=container><div class=toc id=toc-auto>
+<h2 class=toc-title>目录</h2>
+<div class=toc-content id=toc-content-auto></div>
+</div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Ch19 接口</h1><div class=post-meta>
+<div class=post-meta-line><span class=post-author><a href=https://github.com/zchaoyu1126 title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw" aria-hidden=true></i>chao</a></span>&nbsp;<span class=post-category>收录于 <a href=/categories/golang/><i class="far fa-folder fa-fw" aria-hidden=true></i>golang</a></span></div>
+<div class=post-meta-line><i class="far fa-calendar-alt fa-fw" aria-hidden=true></i>&nbsp;<time datetime=2022-03-04>2022-03-04</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden=true></i>&nbsp;约 5119 字&nbsp;
+<i class="far fa-clock fa-fw" aria-hidden=true></i>&nbsp;预计阅读 11 分钟&nbsp;<span id=/2022/03/go-ch19/ class=leancloud_visitors data-flag-title="Ch19 接口">
+<i class="far fa-eye fa-fw" aria-hidden=true></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+</span>&nbsp;</div>
+</div><div class="details toc" id=toc-static data-kept>
+<div class="details-summary toc-title">
+<span>目录</span>
+<span><i class="details-icon fas fa-angle-right" aria-hidden=true></i></span>
+</div>
+<div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents>
+<ul>
+<li><a href=#声明接口><strong>声明接口</strong></a></li>
+<li><a href=#命名规范><strong>命名规范</strong></a></li>
+<li><a href=#接口类型的实现><strong>接口类型的实现</strong></a></li>
+<li><a href=#内部实现><strong>内部实现</strong></a></li>
+<li><a href=#特性><strong>特性</strong></a></li>
+<li><a href=#接口嵌套组合><strong>接口嵌套组合</strong></a></li>
+<li><a href=#类型断言><strong>类型断言</strong></a>
+<ul>
+<li><a href=#type-switch结构><strong>type-switch结构</strong></a></li>
+</ul>
+</li>
+<li><a href=#常见接口>常见接口</a>
+<ul>
+<li><a href=#sort接口><strong>Sort接口</strong></a></li>
+<li><a href=#读写接口><strong>读写接口</strong></a></li>
+</ul>
+</li>
+<li><a href=#空接口><strong>空接口</strong></a>
+<ul>
+<li><a href=#利用空接口构建通用类型的数组><strong>利用空接口构建通用类型的数组</strong></a></li>
+<li><a href=#复制数据切片至空接口切片><strong>复制数据切片至空接口切片</strong></a></li>
+<li><a href=#通用类型的节点数据结构><strong>通用类型的节点数据结构</strong></a></li>
+</ul>
+</li>
+<li><a href=#go的动态类型><strong>Go的动态类型</strong></a></li>
+<li><a href=#接口的提取><strong>接口的提取</strong></a></li>
+<li><a href=#接口的继承><strong>接口的继承</strong></a></li>
+</ul>
+</nav></div>
+</div><div class=content id=content><h1 id=ch19-接口>ch19 接口</h1>
+<p>传统的派生式接口及类关系构建的模式，让类型间拥有强耦合的父子关系。这种关系一般会以“类派生图”的方式进行。经常可以看到大型软件极为复杂的派生树。随着系统功能的不断增加，这棵“派生树”会变得越来越复杂。</p>
+<p>对于Go语言来说，非侵入式设计让实现者的所有类型都是平行的、组合的。如何组合则留到使用者编译时再确认，因此使用Go语言时，不需要同时也不可能有“类派生图”，开发者唯一需要关注的就是“我需要什么”，以及“我能实现什么“。</p>
+<blockquote>
+<p>接口的实现原理https://www.jianshu.com/p/70003e0f49d1</p>
+</blockquote>
+<h2 id=声明接口><strong>声明接口</strong></h2>
+<p>接口是一种约定，它是一个抽象的类型，与见到的具体的类型如int、map、slice等不一样。</p>
+<p>具体的类型，可以知道它是什么，并且可以知道可以用它做什么；但是接口不一样，接口是抽象的，它只有一组接口方法，并不知道它的内部实现，虽然不知道接口是什么，但是知道可以利用它提供的方法做什么。</p>
+<p>通过如下格式定义接口，其中<code>Namer</code>就是一个接口类型</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kd>type</span> <span class=nx>Namer</span> <span class=kd>interface</span> <span class=p>{</span>
+    <span class=nf>Method1</span><span class=p>(</span><span class=nx>param_list</span><span class=p>)</span> <span class=nx>return_type</span>
+    <span class=nf>Method2</span><span class=p>(</span><span class=nx>param_list</span><span class=p>)</span> <span class=nx>return_type</span>
+    <span class=o>...</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id=命名规范><strong>命名规范</strong></h2>
+<p>按照约定，接口的名字有方法名加<code>[e]r</code>后缀组成，例如<code>Printer</code>，<code>Reader</code>、<code>Writer</code>、<code>Logger</code>、<code>Converter</code>等等。还有一些不常用的方式（当后缀<code>er</code>不合适时），比如<code>Recoverable</code>，此时接口名以<code>able</code>结尾，或者以<code>I</code>开头</p>
+<h2 id=接口类型的实现><strong>接口类型的实现</strong></h2>
+<p>接口是一个抽象类型，用来定义行为的类型，但这些定义的行为不是由接口直接实现，而是<strong>通过方法由用户定义的类型实现</strong>。如果用户定义的类型，实现了接口类型声明的所有方法，那么这个用户定义的类型就实现了这个接口，称实现了某一接口的类型为<strong>实体类型</strong>，该实体类型的值可以赋值给接口类型的值。</p>
+<p>如上所述，如果要实现一个接口必须实现这个接口提供的所有方法。具体实现时，<strong>实体类型</strong>可以采用<strong>值接收者</strong>或<strong>指针接收者</strong>两种方式实现接口中定义的方法，但这两种方式是有区别的，具体如下。</p>
+<ul>
+<li>
+<p>值接收者实现</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+
+<span class=kd>type</span> <span class=nx>animal</span> <span class=kd>interface</span><span class=p>{</span>
+    <span class=nf>printInfo</span><span class=p>()</span>
+<span class=p>}</span>
+
+<span class=kd>type</span> <span class=nx>cat</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>name</span> <span class=kt>string</span>
+    <span class=nx>age</span> <span class=kt>int</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>(){</span>
+    <span class=nx>c</span> <span class=o>:=</span> <span class=nx>cat</span> <span class=p>{</span>
+        <span class=nx>name</span> <span class=p>:</span> <span class=s>&#34;mimi&#34;</span><span class=p>,</span>
+        <span class=nx>age</span> <span class=p>:</span> <span class=mi>5</span><span class=p>,</span>
+    <span class=p>}</span>
+    <span class=kd>var</span> <span class=nx>a</span> <span class=nx>animal</span> <span class=p>=</span> <span class=nx>c</span>
+    <span class=nf>invoke</span><span class=p>(</span><span class=nx>a</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=c1>// 类型cat使用值接收者实现接口中定义的方法
+</span><span class=c1></span><span class=kd>func</span> <span class=p>(</span><span class=nx>c</span> <span class=nx>cat</span><span class=p>)</span> <span class=nf>printInfo</span><span class=p>(){</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;this cat&#39;s name is %s and it&#39;s age is %d\n&#34;</span><span class=p>,</span> <span class=nx>c</span><span class=p>.</span><span class=nx>name</span><span class=p>,</span> <span class=nx>c</span><span class=p>.</span><span class=nx>age</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>invoke</span><span class=p>(</span><span class=nx>a</span> <span class=nx>animal</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>a</span><span class=p>.</span><span class=nf>printInfo</span><span class=p>()</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>invoke</code>函数接收一个<code>animal</code>接口类型，例子中传递参数的时候，也是以类型cat的值c传递的，运行程序可以正常执行。现在稍微改造一下，将<code>*cat</code>类型赋值给<code>animal a</code>，并作为参数传递。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kd>func</span> <span class=nf>main</span><span class=p>(){</span>
+    <span class=nx>c</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>cat</span> <span class=p>{</span>
+        <span class=nx>name</span> <span class=p>:</span> <span class=s>&#34;mimi&#34;</span><span class=p>,</span>
+        <span class=nx>age</span> <span class=p>:</span> <span class=mi>5</span><span class=p>,</span>
+    <span class=p>}</span>
+    <span class=kd>var</span> <span class=nx>a</span> <span class=nx>animal</span> <span class=p>=</span> <span class=nx>c</span>
+    <span class=nf>invoke</span><span class=p>(</span><span class=nx>a</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>运行程序，发现程序可以正常运行。</p>
+<p><strong>实体类型以值接收者实现接口的时候，不管是实体类型的值，还是实体类型值的指针，都被认为实现了该接口</strong>。</p>
+</li>
+<li>
+<p>指针接收者实现</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kd>func</span> <span class=nf>main</span><span class=p>(){</span>
+    <span class=nx>c</span> <span class=o>:=</span> <span class=nx>cat</span> <span class=p>{</span>
+        <span class=nx>name</span> <span class=p>:</span> <span class=s>&#34;mimi&#34;</span><span class=p>,</span>
+        <span class=nx>age</span> <span class=p>:</span> <span class=mi>5</span><span class=p>,</span>
+    <span class=p>}</span>
+    <span class=kd>var</span> <span class=nx>a</span> <span class=nx>animal</span> <span class=p>=</span> <span class=nx>c</span>
+    <span class=nf>invoke</span><span class=p>(</span><span class=nx>a</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=c1>// 类型cat使用指针接收者实现接口中定义的方法
+</span><span class=c1></span><span class=kd>func</span> <span class=p>(</span><span class=nx>c</span> <span class=o>*</span><span class=nx>cat</span><span class=p>)</span> <span class=nf>printInfo</span><span class=p>(){</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;this cat&#39;s name is %s and it&#39;s age is %d\n&#34;</span><span class=p>,</span> <span class=nx>c</span><span class=p>.</span><span class=nx>name</span><span class=p>,</span> <span class=nx>c</span><span class=p>.</span><span class=nx>age</span><span class=p>)</span>
+    <span class=c1>// c.name == (*c).name, c.age == (*c.age)
+</span><span class=c1></span><span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>此时编译器已经提示<code>cat</code>没有实现<code>animal</code>接口，因为<code>printInfo</code>方法是指针接收者，所以值<code>c</code>不能作为接口类型animal传参使用。若修改为<code>var a animal = &c</code>，则运行成功。</p>
+<p><strong>实体类型以指针接收者实现接口的时候，只有指向这个类型的指针才被认为实现了这个接口。</strong></p>
+</li>
+</ul>
+<p>Go 语言规范定义了接口方法集的调用规则：</p>
+<ul>
+<li>类型 T 的可调用方法集包含接受者为 T 的所有方法，不包含接受者为* T 的方法</li>
+<li>类型 *T 的可调用方法集包含接受者为 *T 或 T 的所有方法集</li>
+</ul>
+<h2 id=内部实现><strong>内部实现</strong></h2>
+<p>Go语言中的接口可以有值，一个接口类型的变量或一个接口值，例如<code>var ai Namer</code>，<code>ai</code>是一个多字数据结构，它的初始值是<code>nil</code></p>
+<p><img class=lazyload src=/svg/loading.min.svg data-src=ch19%20%E6%8E%A5%E5%8F%A3%20d0c5e5fb1a054e34a7404085ea76be7d/0019-1.png data-srcset="ch19%20%E6%8E%A5%E5%8F%A3%20d0c5e5fb1a054e34a7404085ea76be7d/0019-1.png, ch19%20%E6%8E%A5%E5%8F%A3%20d0c5e5fb1a054e34a7404085ea76be7d/0019-1.png 1.5x, ch19%20%E6%8E%A5%E5%8F%A3%20d0c5e5fb1a054e34a7404085ea76be7d/0019-1.png 2x" data-sizes=auto alt=ch19%20%E6%8E%A5%E5%8F%A3%20d0c5e5fb1a054e34a7404085ea76be7d/0019-1.png title=0019-1.png></p>
+<p>实现了<code>Namer</code>接口的类型的变量可以赋值给<code>ai</code>(即<code>receiver</code>的值)，方法表指针<code>（method table ptr)</code>就指向了当前的方法实现。当另一个实现了<code>Namer</code>接口的类型的变量被赋给<code>ai</code>时，<code>receiver</code>的值和方法表指针也会相应改变。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kd>func</span> <span class=nf>main</span><span class=p>(){</span>
+    <span class=kd>var</span> <span class=nx>b</span> <span class=nx>bytes</span><span class=p>.</span><span class=nx>Buffer</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Fprint</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>b</span><span class=p>,</span> <span class=s>&#34;hello world&#34;</span><span class=p>)</span>
+    <span class=kd>var</span> <span class=nx>w</span> <span class=nx>io</span><span class=p>.</span><span class=nx>Writer</span>
+    <span class=nx>w</span> <span class=p>=</span> <span class=o>&amp;</span><span class=nx>b</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>w</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这里例子中，因为bytes.Buffer实现了接口<code>io.Writer</code>，所以可以通过<code>w=&b</code>对<code>w</code>进行赋值。这个赋值的操作会把定义类型的值存入接口类型的值。</p>
+<p>接口的值被赋值后，接口值内部的布局。接口的值是一个两个字长度的数据结构，第一个字包含<strong>一个指向内部表结构的指针，这个内部表里存储的有实体类型的信息以及相关联的方法集</strong>；第二个字包含的是<strong>一个指向存储的实体类型值的指针</strong>。</p>
+<p>所以接口的值结构其实是两个指针，这也可以说明接口其实是一个引用类型。</p>
+<p><a href=ch39%20interface%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0%20526943e33e8d4c15b07eead6a45cc538.md rel>ch39 interface底层实现</a></p>
+<h2 id=特性><strong>特性</strong></h2>
+<ul>
+<li>多个类型可以实现一个接口</li>
+<li>一个类型可以实现多个接口</li>
+<li>实现某个接口的类型除了实现接口方法外，可以有其他的办法</li>
+<li>即使接口在类型之后才定义，二者处于不同的包中，被单独编译：只要类型实现了接口中的方法，它就实现了此接口。</li>
+</ul>
+<h2 id=接口嵌套组合><strong>接口嵌套组合</strong></h2>
+<p>一个接口可以包含一个或多个其他的接口，这相当于直接将这些内嵌接口的方法列举在外层接口中一样。</p>
+<p>比如<code>File</code>中包含了<code>ReadWriter</code>和<code>Locker</code>的所有方法，还额外有一个<code>Close()</code>方法</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>type ReadWrite interface {
+    Read(b Buffer) bool
+    Write(b Buffer) bool
+}
+
+type Locker interface {
+    Lock()
+    UnLock()
+}
+
+type File interface {
+    ReadWrite
+    Locker
+    Close()
+}
+</code></pre></td></tr></table>
+</div>
+</div><h2 id=类型断言><strong>类型断言</strong></h2>
+<p>一个接口类型的变量<code>varI</code>中可以包含任何类型的值，必须有一种方式来检测它的<strong>动态</strong>类型，即运行时在变量中存储的值的实际类型。</p>
+<p>在执行过程中动态类型可能会有所不同，通常可以使用<strong>类型断言</strong>来测试在某个时刻<code>varI</code>是否包含类型<code>T</code>的值。</p>
+<p><code>varI</code>必须是一个接口变量，否则编译器会报错</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=k>if</span> <span class=nx>v</span><span class=p>,</span> <span class=nx>ok</span> <span class=o>:=</span> <span class=nx>varI</span><span class=p>.(</span><span class=nx>T</span><span class=p>);</span> <span class=nx>ok</span> <span class=p>{</span>
+    <span class=nf>Process</span><span class=p>(</span><span class=nx>v</span><span class=p>)</span>
+    <span class=k>return</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>如果转换合法，<code>v</code>是<code>varI</code>转换到类型<code>T</code>的值，<code>ok</code>会是<code>true</code>；否则<code>v</code>是类型<code>T</code>的零值，<code>ok</code>是false。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+
+<span class=kd>type</span> <span class=nx>Shaper</span> <span class=kd>interface</span> <span class=p>{</span>
+    <span class=nf>Area</span><span class=p>()</span>
+<span class=p>}</span>
+
+<span class=kd>type</span> <span class=nx>Circle</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>radius</span> <span class=kt>float32</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=kd>var</span> <span class=nx>area</span> <span class=nx>Shaper</span>
+    <span class=nx>area</span> <span class=p>=</span> <span class=o>&amp;</span><span class=nx>Circle</span><span class=p>{</span><span class=nx>radius</span><span class=p>:</span><span class=mi>3</span><span class=p>}</span>
+
+    <span class=k>if</span> <span class=nx>t</span><span class=p>,</span> <span class=nx>ok</span> <span class=o>:=</span> <span class=nx>area</span><span class=p>.(</span><span class=o>*</span><span class=nx>Circle</span><span class=p>);</span> <span class=nx>ok</span> <span class=p>{</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;The type of areaIntf is: %T\n&#34;</span><span class=p>,</span> <span class=nx>t</span><span class=p>)</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>c</span> <span class=o>*</span><span class=nx>Circle</span><span class=p>)</span> <span class=nf>Area</span><span class=p>(){</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;circle&#39;s area&#34;</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=type-switch结构><strong>type-switch结构</strong></h3>
+<ul>
+<li>接口变量的类型也可以使用一种特殊形式的<code>switch</code>来检测</li>
+<li>此外，在处理来自于外部的、类型未知的数据时，比如解析诸如JSNO或XML编码的数据时，类型测试和转换会非常有用</li>
+</ul>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=k>switch</span> <span class=nx>x</span><span class=p>.(</span><span class=kd>type</span><span class=p>)</span> <span class=p>{</span>
+    <span class=k>case</span> <span class=kt>bool</span><span class=p>:</span>
+    <span class=c1>// do something
+</span><span class=c1></span>    <span class=k>case</span> <span class=kt>int</span><span class=p>:</span>
+    <span class=c1>// do something
+</span><span class=c1></span>    <span class=k>default</span><span class=p>:</span>
+    <span class=c1>//do something
+</span><span class=c1></span><span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id=常见接口>常见接口</h2>
+<h3 id=sort接口><strong>Sort接口</strong></h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kd>type</span> <span class=nx>Interface</span> <span class=kd>interface</span> <span class=p>{</span>
+    <span class=nf>Len</span><span class=p>()</span> <span class=kt>int</span>
+    <span class=nf>Less</span><span class=p>(</span><span class=nx>i</span><span class=p>,</span> <span class=nx>j</span> <span class=kt>int</span><span class=p>)</span> <span class=kt>bool</span>
+    <span class=nf>Swap</span><span class=p>(</span><span class=nx>i</span><span class=p>,</span> <span class=nx>j</span> <span class=kt>int</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=读写接口><strong>读写接口</strong></h3>
+<p>读和写是软件中很普遍的行为，提起它们就会立即想到读写文件、缓存（比如字节或字符串切片）、标准输入输出、标准错误以及网络连接、管道等，或者读写我们的自定义类型。为了让代码尽可能通用，GO采取了一致的方式来读写数据。</p>
+<p><code>io</code>包提供了用于读和写的接口<code>io.Reader</code>和<code>io.Writer</code></p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kd>type</span> <span class=nx>Reader</span> <span class=kd>interface</span> <span class=p>{</span>
+    <span class=nf>Read</span><span class=p>(</span><span class=nx>p</span> <span class=p>[]</span><span class=kt>byte</span><span class=p>)</span> <span class=p>(</span><span class=nx>n</span> <span class=kt>int</span><span class=p>,</span> <span class=nx>err</span> <span class=kt>error</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>type</span> <span class=nx>Writer</span> <span class=kd>interface</span> <span class=p>{</span>
+    <span class=nf>Write</span><span class=p>(</span><span class=nx>p</span> <span class=p>[]</span><span class=kt>byte</span><span class=p>)</span> <span class=p>(</span><span class=nx>n</span> <span class=kt>int</span><span class=p>,</span> <span class=nx>err</span> <span class=kt>error</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>只要类型实现了读写接口，提供 <code>Read()</code> 和 <code>Write</code> 方法，就可以从它读取数据，或向它写入数据。一个对象要是可读的，它必须实现 <code>io.Reader</code> 接口，这个接口只有一个签名是 <code>Read(p []byte) (n int, err error)</code> 的方法，它从调用它的对象上读取数据，并把读到的数据放入参数中的字节切片中，然后返回读取的字节数和一个 <code>error</code> 对象，如果没有错误发生返回 <code>nil</code>，如果已经到达输入的尾端，会返回 <code>io.EOF("EOF")</code>，如果读取的过程中发生了错误，就会返回具体的错误信息。类似地，一个对象要是可写的，它必须实现 <code>io.Writer</code> 接口，这个接口也只有一个签名是 <code>Write(p []byte) (n int, err error)</code> 的方法，它将指定字节切片中的数据写入调用它的对象里，然后返回实际写入的字节数和一个 <code>error</code> 对象（如果没有错误发生就是 <code>nil</code>）。</p>
+<p><code>io</code> 包里的 <code>Readers</code> 和 <code>Writers</code> 都是不带缓冲的，<code>bufio</code> 包里提供了对应的带缓冲的操作，在读写 <code>UTF-8</code> 编码的文本文件时它们尤其有用。</p>
+<p><a href=ch28%20%E8%BF%9B%E9%98%B6%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%20784fbd0a42d743aabb1b928aff653039.md rel>ch28 进阶输入输出</a></p>
+<h2 id=空接口><strong>空接口</strong></h2>
+<p><strong>空接口</strong>不包含任何办法，它对实现不做任何要求</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>type Any interface {}
+
+</code></pre></td></tr></table>
+</div>
+</div><p>任何其他类型都实现了空接口，<code>any</code>或<code>Any</code>是空接口一个很好的别名或缩写</p>
+<p>可以给空接口类型的变量<code>var val interface {}</code> 赋予任何类型的值</p>
+<p>空接口是一种接口，它是一种指针类型的数据类型，虽然不严谨，但它确实保存了两个指针，**一个是对象的类型(或iTable)，一个是对象的值。**所以赋值过程是让空接口any保存各个数据对象的类型和对象的值。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kd>var</span> <span class=nx>test</span> <span class=kd>interface</span><span class=p>{}</span>
+<span class=nx>test</span> <span class=p>=</span> <span class=s>&#34;string&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=利用空接口构建通用类型的数组><strong>利用空接口构建通用类型的数组</strong></h3>
+<p>让我们给空接口定义一个别名类型<code>Element:type Element interface{}</code></p>
+<p>然后定义一个容器类型的结构体<code>Vector</code>，它包含一个<code>Element</code>类型元素的切片</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kd>type</span> <span class=nx>Element</span> <span class=kd>interface</span><span class=p>{}</span>
+
+<span class=kd>type</span> <span class=nx>Vector</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>a</span>  <span class=p>[]</span><span class=nx>Element</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>p</span> <span class=o>*</span><span class=nx>Vector</span><span class=p>)</span> <span class=nf>At</span><span class=p>(</span><span class=nx>i</span> <span class=kt>int</span><span class=p>)</span> <span class=nx>Element</span> <span class=p>{</span>
+    <span class=k>return</span> <span class=nx>p</span><span class=p>.</span><span class=nx>a</span><span class=p>[</span><span class=nx>i</span><span class=p>]</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>p</span> <span class=o>*</span><span class=nx>Vector</span><span class=p>)</span> <span class=nf>Set</span><span class=p>(</span><span class=nx>i</span> <span class=kt>int</span><span class=p>,</span> <span class=nx>e</span> <span class=nx>Element</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>p</span><span class=p>.</span><span class=nx>a</span><span class=p>[</span><span class=nx>i</span><span class=p>]</span> <span class=p>=</span> <span class=nx>e</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=复制数据切片至空接口切片><strong>复制数据切片至空接口切片</strong></h3>
+<p>假设有一个<code>myType</code>类型的数据切片，若想将切片中的数据赋值到一个空接口切片中，类似</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kd>var</span> <span class=nx>dataSlice</span> <span class=p>[]</span><span class=nx>myType</span> <span class=p>=</span> <span class=nf>FuncReturnSlice</span><span class=p>()</span>
+<span class=kd>var</span> <span class=nx>interfaceSlice</span> <span class=p>[]</span><span class=kd>interface</span><span class=p>{}</span> <span class=p>=</span> <span class=nx>dataSlice</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可惜不能这么做，编译时会出错：</p>
+<p><code>cannot use dataSlice (type []myType) as type []interface { } in assignment</code></p>
+<p>原因是它们俩在内存中的布局是不一样的（参考 <a href=https://github.com/golang/go/wiki/InterfaceSlice target=_blank rel="noopener noreffer">Go wiki</a>）。</p>
+<p>必须使用<code>for-range</code>语句来一个一个显示地赋值：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kd>var</span> <span class=nx>dataSlice</span> <span class=p>[]</span><span class=nx>myType</span> <span class=p>=</span> <span class=nf>FuncReturnSlice</span><span class=p>()</span>
+<span class=kd>var</span> <span class=nx>interfaceSlice</span> <span class=p>[]</span><span class=kd>interface</span><span class=p>{}</span> <span class=p>=</span> <span class=nb>make</span><span class=p>([]</span><span class=kd>interface</span><span class=p>{},</span> <span class=nb>len</span><span class=p>(</span><span class=nx>dataSlice</span><span class=p>))</span>
+<span class=k>for</span> <span class=nx>i</span><span class=p>,</span> <span class=nx>d</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>dataSlice</span> <span class=p>{</span>
+    <span class=nx>interfaceSlice</span><span class=p>[</span><span class=nx>i</span><span class=p>]</span> <span class=p>=</span> <span class=nx>d</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=通用类型的节点数据结构><strong>通用类型的节点数据结构</strong></h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+
+<span class=kd>type</span> <span class=nx>Node</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>le</span> <span class=o>*</span><span class=nx>Node</span>
+    <span class=nx>data</span> <span class=kd>interface</span><span class=p>{}</span>
+    <span class=nx>ri</span> <span class=o>*</span><span class=nx>Node</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>NewNode</span><span class=p>(</span><span class=nx>left</span><span class=p>,</span> <span class=nx>right</span> <span class=o>*</span><span class=nx>Node</span><span class=p>)</span> <span class=o>*</span><span class=nx>Node</span> <span class=p>{</span>
+    <span class=k>return</span> <span class=o>&amp;</span><span class=nx>Node</span><span class=p>{</span><span class=nx>left</span><span class=p>,</span> <span class=kc>nil</span><span class=p>,</span> <span class=nx>right</span><span class=p>}</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>n</span> <span class=o>*</span><span class=nx>Node</span><span class=p>)</span> <span class=nf>SetDate</span><span class=p>(</span><span class=nx>data</span> <span class=kd>interface</span><span class=p>{})</span> <span class=p>{</span>
+    <span class=nx>n</span><span class=p>.</span><span class=nx>data</span> <span class=p>=</span> <span class=nx>data</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>root</span> <span class=o>:=</span> <span class=nf>NewNode</span><span class=p>(</span><span class=kc>nil</span><span class=p>,</span> <span class=kc>nil</span><span class=p>)</span>
+    <span class=nx>root</span><span class=p>.</span><span class=nf>SetData</span><span class=p>(</span><span class=s>&#34;root node&#34;</span><span class=p>)</span>
+    <span class=nx>a</span> <span class=o>:=</span> <span class=nf>NewNode</span><span class=p>(</span><span class=kc>nil</span><span class=p>,</span> <span class=kc>nil</span><span class=p>)</span>
+    <span class=nx>a</span><span class=p>.</span><span class=nf>SetData</span><span class=p>(</span><span class=s>&#34;left node&#34;</span><span class=p>)</span>
+    <span class=nx>b</span> <span class=o>:=</span> <span class=nf>NewNode</span><span class=p>(</span><span class=kc>nil</span><span class=p>,</span> <span class=kc>nil</span><span class=p>)</span>
+    <span class=nx>b</span><span class=p>.</span><span class=nf>SetData</span><span class=p>(</span><span class=s>&#34;right node&#34;</span><span class=p>)</span>
+    <span class=nx>root</span><span class=p>.</span><span class=nx>le</span> <span class=p>=</span> <span class=nx>a</span>
+    <span class=nx>root</span><span class=p>.</span><span class=nx>ri</span> <span class=p>=</span> <span class=nx>b</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;%v\n&#34;</span><span class=p>,</span> <span class=nx>root</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id=go的动态类型><strong>Go的动态类型</strong></h2>
+<p>Go语言没有类：数据（结构体或更一般的类型）和方法是一种松耦合的正交关系</p>
+<p>Go中的接口跟Java、C#类似：都是必须提供一个指定方法集的实现。但是更加灵活通用：任何提供了接口方法实现代码的类型都隐式地实现了该接口。</p>
+<p>和其他语言相比，Go是唯一结合了<code>接口值</code>，<code>静态类型检查（该类型是否实现了某个接口）</code>，<code>运行时动态转换的语言</code>，并且不需要显示地声明类型是否满足某个接口。 该特性允许我们在不改变已有代码地情况下定义和使用新接口。</p>
+<p>类似于Python和Ruby这类动态语言中的<code>动态类型duck typing</code></p>
+<p>这意味这对象可以根据提供的方法被处理，而忽略它们的实际类型：它们能做什么比它们是什么更重要。</p>
+<ul>
+<li>
+<p>例1</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+
+<span class=kd>type</span> <span class=nx>IDuck</span> <span class=kd>interface</span> <span class=p>{</span>
+    <span class=nf>Quack</span><span class=p>()</span>
+    <span class=nf>Walk</span><span class=p>()</span>
+<span class=p>}</span>
+
+<span class=kd>type</span> <span class=nx>Bird</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=c1>// ...
+</span><span class=c1></span><span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>b</span> <span class=o>:=</span> <span class=nb>new</span><span class=p>(</span><span class=nx>Bird</span><span class=p>)</span>
+    <span class=nf>DuckDance</span><span class=p>(</span><span class=nx>b</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>b</span> <span class=o>*</span><span class=nx>Bird</span><span class=p>)</span> <span class=nf>Quack</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;I am quacking!&#34;</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>b</span> <span class=o>*</span><span class=nx>Bird</span><span class=p>)</span> <span class=nf>Walk</span><span class=p>()</span>  <span class=p>{</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;I am walking!&#34;</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>DuckDance</span><span class=p>(</span><span class=nx>duck</span> <span class=nx>IDuck</span><span class=p>)</span> <span class=p>{</span>
+    <span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>1</span><span class=p>;</span> <span class=nx>i</span> <span class=o>&lt;=</span> <span class=mi>3</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+        <span class=nx>duck</span><span class=p>.</span><span class=nf>Quack</span><span class=p>()</span>
+        <span class=nx>duck</span><span class=p>.</span><span class=nf>Walk</span><span class=p>()</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>如果对 <code>cat</code> 调用函数 <code>DuckDance()</code>，Go 会提示编译错误，但是 Python 和 Ruby 会以运行时错误结束。</p>
+</li>
+<li>
+<p>例2</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=nx>pakcage</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+
+<span class=kd>var</span> <span class=nx>ai</span> <span class=nx>AbsInterface</span>
+<span class=kd>var</span> <span class=nx>si</span> <span class=nx>SqrInterface</span>
+<span class=kd>var</span> <span class=nx>empty</span> <span class=kd>interface</span><span class=p>{}</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>pp</span> <span class=o>:=</span> <span class=nb>new</span><span class=p>(</span><span class=nx>Point</span><span class=p>)</span>
+
+    <span class=c1>// 任意对象包括pp都实现了空接口，所以可以赋值给空接口empty
+</span><span class=c1></span>    <span class=nx>empty</span> <span class=p>=</span> <span class=nx>pp</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;%T\n&#34;</span><span class=p>,</span> <span class=nx>empty</span><span class=p>)</span>
+
+    <span class=nx>ai</span> <span class=p>=</span> <span class=nx>empty</span><span class=p>.(</span><span class=nx>AbsInterface</span><span class=p>)</span>
+    <span class=c1>// ai = empty
+</span><span class=c1></span>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;%T\n&#34;</span><span class=p>,</span> <span class=nx>ai</span><span class=p>)</span>
+
+    <span class=nx>si</span> <span class=p>=</span> <span class=nx>empty</span><span class=p>.(</span><span class=nx>SqrInterface</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;%T\n&#34;</span><span class=p>,</span> <span class=nx>si</span><span class=p>)</span>
+
+    <span class=nx>si</span> <span class=p>=</span> <span class=nx>ai</span><span class=p>.(</span><span class=nx>SqrInterface</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;%T\n&#34;</span><span class=p>,</span> <span class=nx>si</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>type</span> <span class=nx>Point</span> <span class=kt>int</span>
+
+<span class=kd>type</span> <span class=nx>AbsInterface</span> <span class=kd>interface</span> <span class=p>{</span>
+    <span class=nf>Abs</span><span class=p>()</span> <span class=kt>float32</span>
+<span class=p>}</span>
+
+<span class=kd>type</span> <span class=nx>SqrInterface</span> <span class=kd>interface</span> <span class=p>{</span>
+    <span class=nf>Sqr</span><span class=p>()</span> <span class=kt>float32</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>p</span> <span class=o>*</span><span class=nx>Point</span><span class=p>)</span> <span class=nf>Abs</span><span class=p>()</span> <span class=kt>float32</span> <span class=p>{</span>
+    <span class=k>return</span> <span class=mf>10.0</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>p</span> <span class=o>*</span><span class=nx>Point</span><span class=p>)</span> <span class=nf>Sqr</span><span class=p>()</span> <span class=kt>float32</span> <span class=p>{</span>
+    <span class=k>return</span> <span class=mf>10.0</span>
+<span class=p>}</span>
+
+</code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>例3</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>mi</span> <span class=o>:=</span> <span class=nf>MyInt</span><span class=p>(</span><span class=mi>5</span><span class=p>)</span>
+    <span class=kd>var</span> <span class=nx>x</span> <span class=nx>Adder</span> <span class=p>=</span> <span class=o>&amp;</span><span class=nx>mi</span>
+    <span class=nx>x</span><span class=p>.</span><span class=nf>add</span><span class=p>()</span>
+    <span class=c1>// x.print()
+</span><span class=c1></span>    <span class=c1>// x.print undefined (type Adder has no field or method print)
+</span><span class=c1></span>    <span class=nx>x</span><span class=p>.(</span><span class=nx>Printer</span><span class=p>).</span><span class=nb>print</span><span class=p>()</span>
+<span class=p>}</span>
+
+<span class=kd>type</span> <span class=nx>Printer</span> <span class=kd>interface</span> <span class=p>{</span>
+    <span class=nb>print</span><span class=p>()</span>
+<span class=p>}</span>
+
+<span class=kd>type</span> <span class=nx>Adder</span> <span class=kd>interface</span> <span class=p>{</span>
+    <span class=nf>add</span><span class=p>()</span>
+<span class=p>}</span>
+
+<span class=kd>type</span> <span class=nx>MyInt</span> <span class=kt>int</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>i</span> <span class=o>*</span><span class=nx>MyInt</span><span class=p>)</span> <span class=nf>add</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;%d\n&#34;</span><span class=p>,</span> <span class=o>*</span><span class=nx>i</span><span class=o>+</span><span class=mi>1</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>i</span> <span class=o>*</span><span class=nx>MyInt</span><span class=p>)</span> <span class=nb>print</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;%v\n&#34;</span><span class=p>,</span> <span class=o>*</span><span class=nx>i</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>x</code> 转换为 <code>Printer</code>类型是完全动态的：只要 <code>x</code> 的底层类型（动态类型）定义了 <code>print</code> 方法这个调用就可以正常运行（译注：若 <code>x</code> 的底层类型未定义 <code>print</code> 方法，此处类型断言会导致 <code>panic</code>，最佳实践应该为 <code>if mpi, ok := x.(myPrintInterface); ok { mpi.print() }</code>）。</p>
+<p>针对上述代码的个人理解：这里的话，如果一个对象实现了很多很多接口，然后将它赋值给一个接口变量，那么该对象实现的其他接口会暂时被隐藏起来。</p>
+</li>
+</ul>
+<p>Go 提供了动态语言的优点，却没有其他动态语言在运行时可能发生错误的缺点。对于动态语言非常重要的单元测试来说，这样既可以减少单元测试的部分需求，又可以发挥相当大的作用。</p>
+<h2 id=接口的提取><strong>接口的提取</strong></h2>
+<p><code>提取接口</code>是非常有用的设计模式，可以减少需要的类型和方法数量，而且不需要像传统的基于类的面向对象语言那样维护整个的类层次结构。</p>
+<p>有用的接口可以在开发的过程中被归纳出来。添加新接口非常容易，因为已有的类型不用变动（仅仅需要实现新接口的方法）。已有的函数可以扩展为使用接口类型的约束性参数：通常只有函数签名需要改变。对比基于类的 OO 类型的语言在这种情况下则需要适应整个类层次结构的变化。</p>
+<p>因此，开发者不用提前设计出所有的接口；<code>整个设计可以持续演进，而不用废弃之前的决定</code>。类型要实现某个接口，它本身不用改变，只需要在这个类型上实现新的方法。</p>
+<h2 id=接口的继承><strong>接口的继承</strong></h2>
+<p><a href=ch18%20%E8%87%AA%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%9E%8B%E4%B8%8E%E7%BB%93%E6%9E%84%E4%BD%93%2076cc67414a6f417592c955fab74ebf63.md rel>ch18 自定义类型与结构体</a></p>
+<p>当一个类型包含（内嵌）另一个类型（实现了一个或多个接口）的指针时，这个类型就可以使用（另一个类型）所有的接口方法。</p>
+<ul>
+<li>
+<p>例1</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kd>type</span> <span class=nx>Task</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>Command</span> <span class=kt>string</span>
+    <span class=o>*</span><span class=nx>log</span><span class=p>.</span><span class=nx>Logger</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这个类型的工厂方法像这样：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kd>func</span> <span class=nf>NewTask</span><span class=p>(</span><span class=nx>command</span> <span class=kt>string</span><span class=p>,</span> <span class=nx>logger</span> <span class=o>*</span><span class=nx>log</span><span class=p>.</span><span class=nx>Logger</span><span class=p>)</span> <span class=o>*</span><span class=nx>Task</span> <span class=p>{</span>
+		<span class=k>return</span> <span class=o>&amp;</span><span class=nx>Task</span><span class=p>{</span><span class=nx>command</span><span class=p>,</span> <span class=nx>logger</span><span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>当 <code>log.Logger</code> 实现了 <code>Log()</code> 方法后，Task 的实例 task 就可以调用该方法：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=nx>task</span><span class=p>.</span><span class=nf>Log</span><span class=p>()</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>类型可以通过继承多个接口来提供像 <code>多重继承</code> 一样的特性：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>type ReaderWriter struct {
+    *io.Reader
+    *io.Writer
+}
+</code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>例2</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kd>type</span> <span class=nx>intferface1</span> <span class=kd>interface</span> <span class=p>{</span>
+    <span class=nf>read</span><span class=p>()</span>
+<span class=p>}</span>
+
+<span class=kd>type</span> <span class=nx>intferface2</span> <span class=kd>interface</span> <span class=p>{</span>
+    <span class=nf>write</span><span class=p>()</span>
+<span class=p>}</span>
+
+<span class=kd>type</span> <span class=nx>myStruct1</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=o>*</span><span class=nx>myStruct2</span>
+<span class=p>}</span>
+
+<span class=kd>type</span> <span class=nx>myStruct2</span> <span class=kd>struct</span> <span class=p>{</span>
+
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>t</span> <span class=o>*</span><span class=nx>myStruct1</span><span class=p>)</span> <span class=nf>read</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;reading&#34;</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>t</span> <span class=o>*</span><span class=nx>myStruct2</span><span class=p>)</span> <span class=nf>write</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>((</span><span class=s>&#34;writing&#34;</span><span class=p>))</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>test</span> <span class=o>:=</span> <span class=nb>new</span><span class=p>(</span><span class=nx>myStruct1</span><span class=p>)</span>
+    <span class=nx>test</span><span class=p>.</span><span class=nf>write</span><span class=p>()</span>
+    <span class=nx>test</span><span class=p>.</span><span class=nf>read</span><span class=p>()</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+</div><div class=post-footer id=post-footer>
+<div class=post-info>
+<div class=post-info-line>
+<div class=post-info-mod>
+<span>更新于 2022-05-29</span>
+</div></div>
+<div class=post-info-line>
+<div class=post-info-md><span>
+<a class=link-to-markdown href=/2022/03/go-ch19/index.md target=_blank>阅读原始文档</a>
+</span></div>
+<div class=post-info-share>
+<span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=https://zchaoyu1126.github.io/2022/03/go-ch19/ data-title="Ch19 接口"><i class="fab fa-twitter fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=https://zchaoyu1126.github.io/2022/03/go-ch19/><i class="fab fa-facebook-square fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 Hacker News" data-sharer=hackernews data-url=https://zchaoyu1126.github.io/2022/03/go-ch19/ data-title="Ch19 接口"><i class="fab fa-hacker-news fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 Line" data-sharer=line data-url=https://zchaoyu1126.github.io/2022/03/go-ch19/ data-title="Ch19 接口"><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@6.20.0/icons/line.svg aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=https://zchaoyu1126.github.io/2022/03/go-ch19/ data-title="Ch19 接口" data-ralateuid=xxxx><i class="fab fa-weibo fa-fw" aria-hidden=true></i></a></span>
+</div>
+</div>
+</div>
+<div class=post-info-more>
+<section class=post-tags></section>
+<section>
+<span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span>
+</section>
+</div>
+<div class=post-nav><a href=/2022/02/go-ch18/ class=prev rel=prev title="Ch18 自定义类型与结构体"><i class="fas fa-angle-left fa-fw" aria-hidden=true></i>Ch18 自定义类型与结构体</a>
+<a href=/2022/03/go-ch20/ class=next rel=next title="Ch20 接口">Ch20 接口<i class="fas fa-angle-right fa-fw" aria-hidden=true></i></a></div>
+</div>
+<div id=comments><div id=valine class=comment></div><noscript>
+Please enable JavaScript to view the comments powered by <a href=https://valine.js.org/>Valine</a>.
+</noscript></div></article></div>
+</main><footer class=footer>
+<div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.91.2">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden=true></i> LoveIt</a>
+</div><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright fa-fw" aria-hidden=true></i><span itemprop=copyrightYear>2021 - 2022</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://github.com/zchaoyu1126 target=_blank>chao</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div>
+</div>
+</footer></div>
+<div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部>
+<i class="fas fa-arrow-up fa-fw" aria-hidden=true></i>
+</a><a href=# id=view-comments class=fixed-button title=查看评论>
+<i class="fas fa-comment fa-fw" aria-hidden=true></i>
+</a>
+</div><link rel=stylesheet href=/lib/valine/valine.min.css><script type=text/javascript src=https://cdn.jsdelivr.net/npm/valine@1.4.18/dist/Valine.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.3.1/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:50},comment:{valine:{appId:"QGzwQXOqs5JOhN4RGPOkR2mR-MdYXbMMI",appKey:"WBmoGyJtbqUswvfLh6L8iEBr",avatar:"mp",el:"#valine",emojiCDN:"https://cdn.jsdelivr.net/npm/emoji-datasource-google@14.0.0/img/google/64/",emojiMaps:{100:"1f4af.png",alien:"1f47d.png",anger:"1f4a2.png",angry:"1f620.png",anguished:"1f627.png",astonished:"1f632.png",black_heart:"1f5a4.png",blue_heart:"1f499.png",blush:"1f60a.png",bomb:"1f4a3.png",boom:"1f4a5.png",broken_heart:"1f494.png",brown_heart:"1f90e.png",clown_face:"1f921.png",cold_face:"1f976.png",cold_sweat:"1f630.png",confounded:"1f616.png",confused:"1f615.png",cry:"1f622.png",crying_cat_face:"1f63f.png",cupid:"1f498.png",dash:"1f4a8.png",disappointed:"1f61e.png",disappointed_relieved:"1f625.png",dizzy:"1f4ab.png",dizzy_face:"1f635.png",drooling_face:"1f924.png",exploding_head:"1f92f.png",expressionless:"1f611.png",face_vomiting:"1f92e.png",face_with_cowboy_hat:"1f920.png",face_with_hand_over_mouth:"1f92d.png",face_with_head_bandage:"1f915.png",face_with_monocle:"1f9d0.png",face_with_raised_eyebrow:"1f928.png",face_with_rolling_eyes:"1f644.png",face_with_symbols_on_mouth:"1f92c.png",face_with_thermometer:"1f912.png",fearful:"1f628.png",flushed:"1f633.png",frowning:"1f626.png",ghost:"1f47b.png",gift_heart:"1f49d.png",green_heart:"1f49a.png",grimacing:"1f62c.png",grin:"1f601.png",grinning:"1f600.png",hankey:"1f4a9.png",hear_no_evil:"1f649.png",heart:"2764-fe0f.png",heart_decoration:"1f49f.png",heart_eyes:"1f60d.png",heart_eyes_cat:"1f63b.png",heartbeat:"1f493.png",heartpulse:"1f497.png",heavy_heart_exclamation_mark_ornament:"2763-fe0f.png",hole:"1f573-fe0f.png",hot_face:"1f975.png",hugging_face:"1f917.png",hushed:"1f62f.png",imp:"1f47f.png",innocent:"1f607.png",japanese_goblin:"1f47a.png",japanese_ogre:"1f479.png",joy:"1f602.png",joy_cat:"1f639.png",kiss:"1f48b.png",kissing:"1f617.png",kissing_cat:"1f63d.png",kissing_closed_eyes:"1f61a.png",kissing_heart:"1f618.png",kissing_smiling_eyes:"1f619.png",laughing:"1f606.png",left_speech_bubble:"1f5e8-fe0f.png",love_letter:"1f48c.png",lying_face:"1f925.png",mask:"1f637.png",money_mouth_face:"1f911.png",nauseated_face:"1f922.png",nerd_face:"1f913.png",neutral_face:"1f610.png",no_mouth:"1f636.png",open_mouth:"1f62e.png",orange_heart:"1f9e1.png",partying_face:"1f973.png",pensive:"1f614.png",persevere:"1f623.png",pleading_face:"1f97a.png",pouting_cat:"1f63e.png",purple_heart:"1f49c.png",rage:"1f621.png",relaxed:"263a-fe0f.png",relieved:"1f60c.png",revolving_hearts:"1f49e.png",right_anger_bubble:"1f5ef-fe0f.png",robot_face:"1f916.png",rolling_on_the_floor_laughing:"1f923.png",scream:"1f631.png",scream_cat:"1f640.png",see_no_evil:"1f648.png",shushing_face:"1f92b.png",skull:"1f480.png",skull_and_crossbones:"2620-fe0f.png",sleeping:"1f634.png",sleepy:"1f62a.png",slightly_frowning_face:"1f641.png",slightly_smiling_face:"1f642.png",smile:"1f604.png",smile_cat:"1f638.png",smiley:"1f603.png",smiley_cat:"1f63a.png",smiling_face_with_3_hearts:"1f970.png",smiling_imp:"1f608.png",smirk:"1f60f.png",smirk_cat:"1f63c.png",sneezing_face:"1f927.png",sob:"1f62d.png",space_invader:"1f47e.png",sparkling_heart:"1f496.png",speak_no_evil:"1f64a.png",speech_balloon:"1f4ac.png","star-struck":"1f929.png",stuck_out_tongue:"1f61b.png",stuck_out_tongue_closed_eyes:"1f61d.png",stuck_out_tongue_winking_eye:"1f61c.png",sunglasses:"1f60e.png",sweat:"1f613.png",sweat_drops:"1f4a6.png",sweat_smile:"1f605.png",thinking_face:"1f914.png",thought_balloon:"1f4ad.png",tired_face:"1f62b.png",triumph:"1f624.png",two_hearts:"1f495.png",unamused:"1f612.png",upside_down_face:"1f643.png",weary:"1f629.png",white_frowning_face:"2639-fe0f.png",white_heart:"1f90d.png",wink:"1f609.png",woozy_face:"1f974.png",worried:"1f61f.png",yawning_face:"1f971.png",yellow_heart:"1f49b.png",yum:"1f60b.png",zany_face:"1f92a.png",zipper_mouth_face:"1f910.png",zzz:"1f4a4.png"},enableQQ:!1,highlight:!0,lang:"zh-CN",pageSize:10,placeholder:"你的评论 ...",recordIP:!0,serverURLs:"https://leancloud.hugoloveit.com",visitor:!0}}}</script><script type=text/javascript src=/js/theme.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/jquery@2.1.3/dist/jquery.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/jquery@2.1.3/dist/jquery.min.js></script>
+<script type=text/javascript src=https://cdn.jsdelivr.net/npm/jquery-backstretch@2.1.18/jquery.backstretch.min.js></script>
+<script type=text/javascript src=/js/custom.js></script></body>
+</html>

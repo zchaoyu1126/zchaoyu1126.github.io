@@ -1,0 +1,366 @@
+<!doctype html><html lang=zh-cn>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=robots content="noodp">
+<title>ch4 网络层-IP基础 - Chao's Blog</title><meta name=Description content="程序猿的学习和日常"><meta property="og:title" content="ch4 网络层-IP基础">
+<meta property="og:description" content="1 IPv4 地址 IPv4地址是一个32bit地址，唯一地与通用地定义了一个连接在因特网上的设备。IP地址采用点分十进制记法，首先每8个Bit插入一个">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://zchaoyu1126.github.io/2022/05/network-ch4/"><meta property="og:image" content="https://zchaoyu1126.github.io/logo.png"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2022-05-30T23:02:12+08:00">
+<meta property="article:modified_time" content="2022-05-31T23:02:12+08:00"><meta property="og:site_name" content="Chao's Blog">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image content="https://zchaoyu1126.github.io/logo.png">
+<meta name=twitter:title content="ch4 网络层-IP基础">
+<meta name=twitter:description content="1 IPv4 地址 IPv4地址是一个32bit地址，唯一地与通用地定义了一个连接在因特网上的设备。IP地址采用点分十进制记法，首先每8个Bit插入一个">
+<meta name=application-name content="Chao's Blog">
+<meta name=apple-mobile-web-app-title content="Chao's Blog"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://zchaoyu1126.github.io/2022/05/network-ch4/><link rel=prev href=https://zchaoyu1126.github.io/2022/05/go-%E6%8C%87%E4%BB%A4%E9%9B%86/><link rel=next href=https://zchaoyu1126.github.io/2022/06/means/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css as=style onload="this.onload=null,this.rel='stylesheet'">
+<noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css></noscript><link rel=preload href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css as=style onload="this.onload=null,this.rel='stylesheet'">
+<noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"ch4 网络层-IP基础","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/zchaoyu1126.github.io\/2022\/05\/network-ch4\/"},"image":[{"@type":"ImageObject","url":"https:\/\/zchaoyu1126.github.io\/images\/Apple-Devices-Preview.png","width":3200,"height":2048}],"genre":"posts","wordcount":3855,"url":"https:\/\/zchaoyu1126.github.io\/2022\/05\/network-ch4\/","datePublished":"2022-05-30T23:02:12+08:00","dateModified":"2022-05-31T23:02:12+08:00","license":"This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher":{"@type":"Organization","name":"xxxx","logo":{"@type":"ImageObject","url":"https:\/\/zchaoyu1126.github.io\/images\/avatar.png","width":528,"height":560}},"author":{"@type":"Person","name":"chao"},"description":""}</script></head>
+<body data-header-desktop=fixed data-header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':'auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark')&&document.body.setAttribute('theme','dark')</script>
+<div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title="Chao's Blog"><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw" aria-hidden=true></i></span>Chao's Blog</a>
+</div>
+<div class=menu>
+<div class=menu-inner><a class=menu-item href=/posts/> 文章
+</a><a class=menu-item href=/tags/> 标签
+</a><a class=menu-item href=/categories/> 分类
+</a>
+<div class=dropdown>
+<a href=javascript:void(0); class="menu-item menu-more dropbtn" title> 归档
+</a>
+<div class="menu-more-content dropdown-content"><a href=/documentation/golang/ title><i class="fa fa-book" aria-hidden=true></i> Golang </a><a href=/documentation/csbase/ title><i class="fa fa-laptop" aria-hidden=true></i> 计算机基础 </a><a href=/documentation/algorithm/ title><i class="fa fa-bookmark" aria-hidden=true></i> 数据结构与算法 </a></div>
+</div>
+<a class=menu-item href=/about/> 关于
+</a><a class=menu-item href=https://github.com/zchaoyu1126 title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw" aria-hidden=true></i>
+</a><span class="menu-item delimiter"></span><a href=javascript:void(0); class="menu-item language" title=选择语言>简体中文<i class="fas fa-chevron-right fa-fw" aria-hidden=true></i>
+<select class=language-select id=language-select-desktop onchange="location=this.value"><option value=/2022/05/network-ch4/ selected>简体中文</option></select>
+</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+</div>
+</div>
+</header><header class=mobile id=header-mobile>
+<div class=header-container>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title="Chao's Blog"><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw" aria-hidden=true></i></span>Chao's Blog</a>
+</div>
+<div class=menu-toggle id=menu-toggle-mobile>
+<span></span><span></span><span></span>
+</div>
+</div>
+<div class=menu id=menu-mobile><a class=menu-item href=/posts/> 文章
+</a><a class=menu-item href=/tags/> 标签
+</a><a class=menu-item href=/categories/> 分类
+</a>
+<div class=dropdown>
+<a href=javascript:void(0); class="menu-item menu-more dropbtn" title> 归档
+</a>
+<div class="menu-more-content dropdown-content"><a href=/documentation/golang/ title><i class="fa fa-book" aria-hidden=true></i> Golang </a><a href=/documentation/csbase/ title><i class="fa fa-laptop" aria-hidden=true></i> 计算机基础 </a><a href=/documentation/algorithm/ title><i class="fa fa-bookmark" aria-hidden=true></i> 数据结构与算法 </a></div>
+</div>
+<a class=menu-item href=/about/> 关于
+</a><a class=menu-item href=https://github.com/zchaoyu1126 title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class=menu-item title=选择语言>简体中文<i class="fas fa-chevron-right fa-fw" aria-hidden=true></i>
+<select class=language-select onchange="location=this.value"><option value=/2022/05/network-ch4/ selected>简体中文</option></select>
+</a></div>
+</div>
+</header><main class=main>
+<div class=container><div class=toc id=toc-auto>
+<h2 class=toc-title>目录</h2>
+<div class=toc-content id=toc-content-auto></div>
+</div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">ch4 网络层-IP基础</h1><div class=post-meta>
+<div class=post-meta-line><span class=post-author><a href=https://github.com/zchaoyu1126 title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw" aria-hidden=true></i>chao</a></span>&nbsp;<span class=post-category>收录于 <a href=/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/><i class="far fa-folder fa-fw" aria-hidden=true></i>计算机网络</a></span></div>
+<div class=post-meta-line><i class="far fa-calendar-alt fa-fw" aria-hidden=true></i>&nbsp;<time datetime=2022-05-30>2022-05-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden=true></i>&nbsp;约 3855 字&nbsp;
+<i class="far fa-clock fa-fw" aria-hidden=true></i>&nbsp;预计阅读 8 分钟&nbsp;<span id=/2022/05/network-ch4/ class=leancloud_visitors data-flag-title="ch4 网络层-IP基础">
+<i class="far fa-eye fa-fw" aria-hidden=true></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+</span>&nbsp;</div>
+</div><div class="details toc" id=toc-static data-kept>
+<div class="details-summary toc-title">
+<span>目录</span>
+<span><i class="details-icon fas fa-angle-right" aria-hidden=true></i></span>
+</div>
+<div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents>
+<ul>
+<li><a href=#1-ipv4-地址>1 IPv4 地址</a>
+<ul>
+<li><a href=#11-分类的ip地址>1.1 分类的IP地址</a>
+<ul>
+<li><a href=#111-ip地址分类>1.1.1 IP地址分类</a></li>
+<li><a href=#112-特殊ip地址>1.1.2 特殊IP地址</a></li>
+<li><a href=#113-私有网络>1.1.3 私有网络</a></li>
+</ul>
+</li>
+<li><a href=#12-划分子网>1.2 划分子网</a>
+<ul>
+<li><a href=#121-子网的划分>1.2.1 子网的划分</a></li>
+<li><a href=#122-变长网络掩码>1.2.2 变长网络掩码</a></li>
+</ul>
+</li>
+<li><a href=#13-构成超网>1.3 构成超网</a></li>
+<li><a href=#14-寻址>1.4 寻址</a></li>
+</ul>
+</li>
+<li><a href=#2-ipv6>2 IPv6</a></li>
+<li><a href=#3-nat地址映射>3 NAT地址映射</a></li>
+<li><a href=#4-isp技术>4 ISP技术</a></li>
+<li><a href=#5-参考资料>5 参考资料</a></li>
+</ul>
+</nav></div>
+</div><div class=content id=content><h2 id=1-ipv4-地址>1 IPv4 地址</h2>
+<p>IPv4地址是一个32bit地址，唯一地与通用地定义了一个连接在因特网上的设备。IP地址采用点分十进制记法，首先每8个Bit插入一个空格，然后将每8bit的二进制数转换为十进制数。</p>
+<div class="details admonition warning open">
+<div class="details-summary admonition-title">
+<i class="icon fas fa-exclamation-triangle fa-fw" aria-hidden=true></i>警告<i class="details-icon fas fa-angle-right fa-fw" aria-hidden=true></i>
+</div>
+<div class=details-content>
+<div class=admonition-content>不能有先导0，数值均小于等于255且大于等于0</div>
+</div>
+</div>
+<p>IP地址现由ICANN（Internet Corporation for Assigned Names and Numbers）进行分配。</p>
+<p>IP地址管理机构在分配IP地址时，只分配网络号，而剩下的主机号则由得到该网络号的单位自行分配。</p>
+<p>路由器仅根据目的主机所连接的网络号来转发分组（而不考虑其主机号），这样可以使路由表中的项目数大幅度减少，从而减小了路由表所占的存储空间。</p>
+<p>IP地址的编址方法总共经历了三个阶段</p>
+<ul>
+<li>分类的IP地址：这是最基本的编址方法，在1981年就通过了相应的标准协议。</li>
+<li>子网的划分：这是最基本编址方法的改进，其标准RFC 950在1985年通过。</li>
+<li>构成超网：这是比较新的无分类编址方法。在1993年提出后很快得到推广应用。</li>
+</ul>
+<h3 id=11-分类的ip地址>1.1 分类的IP地址</h3>
+<h4 id=111-ip地址分类>1.1.1 IP地址分类</h4>
+<p>通过<code>net-id</code>和<code>host-id</code>将IP地址空间被划分为ABCDE五类，其中D类为多播地址，E类为保留地址。</p>
+<figure><a class=lightgallery href=/2022/05/network-ch4/0004-2.png title=/2022/05/network-ch4/0004-2.png data-thumbnail=/2022/05/network-ch4/0004-2.png data-sub-html="<h2>IP地址的分类</h2>">
+<img class=lazyload src=/svg/loading.min.svg data-src=/2022/05/network-ch4/0004-2.png data-srcset="/2022/05/network-ch4/0004-2.png, /2022/05/network-ch4/0004-2.png 1.5x, /2022/05/network-ch4/0004-2.png 2x" data-sizes=auto alt=/2022/05/network-ch4/0004-2.png width=699 height=274>
+</a><figcaption class=image-caption>IP地址的分类</figcaption>
+</figure>
+<div class="details admonition info open">
+<div class="details-summary admonition-title">
+<i class="icon fas fa-info-circle fa-fw" aria-hidden=true></i>信息<i class="details-icon fas fa-angle-right fa-fw" aria-hidden=true></i>
+</div>
+<div class=details-content>
+<div class=admonition-content><p>为什么要分离网络号和主机号？</p>
+<p>因为两台计算机要通讯，首先要判断是否在同一个广播域内，即网络地址是否相同。如果网络地址相同，表示接受发在本网络上，那么可以把数据报直接发送到目标主机。路由器寻址工作中，也就是通过这样的方式来找到对应的网络号的，进而把数据包转发给对应的网络内。</p>
+</div>
+</div>
+</div>
+<h4 id=112-特殊ip地址>1.1.2 特殊IP地址</h4>
+<p>在IP地址中有一些并不是来标注主机的，这些地址具有特殊的意义。</p>
+<p>这些地址包括<strong>网络地址、直接广播地址、受限广播地址、本网络地址、环回地址</strong>等。</p>
+<p>①<strong>网络地址</strong> {&lt;net-id>，0 }：用于标识网络</p>
+<p>因特网上的每个网络都有一个IP地址，其主机号部分为0。</p>
+<p>A类网络的网络地址为：Network-number.0.0.0。例如，120.0.0.0；</p>
+<p>B类网络的网络地址为：Network-number.0.0。例如，139.22.0.0；</p>
+<p>C类网络的网络地址为：Network-number.0。例如，203.120.16.0。</p>
+<div class="details admonition info open">
+<div class="details-summary admonition-title">
+<i class="icon fas fa-info-circle fa-fw" aria-hidden=true></i>信息<i class="details-icon fas fa-angle-right fa-fw" aria-hidden=true></i>
+</div>
+<div class=details-content>
+<div class=admonition-content>用于标识网络，不能分配给主机，故不能作为数据的源地址和目的地址。</div>
+</div>
+</div>
+<p>②<strong>直接广播地址</strong> {&lt;net-id>，-1}：向某个网络上所有的主机发送报文。</p>
+<p>TCP/IP规定，主机号各位全部为“1”的IP地址用于广播，叫作广播地址。路由器在目标网络处将直接广播地址映射为物理网络的广播地址，例如将其映射为6个字节全为1的以太网广播地址。</p>
+<p>A类网络的直接广播地址为：Network-number.255.255.255。例如，120.255.255.255；</p>
+<p>B类网络的直接广播地址为：Network-number.255.255。例如，139.22.255.255；</p>
+<p>C类网络的直接广播地址为：Network-number.255。例如，203.120.16.255。</p>
+<div class="details admonition info open">
+<div class="details-summary admonition-title">
+<i class="icon fas fa-info-circle fa-fw" aria-hidden=true></i>信息<i class="details-icon fas fa-angle-right fa-fw" aria-hidden=true></i>
+</div>
+<div class=details-content>
+<div class=admonition-content>直接广播地址只能作为目的地址</div>
+</div>
+</div>
+<p>③<strong>受限广播地址</strong>{-1，-1}：在本网络内部进行广播。</p>
+<p>受限广播地址是在本网络内部进行广播的一种广播地址，TCP/IP规定，32位比特全为“1”的IP地址用于本网络内的广播。</p>
+<p>直接广播要求发送方必须知道目标网络的网络号，但有些主机在启动时往往并不知道本网络的网络号，这时候如果想要向本网络广播，只能采用受限广播地址（Limited Broadcast Address）。</p>
+<div class="details admonition info open">
+<div class="details-summary admonition-title">
+<i class="icon fas fa-info-circle fa-fw" aria-hidden=true></i>信息<i class="details-icon fas fa-angle-right fa-fw" aria-hidden=true></i>
+</div>
+<div class=details-content>
+<div class=admonition-content><p>受限广播地址只能作为目的地址。</p>
+<p>路由器隔离受限广播，不对受限广播分组进行转发。也就是说因特网不支持全网络范围的广播。</p>
+</div>
+</div>
+</div>
+<br>
+<p>TCP/IP协议规定，网络号各位全部为“0”时表示的是本网络。本网络地址分为两种情况：本网络特定主机地址和本网络本主机地址。</p>
+<p>④<strong>本网络特定主机地址</strong>{0，&lt;host-id>}</p>
+<div class="details admonition info open">
+<div class="details-summary admonition-title">
+<i class="icon fas fa-info-circle fa-fw" aria-hidden=true></i>信息<i class="details-icon fas fa-angle-right fa-fw" aria-hidden=true></i>
+</div>
+<div class=details-content>
+<div class=admonition-content>本网络特定主机地址只能作为源地址。</div>
+</div>
+</div>
+<p>⑤<strong>本网络本主机地址</strong>{0，0}</p>
+<p>无盘工作站启动时没有IP地址，此时采用网络号和主机号都为“0”的本网络本主机地址作为源地址。</p>
+<div class="details admonition info open">
+<div class="details-summary admonition-title">
+<i class="icon fas fa-info-circle fa-fw" aria-hidden=true></i>信息<i class="details-icon fas fa-angle-right fa-fw" aria-hidden=true></i>
+</div>
+<div class=details-content>
+<div class=admonition-content>本网络本主机地址只能作为源地址。</div>
+</div>
+</div>
+<p>⑥<strong>环回地址</strong>{127, &lt;any>}：用于网络软件测试以及本机进程之间通信的特殊地址</p>
+<p>习惯上采用127.0.0.1作为环回地址，命名为localhost。当使用环回地址作为目标地址发送数据时，数据将不会被发送到网络上，而是在数据离开网络层时将其回送给本机的有关进程。</p>
+<p>环回接口对IP数据报的处理过程，如下图所示：</p>
+<figure><a class=lightgallery href=/2022/05/network-ch4/0004-3.png title=/2022/05/network-ch4/0004-3.png data-thumbnail=/2022/05/network-ch4/0004-3.png data-sub-html="<h2>环回地址</h2>">
+<img class=lazyload src=/svg/loading.min.svg data-src=/2022/05/network-ch4/0004-3.png data-srcset="/2022/05/network-ch4/0004-3.png, /2022/05/network-ch4/0004-3.png 1.5x, /2022/05/network-ch4/0004-3.png 2x" data-sizes=auto alt=/2022/05/network-ch4/0004-3.png width=611 height=414>
+</a><figcaption class=image-caption>环回地址</figcaption>
+</figure>
+<p>在发送IP数据时，首先要判别该数据报的目的IP地址是否为环回地址，如果是环回地址，则直接将IP数据报放入IP输入队列实现环回。对于直接以本机地址作为目的地址的IP数据包也要会送给本机。对于广播或组播数据报，则在会送给本机的同时还要向网络发送。</p>
+<p>在除去特殊IP地址之后，可使用的IP地址如下，</p>
+<figure><a class=lightgallery href=/2022/05/network-ch4/0004-4.png title=/2022/05/network-ch4/0004-4.png data-thumbnail=/2022/05/network-ch4/0004-4.png data-sub-html="<h2>IP地址可使用范围</h2>">
+<img class=lazyload src=/svg/loading.min.svg data-src=/2022/05/network-ch4/0004-4.png data-srcset="/2022/05/network-ch4/0004-4.png, /2022/05/network-ch4/0004-4.png 1.5x, /2022/05/network-ch4/0004-4.png 2x" data-sizes=auto alt=/2022/05/network-ch4/0004-4.png width=1066 height=494>
+</a><figcaption class=image-caption>IP地址可使用范围</figcaption>
+</figure>
+<h4 id=113-私有网络>1.1.3 私有网络</h4>
+<p>在IP地址空间中，保留了几个用于私有网络的地址，私有网络地址通常应用于公司、组织和个人网络，它们没有置于因特网。</p>
+<p>A类：10.0.0.0~10.255.255.255</p>
+<p>B类：172.16.0.0~172.31.255.255</p>
+<p>C类：192.168.0.0~192.168.255.255</p>
+<br>
+<h3 id=12-划分子网>1.2 划分子网</h3>
+<div class="details admonition question open">
+<div class="details-summary admonition-title">
+<i class="icon fas fa-question-circle fa-fw" aria-hidden=true></i>问题<i class="details-icon fas fa-angle-right fa-fw" aria-hidden=true></i>
+</div>
+<div class=details-content>
+<div class=admonition-content>对于某些中等规模的网络，一个C类的IP地址不够用，而使用B类的IP地址则过于浪费。如果使用多个C类地址则会造成一个组织有多个网络域，这会导致路由器的路由表扩大。</div>
+</div>
+</div>
+<p>在ARPANET早期，IP地址的设计不够合理，使得IP地址空间的利用率很低，而且给每个物理网络分配一个网络号会使路由表变得太大因而使网络性能变坏。从1985年起，在IP地址中又增加了一个子网号字段，使两级的IP地址变成了三级的IP地址。这种做法叫做划分子网，划分子网已经称为因特网的正式标准协议。</p>
+<h4 id=121-子网的划分>1.2.1 子网的划分</h4>
+<p>划分子网属于一个单位（net-id）内部的事情，该单位（net-id）对外仍然表现为没有划分子网的网络。</p>
+<p>划分子网的方式：从主机号中借用若干个比特作为子网号subnet-id，由此ip地址变为 {&lt;net-id>，&lt;subnet-id>，&lt;host-id>}这样的三级形式。</p>
+<h4 id=122-变长网络掩码>1.2.2 变长网络掩码</h4>
+<p>为了在一个划分子网的网络中可以同时使用几个不同的子网掩码，提出了变长子网掩码（Variable Length Subnet Mask，VLSM）进一步提高IP地址资源的利用率。</p>
+<figure><a class=lightgallery href=/2022/05/network-ch4/0004-7.png title=/2022/05/network-ch4/0004-7.png data-thumbnail=/2022/05/network-ch4/0004-7.png data-sub-html="<h2>VLSM</h2>">
+<img class=lazyload src=/svg/loading.min.svg data-src=/2022/05/network-ch4/0004-7.png data-srcset="/2022/05/network-ch4/0004-7.png, /2022/05/network-ch4/0004-7.png 1.5x, /2022/05/network-ch4/0004-7.png 2x" data-sizes=auto alt=/2022/05/network-ch4/0004-7.png width=809 height=559>
+</a><figcaption class=image-caption>VLSM</figcaption>
+</figure>
+<p>假设有一个组织的网络规模可以使用一个C类地址范围，且需要分为4个子网，那么使用定长的掩码，则至少需要将子网掩码设置为255.255.255.192，这样这个组织的C类地址就被分成了4个等大小的子网，每个子网有62个可用地址。但事实上子网A有100台主机和设备，子网B有50台，子网C、D各有20多台，此时就无法满足需求。</p>
+<p>若使用VLSM技术，则可以设计192.168.1.0/25（126），192.168.1.0/26（62），192.168.1.0/27（30），192.168.1.0/27（30）的子网掩码。</p>
+<br>
+<h3 id=13-构成超网>1.3 构成超网</h3>
+<div class="details admonition question open">
+<div class="details-summary admonition-title">
+<i class="icon fas fa-question-circle fa-fw" aria-hidden=true></i>问题<i class="details-icon fas fa-angle-right fa-fw" aria-hidden=true></i>
+</div>
+<div class=details-content>
+<div class=admonition-content>虽然使用子网技术可以是IP地址都得到有效的应用，但还是很难防止IP地址资源耗尽，因为任何一个规模超过256的网络都需要使用B类地址，所以B类地址消耗的速度特别快，而C类地址缺得不到应用。解决这个问题的一个方法是消除IP地址中类别的概念。</div>
+</div>
+</div>
+<p>在VLSM的基础上，又进一步研究出无分类编址方法，它的正式名字使无分类域间路由选择CIDR（Classless Inter-Domain Routing)。</p>
+<p>CIDR技术将子网标识的两个部分直接合并到一起，使三级的IP地址又变回了两级{&lt;net-prefix>，&lt;host-id>}，net-prefix为网络前缀。</p>
+<p>CIDR仍使用斜线记法，例如128.14.32.0/20，表示该网络一共能容纳$2^{12}-2$个主机或设备。</p>
+<p>原有的IP地址分类方法，使得一个C类地址的网络，最多拥有256个IP地址，而使用CIDR之后致力于消除分类的概念，可以使原先多个C类地址合成为一个规模更大的地址范围，从而提高IP地址的利用率。</p>
+<p>具体地，可见如下例子，</p>
+<figure><a class=lightgallery href=/2022/05/network-ch4/0004-8.png title=/2022/05/network-ch4/0004-8.png data-thumbnail=/2022/05/network-ch4/0004-8.png data-sub-html="<h2>CIDR</h2>">
+<img class=lazyload src=/svg/loading.min.svg data-src=/2022/05/network-ch4/0004-8.png data-srcset="/2022/05/network-ch4/0004-8.png, /2022/05/network-ch4/0004-8.png 1.5x, /2022/05/network-ch4/0004-8.png 2x" data-sizes=auto alt=/2022/05/network-ch4/0004-8.png width=993 height=724>
+</a><figcaption class=image-caption>CIDR</figcaption>
+</figure>
+<br>
+<h3 id=14-寻址>1.4 寻址</h3>
+<p>IP地址的网络地址（&lt;net-id>，0）用于路由控制中。</p>
+<p>在主机和路由器上都会有各自的路由表，如果是windows，可以使用route print命令查看。</p>
+<p>在路由表中记录着网络地址与下一步应该发送至路由器的位置。</p>
+<p>在发送IP数据包时，首先会确定IP包首部中的目标地址，判断是否在同一网络中，若是则直接转发。否则去路由表中查找与该地址具有相同网络地址的记录，根据该记录将IP包转发给相应的下一个路由器。如果路由表中存在多条相同网络地址的记录，就选择相同位数最多的网络地址，也就是最长匹配。</p>
+<p>如下图所示，凡是从其他网络发送到本单位某个主机的IP数据，仍然是根据IP数据报的<strong>net-id</strong>先找到连接在本单位网络上的路由器。然后此路由器在收到IP数据报之后，再按<strong>net-id</strong>和<strong>subnet-id</strong>找到目的子网，最后将IP数据报交付给目的主机。</p>
+<figure><a class=lightgallery href=/2022/05/network-ch4/0004-5.png title=/2022/05/network-ch4/0004-5.png data-thumbnail=/2022/05/network-ch4/0004-5.png data-sub-html="<h2>子网的划分</h2>">
+<img class=lazyload src=/svg/loading.min.svg data-src=/2022/05/network-ch4/0004-5.png data-srcset="/2022/05/network-ch4/0004-5.png, /2022/05/network-ch4/0004-5.png 1.5x, /2022/05/network-ch4/0004-5.png 2x" data-sizes=auto alt=/2022/05/network-ch4/0004-5.png width=1097 height=812>
+</a><figcaption class=image-caption>子网的划分</figcaption>
+</figure>
+<p>路由器R1使用存储的子网掩码与目标IP地址相与，如果得到的结果与目的网络地址相同，那么说明该子网就是目标网络。</p>
+<figure><a class=lightgallery href=/2022/05/network-ch4/0004-6.png title=/2022/05/network-ch4/0004-6.png data-thumbnail=/2022/05/network-ch4/0004-6.png data-sub-html="<h2>路由器寻找路径</h2>">
+<img class=lazyload src=/svg/loading.min.svg data-src=/2022/05/network-ch4/0004-6.png data-srcset="/2022/05/network-ch4/0004-6.png, /2022/05/network-ch4/0004-6.png 1.5x, /2022/05/network-ch4/0004-6.png 2x" data-sizes=auto alt=/2022/05/network-ch4/0004-6.png width=1101 height=821>
+</a><figcaption class=image-caption>路由器寻找路径</figcaption>
+</figure>
+<br>
+<h2 id=2-ipv6>2 IPv6</h2>
+<p>持续更新中</p>
+<br>
+<h2 id=3-nat地址映射>3 NAT地址映射</h2>
+<p>持续更新中</p>
+<figure><a class=lightgallery href=/2022/05/network-ch4/0004-9.png title=/2022/05/network-ch4/0004-9.png data-thumbnail=/2022/05/network-ch4/0004-9.png data-sub-html="<h2>NAT1</h2>">
+<img class=lazyload src=/svg/loading.min.svg data-src=/2022/05/network-ch4/0004-9.png data-srcset="/2022/05/network-ch4/0004-9.png, /2022/05/network-ch4/0004-9.png 1.5x, /2022/05/network-ch4/0004-9.png 2x" data-sizes=auto alt=/2022/05/network-ch4/0004-9.png width=962 height=298>
+</a><figcaption class=image-caption>NAT1</figcaption>
+</figure>
+<figure><a class=lightgallery href=/2022/05/network-ch4/0004-10.png title=/2022/05/network-ch4/0004-10.png data-thumbnail=/2022/05/network-ch4/0004-10.png data-sub-html="<h2>NAT2</h2>">
+<img class=lazyload src=/svg/loading.min.svg data-src=/2022/05/network-ch4/0004-10.png data-srcset="/2022/05/network-ch4/0004-10.png, /2022/05/network-ch4/0004-10.png 1.5x, /2022/05/network-ch4/0004-10.png 2x" data-sizes=auto alt=/2022/05/network-ch4/0004-10.png width=986 height=281>
+</a><figcaption class=image-caption>NAT2</figcaption>
+</figure>
+<figure><a class=lightgallery href=/2022/05/network-ch4/0004-11.png title=/2022/05/network-ch4/0004-11.png data-thumbnail=/2022/05/network-ch4/0004-11.png data-sub-html="<h2>NAT3</h2>">
+<img class=lazyload src=/svg/loading.min.svg data-src=/2022/05/network-ch4/0004-11.png data-srcset="/2022/05/network-ch4/0004-11.png, /2022/05/network-ch4/0004-11.png 1.5x, /2022/05/network-ch4/0004-11.png 2x" data-sizes=auto alt=/2022/05/network-ch4/0004-11.png width=827 height=539>
+</a><figcaption class=image-caption>NAT3</figcaption>
+</figure>
+<figure><a class=lightgallery href=/2022/05/network-ch4/0004-12.png title=/2022/05/network-ch4/0004-12.png data-thumbnail=/2022/05/network-ch4/0004-12.png data-sub-html="<h2>NAT4</h2>">
+<img class=lazyload src=/svg/loading.min.svg data-src=/2022/05/network-ch4/0004-12.png data-srcset="/2022/05/network-ch4/0004-12.png, /2022/05/network-ch4/0004-12.png 1.5x, /2022/05/network-ch4/0004-12.png 2x" data-sizes=auto alt=/2022/05/network-ch4/0004-12.png width=804 height=252>
+</a><figcaption class=image-caption>NAT4</figcaption>
+</figure>
+<br>
+<h2 id=4-isp技术>4 ISP技术</h2>
+<figure><a class=lightgallery href=/2022/05/network-ch4/0004-13.png title=/2022/05/network-ch4/0004-13.png data-thumbnail=/2022/05/network-ch4/0004-13.png data-sub-html="<h2>ISP</h2>">
+<img class=lazyload src=/svg/loading.min.svg data-src=/2022/05/network-ch4/0004-13.png data-srcset="/2022/05/network-ch4/0004-13.png, /2022/05/network-ch4/0004-13.png 1.5x, /2022/05/network-ch4/0004-13.png 2x" data-sizes=auto alt=/2022/05/network-ch4/0004-13.png width=834 height=488>
+</a><figcaption class=image-caption>ISP</figcaption>
+</figure>
+<h2 id=5-参考资料>5 参考资料</h2>
+<ol>
+<li><a href=https://blog.csdn.net/qq_38410730/article/details/80980749 target=_blank rel="noopener noreffer">https://blog.csdn.net/qq_38410730/article/details/80980749</a></li>
+<li><a href=https://xiaolincoding.com/network/4_ip/ip_base.html target=_blank rel="noopener noreffer">https://xiaolincoding.com/network/4_ip/ip_base.html</a></li>
+<li>西电计算机网络课程PPT</li>
+</ol>
+<p>本文仅IP的相关知识点进行摘录，文中所有图片著作权归原作者所有，如有侵权请联系删除。</p>
+</div><div class=post-footer id=post-footer>
+<div class=post-info>
+<div class=post-info-line>
+<div class=post-info-mod>
+<span>更新于 2022-05-31</span>
+</div></div>
+<div class=post-info-line>
+<div class=post-info-md><span>
+<a class=link-to-markdown href=/2022/05/network-ch4/index.md target=_blank>阅读原始文档</a>
+</span></div>
+<div class=post-info-share>
+<span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=https://zchaoyu1126.github.io/2022/05/network-ch4/ data-title="ch4 网络层-IP基础"><i class="fab fa-twitter fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=https://zchaoyu1126.github.io/2022/05/network-ch4/><i class="fab fa-facebook-square fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 Hacker News" data-sharer=hackernews data-url=https://zchaoyu1126.github.io/2022/05/network-ch4/ data-title="ch4 网络层-IP基础"><i class="fab fa-hacker-news fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 Line" data-sharer=line data-url=https://zchaoyu1126.github.io/2022/05/network-ch4/ data-title="ch4 网络层-IP基础"><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@6.20.0/icons/line.svg aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=https://zchaoyu1126.github.io/2022/05/network-ch4/ data-title="ch4 网络层-IP基础" data-ralateuid=xxxx><i class="fab fa-weibo fa-fw" aria-hidden=true></i></a></span>
+</div>
+</div>
+</div>
+<div class=post-info-more>
+<section class=post-tags></section>
+<section>
+<span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span>
+</section>
+</div>
+<div class=post-nav><a href=/2022/05/go-%E6%8C%87%E4%BB%A4%E9%9B%86/ class=prev rel=prev title="Go 指令集"><i class="fas fa-angle-left fa-fw" aria-hidden=true></i>Go 指令集</a>
+<a href=/2022/06/means/ class=next rel=next title=Go语言学习资料>Go语言学习资料<i class="fas fa-angle-right fa-fw" aria-hidden=true></i></a></div>
+</div>
+<div id=comments><div id=valine class=comment></div><noscript>
+Please enable JavaScript to view the comments powered by <a href=https://valine.js.org/>Valine</a>.
+</noscript></div></article></div>
+</main><footer class=footer>
+<div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.91.2">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden=true></i> LoveIt</a>
+</div><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright fa-fw" aria-hidden=true></i><span itemprop=copyrightYear>2021 - 2022</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://github.com/zchaoyu1126 target=_blank>chao</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div>
+</div>
+</footer></div>
+<div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部>
+<i class="fas fa-arrow-up fa-fw" aria-hidden=true></i>
+</a><a href=# id=view-comments class=fixed-button title=查看评论>
+<i class="fas fa-comment fa-fw" aria-hidden=true></i>
+</a>
+</div><link rel=stylesheet href=/lib/valine/valine.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/lightgallery@2.4.0/css/lightgallery-bundle.min.css><script type=text/javascript src=https://cdn.jsdelivr.net/npm/valine@1.4.18/dist/Valine.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.3.1/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lightgallery@2.4.0/lightgallery.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lightgallery@2.4.0/plugins/thumbnail/lg-thumbnail.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lightgallery@2.4.0/plugins/zoom/lg-zoom.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:50},comment:{valine:{appId:"QGzwQXOqs5JOhN4RGPOkR2mR-MdYXbMMI",appKey:"WBmoGyJtbqUswvfLh6L8iEBr",avatar:"mp",el:"#valine",emojiCDN:"https://cdn.jsdelivr.net/npm/emoji-datasource-google@14.0.0/img/google/64/",emojiMaps:{100:"1f4af.png",alien:"1f47d.png",anger:"1f4a2.png",angry:"1f620.png",anguished:"1f627.png",astonished:"1f632.png",black_heart:"1f5a4.png",blue_heart:"1f499.png",blush:"1f60a.png",bomb:"1f4a3.png",boom:"1f4a5.png",broken_heart:"1f494.png",brown_heart:"1f90e.png",clown_face:"1f921.png",cold_face:"1f976.png",cold_sweat:"1f630.png",confounded:"1f616.png",confused:"1f615.png",cry:"1f622.png",crying_cat_face:"1f63f.png",cupid:"1f498.png",dash:"1f4a8.png",disappointed:"1f61e.png",disappointed_relieved:"1f625.png",dizzy:"1f4ab.png",dizzy_face:"1f635.png",drooling_face:"1f924.png",exploding_head:"1f92f.png",expressionless:"1f611.png",face_vomiting:"1f92e.png",face_with_cowboy_hat:"1f920.png",face_with_hand_over_mouth:"1f92d.png",face_with_head_bandage:"1f915.png",face_with_monocle:"1f9d0.png",face_with_raised_eyebrow:"1f928.png",face_with_rolling_eyes:"1f644.png",face_with_symbols_on_mouth:"1f92c.png",face_with_thermometer:"1f912.png",fearful:"1f628.png",flushed:"1f633.png",frowning:"1f626.png",ghost:"1f47b.png",gift_heart:"1f49d.png",green_heart:"1f49a.png",grimacing:"1f62c.png",grin:"1f601.png",grinning:"1f600.png",hankey:"1f4a9.png",hear_no_evil:"1f649.png",heart:"2764-fe0f.png",heart_decoration:"1f49f.png",heart_eyes:"1f60d.png",heart_eyes_cat:"1f63b.png",heartbeat:"1f493.png",heartpulse:"1f497.png",heavy_heart_exclamation_mark_ornament:"2763-fe0f.png",hole:"1f573-fe0f.png",hot_face:"1f975.png",hugging_face:"1f917.png",hushed:"1f62f.png",imp:"1f47f.png",innocent:"1f607.png",japanese_goblin:"1f47a.png",japanese_ogre:"1f479.png",joy:"1f602.png",joy_cat:"1f639.png",kiss:"1f48b.png",kissing:"1f617.png",kissing_cat:"1f63d.png",kissing_closed_eyes:"1f61a.png",kissing_heart:"1f618.png",kissing_smiling_eyes:"1f619.png",laughing:"1f606.png",left_speech_bubble:"1f5e8-fe0f.png",love_letter:"1f48c.png",lying_face:"1f925.png",mask:"1f637.png",money_mouth_face:"1f911.png",nauseated_face:"1f922.png",nerd_face:"1f913.png",neutral_face:"1f610.png",no_mouth:"1f636.png",open_mouth:"1f62e.png",orange_heart:"1f9e1.png",partying_face:"1f973.png",pensive:"1f614.png",persevere:"1f623.png",pleading_face:"1f97a.png",pouting_cat:"1f63e.png",purple_heart:"1f49c.png",rage:"1f621.png",relaxed:"263a-fe0f.png",relieved:"1f60c.png",revolving_hearts:"1f49e.png",right_anger_bubble:"1f5ef-fe0f.png",robot_face:"1f916.png",rolling_on_the_floor_laughing:"1f923.png",scream:"1f631.png",scream_cat:"1f640.png",see_no_evil:"1f648.png",shushing_face:"1f92b.png",skull:"1f480.png",skull_and_crossbones:"2620-fe0f.png",sleeping:"1f634.png",sleepy:"1f62a.png",slightly_frowning_face:"1f641.png",slightly_smiling_face:"1f642.png",smile:"1f604.png",smile_cat:"1f638.png",smiley:"1f603.png",smiley_cat:"1f63a.png",smiling_face_with_3_hearts:"1f970.png",smiling_imp:"1f608.png",smirk:"1f60f.png",smirk_cat:"1f63c.png",sneezing_face:"1f927.png",sob:"1f62d.png",space_invader:"1f47e.png",sparkling_heart:"1f496.png",speak_no_evil:"1f64a.png",speech_balloon:"1f4ac.png","star-struck":"1f929.png",stuck_out_tongue:"1f61b.png",stuck_out_tongue_closed_eyes:"1f61d.png",stuck_out_tongue_winking_eye:"1f61c.png",sunglasses:"1f60e.png",sweat:"1f613.png",sweat_drops:"1f4a6.png",sweat_smile:"1f605.png",thinking_face:"1f914.png",thought_balloon:"1f4ad.png",tired_face:"1f62b.png",triumph:"1f624.png",two_hearts:"1f495.png",unamused:"1f612.png",upside_down_face:"1f643.png",weary:"1f629.png",white_frowning_face:"2639-fe0f.png",white_heart:"1f90d.png",wink:"1f609.png",woozy_face:"1f974.png",worried:"1f61f.png",yawning_face:"1f971.png",yellow_heart:"1f49b.png",yum:"1f60b.png",zany_face:"1f92a.png",zipper_mouth_face:"1f910.png",zzz:"1f4a4.png"},enableQQ:!1,highlight:!0,lang:"zh-CN",pageSize:10,placeholder:"你的评论 ...",recordIP:!0,serverURLs:"https://leancloud.hugoloveit.com",visitor:!0}},lightgallery:!0}</script><script type=text/javascript src=/js/theme.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/jquery@2.1.3/dist/jquery.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/jquery@2.1.3/dist/jquery.min.js></script>
+<script type=text/javascript src=https://cdn.jsdelivr.net/npm/jquery-backstretch@2.1.18/jquery.backstretch.min.js></script>
+<script type=text/javascript src=/js/custom.js></script></body>
+</html>

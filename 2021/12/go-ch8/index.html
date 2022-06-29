@@ -1,0 +1,697 @@
+<!doctype html><html lang=zh-cn>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=robots content="noodp">
+<title>Ch8 控制结构 - Chao's Blog</title><meta name=Description content="程序猿的学习和日常"><meta property="og:title" content="Ch8 控制结构">
+<meta property="og:description" content="1 条件结构和分支结构 1.1 if-else 习惯用法一 1 2 3 4 5 6 7 8 9 var prompt = &#34;Enter a digit, e.g. 3 &#34;+ &#34;or %s to quit.&#34; func init() { if runtime.GOOS == &#34;windows&#34; { prompt = fmt.Sprintf(prompt, &#34;Ctrl+Z, Enter&#34;) } else { //Unix-like prompt = fmt.Sprintf(prompt, &#34;Ctrl+D&#34;) } } 习惯用法二 ok-">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://zchaoyu1126.github.io/2021/12/go-ch8/"><meta property="og:image" content="https://zchaoyu1126.github.io/logo.png"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2021-12-16T20:20:12+08:00">
+<meta property="article:modified_time" content="2022-05-29T22:43:21+08:00"><meta property="og:site_name" content="Chao's Blog">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image content="https://zchaoyu1126.github.io/logo.png">
+<meta name=twitter:title content="Ch8 控制结构">
+<meta name=twitter:description content="1 条件结构和分支结构 1.1 if-else 习惯用法一 1 2 3 4 5 6 7 8 9 var prompt = &#34;Enter a digit, e.g. 3 &#34;+ &#34;or %s to quit.&#34; func init() { if runtime.GOOS == &#34;windows&#34; { prompt = fmt.Sprintf(prompt, &#34;Ctrl+Z, Enter&#34;) } else { //Unix-like prompt = fmt.Sprintf(prompt, &#34;Ctrl+D&#34;) } } 习惯用法二 ok-">
+<meta name=application-name content="Chao's Blog">
+<meta name=apple-mobile-web-app-title content="Chao's Blog"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://zchaoyu1126.github.io/2021/12/go-ch8/><link rel=prev href=https://zchaoyu1126.github.io/2021/12/go-ch7/><link rel=next href=https://zchaoyu1126.github.io/2021/12/go-ch9/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css as=style onload="this.onload=null,this.rel='stylesheet'">
+<noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css></noscript><link rel=preload href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css as=style onload="this.onload=null,this.rel='stylesheet'">
+<noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Ch8 控制结构","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/zchaoyu1126.github.io\/2021\/12\/go-ch8\/"},"image":[{"@type":"ImageObject","url":"https:\/\/zchaoyu1126.github.io\/images\/Apple-Devices-Preview.png","width":3200,"height":2048}],"genre":"posts","wordcount":2456,"url":"https:\/\/zchaoyu1126.github.io\/2021\/12\/go-ch8\/","datePublished":"2021-12-16T20:20:12+08:00","dateModified":"2022-05-29T22:43:21+08:00","license":"This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher":{"@type":"Organization","name":"xxxx","logo":{"@type":"ImageObject","url":"https:\/\/zchaoyu1126.github.io\/images\/avatar.png","width":528,"height":560}},"author":{"@type":"Person","name":"chao"},"description":""}</script></head>
+<body data-header-desktop=fixed data-header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':'auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark')&&document.body.setAttribute('theme','dark')</script>
+<div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title="Chao's Blog"><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw" aria-hidden=true></i></span>Chao's Blog</a>
+</div>
+<div class=menu>
+<div class=menu-inner><a class=menu-item href=/posts/> 文章
+</a><a class=menu-item href=/tags/> 标签
+</a><a class=menu-item href=/categories/> 分类
+</a>
+<div class=dropdown>
+<a href=javascript:void(0); class="menu-item menu-more dropbtn" title> 归档
+</a>
+<div class="menu-more-content dropdown-content"><a href=/documentation/golang/ title><i class="fa fa-book" aria-hidden=true></i> Golang </a><a href=/documentation/csbase/ title><i class="fa fa-laptop" aria-hidden=true></i> 计算机基础 </a><a href=/documentation/algorithm/ title><i class="fa fa-bookmark" aria-hidden=true></i> 数据结构与算法 </a></div>
+</div>
+<a class=menu-item href=/about/> 关于
+</a><a class=menu-item href=https://github.com/zchaoyu1126 title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw" aria-hidden=true></i>
+</a><span class="menu-item delimiter"></span><a href=javascript:void(0); class="menu-item language" title=选择语言>简体中文<i class="fas fa-chevron-right fa-fw" aria-hidden=true></i>
+<select class=language-select id=language-select-desktop onchange="location=this.value"><option value=/2021/12/go-ch8/ selected>简体中文</option></select>
+</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+</div>
+</div>
+</header><header class=mobile id=header-mobile>
+<div class=header-container>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title="Chao's Blog"><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw" aria-hidden=true></i></span>Chao's Blog</a>
+</div>
+<div class=menu-toggle id=menu-toggle-mobile>
+<span></span><span></span><span></span>
+</div>
+</div>
+<div class=menu id=menu-mobile><a class=menu-item href=/posts/> 文章
+</a><a class=menu-item href=/tags/> 标签
+</a><a class=menu-item href=/categories/> 分类
+</a>
+<div class=dropdown>
+<a href=javascript:void(0); class="menu-item menu-more dropbtn" title> 归档
+</a>
+<div class="menu-more-content dropdown-content"><a href=/documentation/golang/ title><i class="fa fa-book" aria-hidden=true></i> Golang </a><a href=/documentation/csbase/ title><i class="fa fa-laptop" aria-hidden=true></i> 计算机基础 </a><a href=/documentation/algorithm/ title><i class="fa fa-bookmark" aria-hidden=true></i> 数据结构与算法 </a></div>
+</div>
+<a class=menu-item href=/about/> 关于
+</a><a class=menu-item href=https://github.com/zchaoyu1126 title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class=menu-item title=选择语言>简体中文<i class="fas fa-chevron-right fa-fw" aria-hidden=true></i>
+<select class=language-select onchange="location=this.value"><option value=/2021/12/go-ch8/ selected>简体中文</option></select>
+</a></div>
+</div>
+</header><main class=main>
+<div class=container><div class=toc id=toc-auto>
+<h2 class=toc-title>目录</h2>
+<div class=toc-content id=toc-content-auto></div>
+</div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Ch8 控制结构</h1><div class=post-meta>
+<div class=post-meta-line><span class=post-author><a href=https://github.com/zchaoyu1126 title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw" aria-hidden=true></i>chao</a></span>&nbsp;<span class=post-category>收录于 <a href=/categories/golang/><i class="far fa-folder fa-fw" aria-hidden=true></i>golang</a></span></div>
+<div class=post-meta-line><i class="far fa-calendar-alt fa-fw" aria-hidden=true></i>&nbsp;<time datetime=2021-12-16>2021-12-16</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden=true></i>&nbsp;约 2456 字&nbsp;
+<i class="far fa-clock fa-fw" aria-hidden=true></i>&nbsp;预计阅读 5 分钟&nbsp;<span id=/2021/12/go-ch8/ class=leancloud_visitors data-flag-title="Ch8 控制结构">
+<i class="far fa-eye fa-fw" aria-hidden=true></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+</span>&nbsp;</div>
+</div><div class="details toc" id=toc-static data-kept>
+<div class="details-summary toc-title">
+<span>目录</span>
+<span><i class="details-icon fas fa-angle-right" aria-hidden=true></i></span>
+</div>
+<div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents>
+<ul>
+<li><a href=#1-条件结构和分支结构>1 条件结构和分支结构</a>
+<ul>
+<li><a href=#11-if-else>1.1 if-else</a></li>
+<li><a href=#12-switch结构>1.2 switch结构</a></li>
+</ul>
+</li>
+<li><a href=#2-迭代或循环结构>2 迭代或循环结构</a>
+<ul>
+<li><a href=#21-for>2.1 for</a></li>
+<li><a href=#22-for-range>2.2 for range</a></li>
+<li><a href=#23-breakcontinue>2.3 break、continue</a></li>
+<li><a href=#24-labelgoto>2.4 label、goto</a></li>
+</ul>
+</li>
+</ul>
+</nav></div>
+</div><div class=content id=content><h2 id=1-条件结构和分支结构>1 条件结构和分支结构</h2>
+<h3 id=11-if-else>1.1 if-else</h3>
+<p><strong>习惯用法一</strong></p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kd>var</span> <span class=nx>prompt</span> <span class=p>=</span> <span class=s>&#34;Enter a digit, e.g. 3 &#34;</span><span class=o>+</span> <span class=s>&#34;or %s to quit.&#34;</span>
+
+<span class=kd>func</span> <span class=nf>init</span><span class=p>()</span> <span class=p>{</span>
+  <span class=k>if</span> <span class=nx>runtime</span><span class=p>.</span><span class=nx>GOOS</span> <span class=o>==</span> <span class=s>&#34;windows&#34;</span> <span class=p>{</span>
+  	<span class=nx>prompt</span> <span class=p>=</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Sprintf</span><span class=p>(</span><span class=nx>prompt</span><span class=p>,</span> <span class=s>&#34;Ctrl+Z, Enter&#34;</span><span class=p>)</span>
+  <span class=p>}</span> <span class=k>else</span> <span class=p>{</span> <span class=c1>//Unix-like
+</span><span class=c1></span>  	<span class=nx>prompt</span> <span class=p>=</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Sprintf</span><span class=p>(</span><span class=nx>prompt</span><span class=p>,</span> <span class=s>&#34;Ctrl+D&#34;</span><span class=p>)</span>
+  <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>习惯用法二 ok-pattern模式</strong></p>
+<p>if语句可包含一个初始化语句，例如给一个变量赋值</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=k>if</span> <span class=nx>val</span> <span class=o>:=</span> <span class=mi>10</span><span class=p>;</span> <span class=nx>val</span> <span class=p>&gt;</span> <span class=nx>max</span> <span class=p>{</span>
+	<span class=c1>// do something
+</span><span class=c1></span><span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>使用简短方式<code>:=</code>声明的变量<code>val</code>，其作用域只存在于if语句中，包括if后的else语句。</p>
+<p>如果变量<code>val</code>在if结构之前已经存在，那么在if语句块中，该变量原来的值会被隐藏。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=k>if</span> <span class=nx>value</span> <span class=o>:=</span> <span class=nf>process</span><span class=p>(</span><span class=nx>data</span><span class=p>);</span> <span class=nx>value</span> <span class=p>&gt;</span> <span class=nx>max</span> <span class=p>{</span>
+	<span class=c1>// do something
+</span><span class=c1></span><span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=nx>value</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>pack1</span><span class=p>.</span><span class=nf>Function1</span><span class=p>(</span><span class=nx>param1</span><span class=p>)</span>
+<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;An error occured in pack1.Function1 with parameter %v&#34;</span><span class=p>,</span> <span class=nx>param1</span><span class=p>)</span>
+	<span class=k>return</span> <span class=nx>err</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>使用习惯语法二，可将上述代码简化为，这种方式常称为<code>ok-pattern</code>模式</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=k>if</span> <span class=nx>value</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>pack1</span><span class=p>.</span><span class=nf>Function1</span><span class=p>(</span><span class=nx>param1</span><span class=p>);</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;An error occured in pack1.Function1 with parameter %v&#34;</span><span class=p>,</span> <span class=nx>param1</span><span class=p>)</span>
+	<span class=k>return</span> <span class=nx>err</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=12-switch结构>1.2 switch结构</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=k>switch</span> <span class=nx>var1</span> <span class=p>{</span>
+    <span class=k>case</span> <span class=nx>value1</span><span class=p>:</span>
+    <span class=o>...</span>
+    <span class=k>case</span> <span class=nx>value2</span><span class=p>:</span>
+    <span class=o>...</span>
+    <span class=k>default</span><span class=p>:</span>
+    <span class=o>...</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><code>value1</code>和<code>value2</code>必须是相同类型的值或计算结果为相同类型的表达式</li>
+<li>与C语言一样，<code>case</code>后可跟多个可能符合条件的值，使用逗号分割</li>
+<li>Golang使用快速的查找算法来测试switch条件与case分支的匹配清空，直到算法匹配到某个case或进入default为止</li>
+<li>某个分支的代码执行完毕后，会退出整个switch代码块。如果希望执行后续分支的代码，可以使用<code>fallthrough</code>关键字</li>
+<li>在 <code>case ...:</code> 语句之后，不需要使用花括号将多行语句括起来，当代码块只有一行时，可以直接放置在 <code>case</code> 语句之后。</li>
+</ul>
+<p><strong>习惯用法一</strong></p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=kd>var</span> <span class=nx>num1</span> <span class=kt>int</span> <span class=p>=</span> <span class=mi>100</span>
+
+    <span class=k>switch</span> <span class=nx>num1</span> <span class=p>{</span>
+    <span class=k>case</span> <span class=mi>98</span><span class=p>,</span> <span class=mi>99</span><span class=p>:</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;It&#39;s equal to 98&#34;</span><span class=p>)</span>
+    <span class=k>case</span> <span class=mi>100</span><span class=p>:</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;It&#39;s equal to 100&#34;</span><span class=p>)</span>
+    <span class=k>default</span><span class=p>:</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;It&#39;s not equal to 98 or 100&#34;</span><span class=p>)</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>习惯用法二</strong></p>
+<p>switch 语句的第二种形式是不提供任何被判断的值（实际上默认为判断是否为 true），然后在每个 case 分支中进行测试不同的条件。当任一分支的测试结果为 true 时，该分支的代码会被执行。这看起来非常像链式的 <code>if-else</code> 语句，但是在测试条件非常多的情况下，提供了可读性更好的书写方式。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=kd>var</span> <span class=nx>num1</span> <span class=kt>int</span> <span class=p>=</span> <span class=mi>7</span>
+
+    <span class=k>switch</span> <span class=p>{</span>
+    <span class=k>case</span> <span class=nx>num1</span> <span class=p>&lt;</span> <span class=mi>0</span><span class=p>:</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Number is negative&#34;</span><span class=p>)</span>
+    <span class=k>case</span> <span class=nx>num1</span> <span class=p>&gt;</span> <span class=mi>0</span> <span class=o>&amp;&amp;</span> <span class=nx>num1</span> <span class=p>&lt;</span> <span class=mi>10</span><span class=p>:</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Number is between 0 and 10&#34;</span><span class=p>)</span>
+    <span class=k>default</span><span class=p>:</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Number is 10 or greater&#34;</span><span class=p>)</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>习惯用法三</strong></p>
+<p>switch 语句的第三种形式是包含一个初始化语句，这种形式可以非常优雅地进行条件判断。在下面这个代码片段中，变量 a 和 b 被平行初始化，然后作为判断条件：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=k>switch</span> <span class=nx>a</span><span class=p>,</span> <span class=nx>b</span> <span class=o>:=</span> <span class=nx>x</span><span class=p>[</span><span class=nx>i</span><span class=p>],</span> <span class=nx>y</span><span class=p>[</span><span class=nx>j</span><span class=p>];</span> <span class=p>{</span>
+    <span class=k>case</span> <span class=nx>a</span> <span class=p>&lt;</span> <span class=nx>b</span><span class=p>:</span> <span class=nx>t</span> <span class=p>=</span> <span class=o>-</span><span class=mi>1</span>
+    <span class=k>case</span> <span class=nx>a</span> <span class=o>==</span> <span class=nx>b</span><span class=p>:</span> <span class=nx>t</span> <span class=p>=</span> <span class=mi>0</span>
+    <span class=k>case</span> <span class=nx>a</span> <span class=p>&gt;</span> <span class=nx>b</span><span class=p>:</span> <span class=nx>t</span> <span class=p>=</span> <span class=mi>1</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>此外，如果初始化语句出现赋值失败的情况，例如如下的语句，这种情况需要自己额外注意会不会引入意向不到的BUG。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+
+<span class=kd>var</span> <span class=nx>scores</span> <span class=p>=</span> <span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kt>int</span><span class=p>{</span><span class=s>&#34;Tony&#34;</span><span class=p>:</span> <span class=mi>95</span><span class=p>,</span> <span class=s>&#34;Tom&#34;</span><span class=p>:</span> <span class=mi>59</span><span class=p>,</span> <span class=s>&#34;Sarah&#34;</span><span class=p>:</span> <span class=mi>79</span><span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=k>switch</span> <span class=nx>score</span> <span class=o>:=</span> <span class=nx>scores</span><span class=p>[</span><span class=s>&#34;Lisa&#34;</span><span class=p>];</span> <span class=p>{</span>
+    <span class=k>case</span> <span class=nx>score</span> <span class=p>&gt;</span> <span class=mi>90</span><span class=p>:</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>score</span><span class=p>)</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;excellent&#34;</span><span class=p>)</span>
+    <span class=k>case</span> <span class=nx>score</span> <span class=p>&gt;</span> <span class=mi>80</span><span class=p>:</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Pretty good&#34;</span><span class=p>)</span>
+    <span class=k>case</span> <span class=nx>score</span> <span class=p>&gt;</span> <span class=mi>60</span><span class=p>:</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;not bad&#34;</span><span class=p>)</span>
+    <span class=k>default</span><span class=p>:</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;failed&#34;</span><span class=p>)</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+<span class=c1>// Lisa doesn&#39;t exist, but this program still output failed otherwise &#39;unknown student&#39;.
+</span></code></pre></td></tr></table>
+</div>
+</div><h2 id=2-迭代或循环结构>2 迭代或循环结构</h2>
+<h3 id=21-for>2.1 for</h3>
+<p><strong>习惯用法一 变量i</strong></p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=mi>5</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;This is the %d iteration\n&#34;</span><span class=p>,</span> <span class=nx>i</span><span class=p>)</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="details admonition warning open">
+<div class="details-summary admonition-title">
+<i class="icon fas fa-exclamation-triangle fa-fw" aria-hidden=true></i>警告<i class="details-icon fas fa-angle-right fa-fw" aria-hidden=true></i>
+</div>
+<div class=details-content>
+<div class=admonition-content>特别注意, 永远不要在循环体内修改计数器，这在任何语言中都是非常差的实践！</div>
+</div>
+</div>
+<p>得益于 Go 语言具有的平行赋值的特性,==可以在循环中同时使用多个计数器：==</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=k>for</span> <span class=nx>i</span><span class=p>,</span> <span class=nx>j</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>,</span> <span class=nx>N</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=nx>j</span><span class=p>;</span> <span class=nx>i</span><span class=p>,</span> <span class=nx>j</span> <span class=p>=</span> <span class=nx>i</span><span class=o>+</span><span class=mi>1</span><span class=p>,</span> <span class=nx>j</span><span class=o>-</span><span class=mi>1</span> <span class=p>{</span>
+    <span class=c1>// do something
+</span><span class=c1></span><span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>习惯用法二 基于条件判断的迭代</strong></p>
+<p>for 结构的第二种形式是没有头部的条件判断迭代（类似其它语言中的 while 循环），基本形式为：<code>for 条件语句 {}</code>。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=kd>var</span> <span class=nx>i</span> <span class=kt>int</span> <span class=p>=</span> <span class=mi>5</span>
+
+    <span class=k>for</span> <span class=nx>i</span> <span class=o>&gt;=</span> <span class=mi>0</span> <span class=p>{</span>
+        <span class=nx>i</span> <span class=p>=</span> <span class=nx>i</span> <span class=o>-</span> <span class=mi>1</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;The variable i is now: %d\n&#34;</span><span class=p>,</span> <span class=nx>i</span><span class=p>)</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>习惯用法三 无限循环</strong></p>
+<p>条件语句是可以被省略的，如 <code>i:=0; ; i++</code> 或 <code>for { }</code> 或 <code>for ;; { }</code>（<code>;;</code> 会在使用 <code>gofmt</code> 时被移除）：这些循环的本质就是无限循环。最后一个形式也可以被改写为 <code>for true { }</code>，但一般情况下都会直接写 <code>for { }</code>。</p>
+<p>如果 for 循环的头部没有条件语句，那么就会认为条件永远为 true，因此循环体内必须有相关的条件判断以确保会在某个时刻退出循环。想要直接退出循环体，可以使用 break 语句或 return 语句直接返回。</p>
+<p>无限循环的经典应用是服务器，用于不断等待和接受新的请求。</p>
+<h3 id=22-for-range>2.2 for range</h3>
+<p>这是 Go的一种迭代结构，它可以迭代任何一个集合（包括数组和 map等）。</p>
+<p>一般形式为：<code>for ix, val := range coll { }</code>。
+<div class="details admonition warning open">
+<div class="details-summary admonition-title">
+<i class="icon fas fa-exclamation-triangle fa-fw" aria-hidden=true></i>警告<i class="details-icon fas fa-angle-right fa-fw" aria-hidden=true></i>
+</div>
+<div class=details-content>
+<div class=admonition-content>要注意的是，<code>val</code> 始终为集合中<strong>对应索引的值拷贝</strong>，因此它一般只具有只读性质，对它所做的任何修改都不会影响到集合中原有的值，但<strong>如果 val 为指针，则会产生指针的拷贝，依旧可以修改集合中的原值</strong>。</div>
+</div>
+</div></p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+
+    <span class=nx>arr</span> <span class=o>:=</span> <span class=p>[]</span><span class=kt>int</span><span class=p>{</span><span class=mi>0</span><span class=p>,</span> <span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=mi>3</span><span class=p>}</span>
+    <span class=k>for</span> <span class=nx>i</span><span class=p>,</span> <span class=nx>val</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>arr</span> <span class=p>{</span>
+        <span class=nx>val</span> <span class=p>=</span> <span class=nx>val</span> <span class=o>*</span> <span class=nx>i</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;in the loop, %dth element of arr is %d\n&#34;</span><span class=p>,</span> <span class=nx>i</span><span class=p>,</span> <span class=nx>val</span><span class=p>)</span>
+    <span class=p>}</span>
+    <span class=k>for</span> <span class=nx>i</span><span class=p>,</span> <span class=nx>val</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>arr</span> <span class=p>{</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;after modify operation, %dth element of arr is %d\n&#34;</span><span class=p>,</span> <span class=nx>i</span><span class=p>,</span> <span class=nx>val</span><span class=p>)</span>
+    <span class=p>}</span>
+
+    <span class=nx>matrix</span> <span class=o>:=</span> <span class=p>[][]</span><span class=kt>int</span><span class=p>{{</span><span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=mi>3</span><span class=p>},</span> <span class=p>{</span><span class=mi>4</span><span class=p>,</span> <span class=mi>5</span><span class=p>,</span> <span class=mi>6</span><span class=p>}}</span>
+    <span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>row</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>matrix</span> <span class=p>{</span>
+        <span class=nx>row</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span> <span class=o>+=</span> <span class=nx>row</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span>
+    <span class=p>}</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>matrix</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=c1>//in the loop, 0th element of arr is 0
+</span><span class=c1>//in the loop, 1th element of arr is 1
+</span><span class=c1>//in the loop, 2th element of arr is 4
+</span><span class=c1>//in the loop, 3th element of arr is 9
+</span><span class=c1>//after modify operation, 0th element of arr is 0
+</span><span class=c1>//after modify operation, 1th element of arr is 1
+</span><span class=c1>//after modify operation, 2th element of arr is 2
+</span><span class=c1>//after modify operation, 3th element of arr is 3
+</span><span class=c1>//[[1 2 3] [16 5 6]]
+</span></code></pre></td></tr></table>
+</div>
+</div><h3 id=23-breakcontinue>2.3 break、continue</h3>
+<ul>
+<li>break：作用范围为该语句最后出现的内部结构，如for、switch、select</li>
+<li>continue： 忽略剩余的循环体，直接进行下一次是否进入循环的判断，只用于for</li>
+</ul>
+<h3 id=24-labelgoto>2.4 label、goto</h3>
+<p>正常continue情况下，continue只忽视内层循环，还应输出<code>i is: 0, and j is : 5</code>的结果，但这里直接使 i 变成下一个循环的值，而此时 j 的值就被重设为 0。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+<span class=nx>LABEL1</span><span class=p>:</span>
+    <span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=o>&lt;=</span> <span class=mi>5</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+        <span class=k>for</span> <span class=nx>j</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>j</span> <span class=o>&lt;=</span> <span class=mi>5</span><span class=p>;</span> <span class=nx>j</span><span class=o>++</span> <span class=p>{</span>
+            <span class=k>if</span> <span class=nx>j</span> <span class=o>==</span> <span class=mi>4</span> <span class=p>{</span>
+                <span class=k>continue</span> <span class=nx>LABEL1</span>
+            <span class=p>}</span>
+            <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;i is: %d, and j is: %d\n&#34;</span><span class=p>,</span> <span class=nx>i</span><span class=p>,</span> <span class=nx>j</span><span class=p>)</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+<span class=c1>//i is: 0, and j is: 0
+</span><span class=c1>//i is: 0, and j is: 1
+</span><span class=c1>//i is: 0, and j is: 2
+</span><span class=c1>//i is: 0, and j is: 3
+</span><span class=c1>//i is: 1, and j is: 0
+</span><span class=c1>//i is: 1, and j is: 1
+</span><span class=c1>//i is: 1, and j is: 2
+</span><span class=c1>//i is: 1, and j is: 3
+</span><span class=c1>//..
+</span></code></pre></td></tr></table>
+</div>
+</div><p>将 continue 改为 break，则不会只退出内层循环，而是直接退出外层循环。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+<span class=nx>LABEL1</span><span class=p>:</span>
+    <span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=o>&lt;=</span> <span class=mi>5</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+        <span class=k>for</span> <span class=nx>j</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>j</span> <span class=o>&lt;=</span> <span class=mi>5</span><span class=p>;</span> <span class=nx>j</span><span class=o>++</span> <span class=p>{</span>
+            <span class=k>if</span> <span class=nx>j</span> <span class=o>==</span> <span class=mi>4</span> <span class=p>{</span>
+                <span class=k>break</span> <span class=nx>LABEL1</span>
+            <span class=p>}</span>
+            <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;i is: %d, and j is: %d\n&#34;</span><span class=p>,</span> <span class=nx>i</span><span class=p>,</span> <span class=nx>j</span><span class=p>)</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+<span class=c1>// i is: 0, and j is: 0
+</span><span class=c1>// i is: 0, and j is: 1
+</span><span class=c1>// i is: 0, and j is: 2
+</span><span class=c1>// i is: 0, and j is: 3
+</span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>标签和goto语句是不被鼓励的，只建议使用 goto 语句来跳出无限读取循环并关闭相应的客户端链接。</li>
+<li>如果必须使用 goto，应当只使用正序的标签（标签位于 goto 语句之后），但注意标签和 goto 语句之间不能出现定义新变量的语句，否则会导致编译失败。</li>
+</ul>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=c1>// compile error goto2.go:8: goto TARGET jumps over declaration of b at goto2.go:8
+</span><span class=c1></span><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>a</span> <span class=o>:=</span> <span class=mi>1</span>
+    <span class=k>goto</span> <span class=nx>TARGET</span> <span class=c1>// compile error
+</span><span class=c1></span>    <span class=nx>b</span> <span class=o>:=</span> <span class=mi>9</span>
+    <span class=nx>TARGET</span><span class=p>:</span>
+    <span class=nx>b</span> <span class=o>+=</span> <span class=nx>a</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;a is %v *** b is %v&#34;</span><span class=p>,</span> <span class=nx>a</span><span class=p>,</span> <span class=nx>b</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div></div><div class=post-footer id=post-footer>
+<div class=post-info>
+<div class=post-info-line>
+<div class=post-info-mod>
+<span>更新于 2022-05-29</span>
+</div></div>
+<div class=post-info-line>
+<div class=post-info-md><span>
+<a class=link-to-markdown href=/2021/12/go-ch8/index.md target=_blank>阅读原始文档</a>
+</span></div>
+<div class=post-info-share>
+<span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=https://zchaoyu1126.github.io/2021/12/go-ch8/ data-title="Ch8 控制结构"><i class="fab fa-twitter fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=https://zchaoyu1126.github.io/2021/12/go-ch8/><i class="fab fa-facebook-square fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 Hacker News" data-sharer=hackernews data-url=https://zchaoyu1126.github.io/2021/12/go-ch8/ data-title="Ch8 控制结构"><i class="fab fa-hacker-news fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 Line" data-sharer=line data-url=https://zchaoyu1126.github.io/2021/12/go-ch8/ data-title="Ch8 控制结构"><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@6.20.0/icons/line.svg aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=https://zchaoyu1126.github.io/2021/12/go-ch8/ data-title="Ch8 控制结构" data-ralateuid=xxxx><i class="fab fa-weibo fa-fw" aria-hidden=true></i></a></span>
+</div>
+</div>
+</div>
+<div class=post-info-more>
+<section class=post-tags></section>
+<section>
+<span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span>
+</section>
+</div>
+<div class=post-nav><a href=/2021/12/go-ch7/ class=prev rel=prev title="Ch7 输入与输出"><i class="fas fa-angle-left fa-fw" aria-hidden=true></i>Ch7 输入与输出</a>
+<a href=/2021/12/go-ch9/ class=next rel=next title="Ch9 指针">Ch9 指针<i class="fas fa-angle-right fa-fw" aria-hidden=true></i></a></div>
+</div>
+<div id=comments><div id=valine class=comment></div><noscript>
+Please enable JavaScript to view the comments powered by <a href=https://valine.js.org/>Valine</a>.
+</noscript></div></article></div>
+</main><footer class=footer>
+<div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.91.2">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden=true></i> LoveIt</a>
+</div><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright fa-fw" aria-hidden=true></i><span itemprop=copyrightYear>2021 - 2022</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://github.com/zchaoyu1126 target=_blank>chao</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div>
+</div>
+</footer></div>
+<div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部>
+<i class="fas fa-arrow-up fa-fw" aria-hidden=true></i>
+</a><a href=# id=view-comments class=fixed-button title=查看评论>
+<i class="fas fa-comment fa-fw" aria-hidden=true></i>
+</a>
+</div><link rel=stylesheet href=/lib/valine/valine.min.css><script type=text/javascript src=https://cdn.jsdelivr.net/npm/valine@1.4.18/dist/Valine.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.3.1/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:50},comment:{valine:{appId:"QGzwQXOqs5JOhN4RGPOkR2mR-MdYXbMMI",appKey:"WBmoGyJtbqUswvfLh6L8iEBr",avatar:"mp",el:"#valine",emojiCDN:"https://cdn.jsdelivr.net/npm/emoji-datasource-google@14.0.0/img/google/64/",emojiMaps:{100:"1f4af.png",alien:"1f47d.png",anger:"1f4a2.png",angry:"1f620.png",anguished:"1f627.png",astonished:"1f632.png",black_heart:"1f5a4.png",blue_heart:"1f499.png",blush:"1f60a.png",bomb:"1f4a3.png",boom:"1f4a5.png",broken_heart:"1f494.png",brown_heart:"1f90e.png",clown_face:"1f921.png",cold_face:"1f976.png",cold_sweat:"1f630.png",confounded:"1f616.png",confused:"1f615.png",cry:"1f622.png",crying_cat_face:"1f63f.png",cupid:"1f498.png",dash:"1f4a8.png",disappointed:"1f61e.png",disappointed_relieved:"1f625.png",dizzy:"1f4ab.png",dizzy_face:"1f635.png",drooling_face:"1f924.png",exploding_head:"1f92f.png",expressionless:"1f611.png",face_vomiting:"1f92e.png",face_with_cowboy_hat:"1f920.png",face_with_hand_over_mouth:"1f92d.png",face_with_head_bandage:"1f915.png",face_with_monocle:"1f9d0.png",face_with_raised_eyebrow:"1f928.png",face_with_rolling_eyes:"1f644.png",face_with_symbols_on_mouth:"1f92c.png",face_with_thermometer:"1f912.png",fearful:"1f628.png",flushed:"1f633.png",frowning:"1f626.png",ghost:"1f47b.png",gift_heart:"1f49d.png",green_heart:"1f49a.png",grimacing:"1f62c.png",grin:"1f601.png",grinning:"1f600.png",hankey:"1f4a9.png",hear_no_evil:"1f649.png",heart:"2764-fe0f.png",heart_decoration:"1f49f.png",heart_eyes:"1f60d.png",heart_eyes_cat:"1f63b.png",heartbeat:"1f493.png",heartpulse:"1f497.png",heavy_heart_exclamation_mark_ornament:"2763-fe0f.png",hole:"1f573-fe0f.png",hot_face:"1f975.png",hugging_face:"1f917.png",hushed:"1f62f.png",imp:"1f47f.png",innocent:"1f607.png",japanese_goblin:"1f47a.png",japanese_ogre:"1f479.png",joy:"1f602.png",joy_cat:"1f639.png",kiss:"1f48b.png",kissing:"1f617.png",kissing_cat:"1f63d.png",kissing_closed_eyes:"1f61a.png",kissing_heart:"1f618.png",kissing_smiling_eyes:"1f619.png",laughing:"1f606.png",left_speech_bubble:"1f5e8-fe0f.png",love_letter:"1f48c.png",lying_face:"1f925.png",mask:"1f637.png",money_mouth_face:"1f911.png",nauseated_face:"1f922.png",nerd_face:"1f913.png",neutral_face:"1f610.png",no_mouth:"1f636.png",open_mouth:"1f62e.png",orange_heart:"1f9e1.png",partying_face:"1f973.png",pensive:"1f614.png",persevere:"1f623.png",pleading_face:"1f97a.png",pouting_cat:"1f63e.png",purple_heart:"1f49c.png",rage:"1f621.png",relaxed:"263a-fe0f.png",relieved:"1f60c.png",revolving_hearts:"1f49e.png",right_anger_bubble:"1f5ef-fe0f.png",robot_face:"1f916.png",rolling_on_the_floor_laughing:"1f923.png",scream:"1f631.png",scream_cat:"1f640.png",see_no_evil:"1f648.png",shushing_face:"1f92b.png",skull:"1f480.png",skull_and_crossbones:"2620-fe0f.png",sleeping:"1f634.png",sleepy:"1f62a.png",slightly_frowning_face:"1f641.png",slightly_smiling_face:"1f642.png",smile:"1f604.png",smile_cat:"1f638.png",smiley:"1f603.png",smiley_cat:"1f63a.png",smiling_face_with_3_hearts:"1f970.png",smiling_imp:"1f608.png",smirk:"1f60f.png",smirk_cat:"1f63c.png",sneezing_face:"1f927.png",sob:"1f62d.png",space_invader:"1f47e.png",sparkling_heart:"1f496.png",speak_no_evil:"1f64a.png",speech_balloon:"1f4ac.png","star-struck":"1f929.png",stuck_out_tongue:"1f61b.png",stuck_out_tongue_closed_eyes:"1f61d.png",stuck_out_tongue_winking_eye:"1f61c.png",sunglasses:"1f60e.png",sweat:"1f613.png",sweat_drops:"1f4a6.png",sweat_smile:"1f605.png",thinking_face:"1f914.png",thought_balloon:"1f4ad.png",tired_face:"1f62b.png",triumph:"1f624.png",two_hearts:"1f495.png",unamused:"1f612.png",upside_down_face:"1f643.png",weary:"1f629.png",white_frowning_face:"2639-fe0f.png",white_heart:"1f90d.png",wink:"1f609.png",woozy_face:"1f974.png",worried:"1f61f.png",yawning_face:"1f971.png",yellow_heart:"1f49b.png",yum:"1f60b.png",zany_face:"1f92a.png",zipper_mouth_face:"1f910.png",zzz:"1f4a4.png"},enableQQ:!1,highlight:!0,lang:"zh-CN",pageSize:10,placeholder:"你的评论 ...",recordIP:!0,serverURLs:"https://leancloud.hugoloveit.com",visitor:!0}}}</script><script type=text/javascript src=/js/theme.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/jquery@2.1.3/dist/jquery.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/jquery@2.1.3/dist/jquery.min.js></script>
+<script type=text/javascript src=https://cdn.jsdelivr.net/npm/jquery-backstretch@2.1.18/jquery.backstretch.min.js></script>
+<script type=text/javascript src=/js/custom.js></script></body>
+</html>
