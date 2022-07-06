@@ -68,10 +68,10 @@
 ## 6 补充
 
 - 资料索引：[https://learnku.com/go/docs](https://learnku.com/go/docs)
-
 - 李文周的博客：[https://www.liwenzhou.com/posts/Go/golang-menu/](https://www.liwenzhou.com/posts/Go/golang-menu/)
-
 - 公众号：脑子进煎鱼了，网管叨bi叨，Kratos开源社区
 - 项目：[https://juejin.cn/post/7038967716459315208](https://juejin.cn/post/7038967716459315208)
+-  [煎鱼 (eddycjy.com)](https://eddycjy.com/) 
+- Go修养之路：https://www.yuque.com/aceld/golang
 
 
