@@ -1,17 +1,17 @@
 # C++
 
 
-第一章概述：[传送门](http://http://note4u.top/2022/07/cpp-ch1/)
+第一章概述：[传送门](http://note4u.top/2022/07/cpp-ch1/)
 
-第二章类和对象的特性：[传送门](http://http://note4u.top/2022/07/cpp-ch2/)
+第二章类和对象的特性：[传送门](http://note4u.top/2022/07/cpp-ch2/)
 
-第三章类和对象：[传送门](http://http://note4u.top/2022/07/cpp-ch3/)
+第三章类和对象：[传送门](http://note4u.top/2022/07/cpp-ch3/)
 
-第四章运算符重载：[传送门](http://http://note4u.top/2022/07/cpp-ch4/)
+第四章运算符重载：[传送门](http://note4u.top/2022/07/cpp-ch4/)
 
-第五章继承与派生：[传送门](http://http://note4u.top/2022/07/cpp-ch5/)
+第五章继承与派生：[传送门](http://note4u.top/2022/07/cpp-ch5/)
 
-第六章多态性与虚函数：[传送门](http://http://note4u.top/2022/07/cpp-ch6/)
+第六章多态性与虚函数：[传送门](http://note4u.top/2022/07/cpp-ch6/)
 
 第七章输入输出流：敬请期待
 
