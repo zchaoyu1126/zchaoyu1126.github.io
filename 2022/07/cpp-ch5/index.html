@@ -1,0 +1,696 @@
+<!doctype html><html lang=zh-cn>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=robots content="noodp">
+<title>第五章 继承与派生 - Chao's Blog</title><meta name=Description content="程序猿的学习和日常"><meta property="og:title" content="第五章 继承与派生">
+<meta property="og:description" content="继承与派生 继承，是两个类之间的关系。派生，是基类创建新类的过程。 继承的传递性将增加类之间的耦合度，应防止滥用继承。 5.1 派生类中的基类成员的访问">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://zchaoyu1126.github.io/2022/07/cpp-ch5/"><meta property="og:image" content="https://zchaoyu1126.github.io/logo.png"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2022-07-11T11:25:18+08:00">
+<meta property="article:modified_time" content="2022-07-11T11:25:18+08:00"><meta property="og:site_name" content="Chao's Blog">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image content="https://zchaoyu1126.github.io/logo.png">
+<meta name=twitter:title content="第五章 继承与派生">
+<meta name=twitter:description content="继承与派生 继承，是两个类之间的关系。派生，是基类创建新类的过程。 继承的传递性将增加类之间的耦合度，应防止滥用继承。 5.1 派生类中的基类成员的访问">
+<meta name=application-name content="Chao's Blog">
+<meta name=apple-mobile-web-app-title content="Chao's Blog"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://zchaoyu1126.github.io/2022/07/cpp-ch5/><link rel=prev href=https://zchaoyu1126.github.io/2022/07/cpp-ch4/><link rel=next href=https://zchaoyu1126.github.io/2022/07/cpp-ch6/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css as=style onload="this.onload=null,this.rel='stylesheet'">
+<noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css></noscript><link rel=preload href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css as=style onload="this.onload=null,this.rel='stylesheet'">
+<noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"第五章 继承与派生","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/zchaoyu1126.github.io\/2022\/07\/cpp-ch5\/"},"image":[{"@type":"ImageObject","url":"https:\/\/zchaoyu1126.github.io\/images\/Apple-Devices-Preview.png","width":3200,"height":2048}],"genre":"posts","wordcount":2127,"url":"https:\/\/zchaoyu1126.github.io\/2022\/07\/cpp-ch5\/","datePublished":"2022-07-11T11:25:18+08:00","dateModified":"2022-07-11T11:25:18+08:00","license":"This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher":{"@type":"Organization","name":"xxxx","logo":{"@type":"ImageObject","url":"https:\/\/zchaoyu1126.github.io\/images\/avatar.png","width":528,"height":560}},"author":{"@type":"Person","name":"chao"},"description":""}</script></head>
+<body data-header-desktop=fixed data-header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':'auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark')&&document.body.setAttribute('theme','dark')</script>
+<div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title="Chao's Blog"><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw" aria-hidden=true></i></span>Chao's Blog</a>
+</div>
+<div class=menu>
+<div class=menu-inner><a class=menu-item href=/posts/> 文章
+</a><a class=menu-item href=/tags/> 标签
+</a><a class=menu-item href=/categories/> 分类
+</a>
+<div class=dropdown>
+<a href=javascript:void(0); class="menu-item menu-more dropbtn" title> 归档
+</a>
+<div class="menu-more-content dropdown-content"><a href=/documentation/cpp/ title><i class="fa fa-asterisk" aria-hidden=true></i> C++ </a><a href=/documentation/golang/ title><i class="fa fa-book" aria-hidden=true></i> Golang </a><a href=/documentation/csbase/ title><i class="fa fa-laptop" aria-hidden=true></i> 计算机基础 </a><a href=/documentation/algorithm/ title><i class="fa fa-bookmark" aria-hidden=true></i> 数据结构与算法 </a></div>
+</div>
+<a class=menu-item href=/about/> 关于
+</a><a class=menu-item href=https://github.com/zchaoyu1126 title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw" aria-hidden=true></i>
+</a><span class="menu-item delimiter"></span><a href=javascript:void(0); class="menu-item language" title=选择语言>简体中文<i class="fas fa-chevron-right fa-fw" aria-hidden=true></i>
+<select class=language-select id=language-select-desktop onchange="location=this.value"><option value=/2022/07/cpp-ch5/ selected>简体中文</option></select>
+</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+</div>
+</div>
+</header><header class=mobile id=header-mobile>
+<div class=header-container>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title="Chao's Blog"><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw" aria-hidden=true></i></span>Chao's Blog</a>
+</div>
+<div class=menu-toggle id=menu-toggle-mobile>
+<span></span><span></span><span></span>
+</div>
+</div>
+<div class=menu id=menu-mobile><a class=menu-item href=/posts/> 文章
+</a><a class=menu-item href=/tags/> 标签
+</a><a class=menu-item href=/categories/> 分类
+</a>
+<div class=dropdown>
+<a href=javascript:void(0); class="menu-item menu-more dropbtn" title> 归档
+</a>
+<div class="menu-more-content dropdown-content"><a href=/documentation/cpp/ title><i class="fa fa-asterisk" aria-hidden=true></i> C++ </a><a href=/documentation/golang/ title><i class="fa fa-book" aria-hidden=true></i> Golang </a><a href=/documentation/csbase/ title><i class="fa fa-laptop" aria-hidden=true></i> 计算机基础 </a><a href=/documentation/algorithm/ title><i class="fa fa-bookmark" aria-hidden=true></i> 数据结构与算法 </a></div>
+</div>
+<a class=menu-item href=/about/> 关于
+</a><a class=menu-item href=https://github.com/zchaoyu1126 title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class=menu-item title=选择语言>简体中文<i class="fas fa-chevron-right fa-fw" aria-hidden=true></i>
+<select class=language-select onchange="location=this.value"><option value=/2022/07/cpp-ch5/ selected>简体中文</option></select>
+</a></div>
+</div>
+</header><main class=main>
+<div class=container><div class=toc id=toc-auto>
+<h2 class=toc-title>目录</h2>
+<div class=toc-content id=toc-content-auto></div>
+</div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">第五章 继承与派生</h1><div class=post-meta>
+<div class=post-meta-line><span class=post-author><a href=https://github.com/zchaoyu1126 title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw" aria-hidden=true></i>chao</a></span>&nbsp;<span class=post-category>收录于 <a href=/categories/c++/><i class="far fa-folder fa-fw" aria-hidden=true></i>C++</a></span></div>
+<div class=post-meta-line><i class="far fa-calendar-alt fa-fw" aria-hidden=true></i>&nbsp;<time datetime=2022-07-11>2022-07-11</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden=true></i>&nbsp;约 2127 字&nbsp;
+<i class="far fa-clock fa-fw" aria-hidden=true></i>&nbsp;预计阅读 5 分钟&nbsp;<span id=/2022/07/cpp-ch5/ class=leancloud_visitors data-flag-title="第五章 继承与派生">
+<i class="far fa-eye fa-fw" aria-hidden=true></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+</span>&nbsp;</div>
+</div><div class="details toc" id=toc-static data-kept>
+<div class="details-summary toc-title">
+<span>目录</span>
+<span><i class="details-icon fas fa-angle-right" aria-hidden=true></i></span>
+</div>
+<div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents>
+<ul>
+<li>
+<ul>
+<li><a href=#51-派生类中的基类成员的访问权限>5.1 派生类中的基类成员的访问权限</a></li>
+<li><a href=#52-派生类的构造与析构>5.2 派生类的构造与析构</a></li>
+<li><a href=#53-多继承>5.3 多继承</a></li>
+<li><a href=#54-虚基类>5.4 虚基类</a></li>
+</ul>
+</li>
+</ul>
+</nav></div>
+</div><div class=content id=content><div class="details admonition info open">
+<div class="details-summary admonition-title">
+<i class="icon fas fa-info-circle fa-fw" aria-hidden=true></i>继承与派生<i class="details-icon fas fa-angle-right fa-fw" aria-hidden=true></i>
+</div>
+<div class=details-content>
+<div class=admonition-content><p>继承，是两个类之间的关系。派生，是基类创建新类的过程。</p>
+<p>继承的传递性将增加类之间的耦合度，应防止滥用继承。</p>
+</div>
+</div>
+</div>
+<h3 id=51-派生类中的基类成员的访问权限>5.1 派生类中的基类成员的访问权限</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=c1>// 派生类的定义格式如下：
+</span><span class=c1></span><span class=k>class</span> <span class=err>&lt;派生类名</span><span class=o>&gt;:&lt;</span><span class=err>继承方式</span><span class=o>&gt;</span> <span class=o>&lt;</span><span class=err>基类名</span><span class=o>&gt;</span> <span class=p>{</span>
+    <span class=o>&lt;</span><span class=err>派生类新定义成员</span><span class=o>&gt;</span>
+<span class=p>};</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>类的继承方式有public(公有继承)、protected(保护继承)和private(私有继承)三种，<strong>默认情况下为私有继承。</strong></p>
+<p>派生类继承了<strong>基类的全部成员变量，以及除了构造、析构函数之外的全部成员函数</strong>，它们在派生类中的访问属性由继承方式控制。</p>
+<figure><a class=lightgallery href=/2022/07/cpp-ch5/img1.png title=/2022/07/cpp-ch5/img1.png data-thumbnail=/2022/07/cpp-ch5/img1.png data-sub-html="<h2>访问权限</h2>">
+<img class=lazyload src=/svg/loading.min.svg data-src=/2022/07/cpp-ch5/img1.png data-srcset="/2022/07/cpp-ch5/img1.png, /2022/07/cpp-ch5/img1.png 1.5x, /2022/07/cpp-ch5/img1.png 2x" data-sizes=auto alt=/2022/07/cpp-ch5/img1.png width=921 height=435>
+</a><figcaption class=image-caption>访问权限</figcaption>
+</figure>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
+</span><span class=cp></span><span class=k>using</span> <span class=k>namespace</span> <span class=n>std</span><span class=p>;</span>
+
+<span class=k>class</span> <span class=nc>Point</span> <span class=p>{</span>
+<span class=k>public</span><span class=o>:</span>
+    <span class=kt>void</span> <span class=n>InitP</span><span class=p>(</span><span class=kt>float</span> <span class=n>xx</span> <span class=o>=</span> <span class=mi>0</span><span class=p>,</span> <span class=kt>float</span> <span class=n>yy</span> <span class=o>=</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span>
+        <span class=n>X</span> <span class=o>=</span> <span class=n>xx</span><span class=p>;</span>
+        <span class=n>Y</span> <span class=o>=</span> <span class=n>yy</span><span class=p>;</span>
+    <span class=p>}</span>
+    <span class=kt>void</span> <span class=nf>Move</span><span class=p>(</span><span class=kt>float</span> <span class=n>xOff</span><span class=p>,</span> <span class=kt>float</span> <span class=n>yOff</span><span class=p>)</span> <span class=p>{</span>
+        <span class=n>X</span> <span class=o>+=</span> <span class=n>xOff</span><span class=p>;</span>
+        <span class=n>Y</span> <span class=o>+=</span> <span class=n>yOff</span><span class=p>;</span>
+    <span class=p>}</span>
+    <span class=kt>float</span> <span class=nf>GetX</span><span class=p>()</span> <span class=p>{</span>
+        <span class=k>return</span> <span class=n>X</span><span class=p>;</span>
+    <span class=p>}</span>
+    <span class=kt>float</span> <span class=nf>GetY</span><span class=p>()</span> <span class=p>{</span>
+        <span class=k>return</span> <span class=n>Y</span><span class=p>;</span>
+    <span class=p>}</span>
+<span class=k>private</span><span class=o>:</span>
+    <span class=kt>float</span> <span class=n>X</span><span class=p>,</span> <span class=n>Y</span><span class=p>;</span>
+<span class=p>};</span>
+
+<span class=k>class</span> <span class=nc>Rectangle</span><span class=o>:</span> <span class=k>public</span> <span class=n>Point</span> <span class=p>{</span>
+<span class=k>public</span><span class=o>:</span>
+    <span class=kt>void</span> <span class=n>InitR</span><span class=p>(</span><span class=kt>float</span> <span class=n>x</span><span class=p>,</span> <span class=kt>float</span> <span class=n>y</span><span class=p>,</span> <span class=kt>float</span> <span class=n>w</span><span class=p>,</span> <span class=kt>float</span> <span class=n>h</span><span class=p>)</span> <span class=p>{</span>
+        <span class=n>InitP</span><span class=p>(</span><span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>);</span>
+        <span class=n>W</span> <span class=o>=</span> <span class=n>w</span><span class=p>;</span>
+        <span class=n>H</span> <span class=o>=</span> <span class=n>h</span><span class=p>;</span>
+    <span class=p>}</span>
+    <span class=kt>float</span> <span class=nf>GetH</span><span class=p>()</span> <span class=p>{</span>
+        <span class=k>return</span> <span class=n>H</span><span class=p>;</span>
+    <span class=p>}</span>
+    <span class=kt>float</span> <span class=nf>GetW</span><span class=p>()</span> <span class=p>{</span>
+        <span class=k>return</span> <span class=n>W</span><span class=p>;</span>
+    <span class=p>}</span>
+<span class=k>private</span><span class=o>:</span>
+    <span class=kt>float</span> <span class=n>W</span><span class=p>,</span> <span class=n>H</span><span class=p>;</span>
+<span class=p>};</span>
+
+<span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=n>Rectangle</span> <span class=n>rect</span><span class=p>;</span>
+    <span class=n>rect</span><span class=p>.</span><span class=n>InitR</span><span class=p>(</span><span class=mi>2</span><span class=p>,</span> <span class=mi>3</span><span class=p>,</span> <span class=mi>20</span><span class=p>,</span> <span class=mi>10</span><span class=p>);</span>
+    <span class=n>rect</span><span class=p>.</span><span class=n>Move</span><span class=p>(</span><span class=mi>3</span><span class=p>,</span> <span class=mi>2</span><span class=p>);</span>
+    <span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;The date of rect(X,Y,W,H):&#34;</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span>
+    <span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=n>rect</span><span class=p>.</span><span class=n>GetX</span><span class=p>()</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;,&#34;</span> <span class=o>&lt;&lt;</span> <span class=n>rect</span><span class=p>.</span><span class=n>GetY</span><span class=p>()</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;,&#34;</span> <span class=o>&lt;&lt;</span> <span class=n>rect</span><span class=p>.</span><span class=n>GetW</span><span class=p>()</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;,&#34;</span> <span class=o>&lt;&lt;</span> <span class=n>rect</span><span class=p>.</span><span class=n>GetH</span><span class=p>()</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span>
+	<span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+<span class=p>}</span>
+<span class=c1>// The date of rect(X,Y,W,H):
+</span><span class=c1>// 5,5,20,10
+</span></code></pre></td></tr></table>
+</div>
+</div><h3 id=52-派生类的构造与析构>5.2 派生类的构造与析构</h3>
+<p>构造函数：基类的构造函数→成员对象构造函数→派生类的构造函数。</p>
+<p>析构函数：相反。</p>
+<div class="details admonition info open">
+<div class="details-summary admonition-title">
+<i class="icon fas fa-info-circle fa-fw" aria-hidden=true></i>构造函数<i class="details-icon fas fa-angle-right fa-fw" aria-hidden=true></i>
+</div>
+<div class=details-content>
+<div class=admonition-content><p>当基类中没有显式定义构造函数，或定义了无参构造函数时，派生类构造函数的初始化表可以省略对基类构造函数的调用，而采用隐含调用。</p>
+<p>当基类的构造函数使用一个或多个参数时，派生类必须定义构造函数，提供将参数传递给基类构造函数的途径。这时，派生类构造函数的函数体可能为空，仅起到参数传递作用。</p>
+<p>如果在基类中既定义了无参构造函数，又定义了带参构造函数，则在定义派生类构造函数时，既可以包含基类构造函数和参数，也可以不包含基类构造函数。</p>
+</div>
+</div>
+</div>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
+</span><span class=cp></span><span class=k>using</span> <span class=k>namespace</span> <span class=n>std</span><span class=p>;</span>
+
+<span class=k>class</span> <span class=nc>Base</span> <span class=p>{</span>
+<span class=k>public</span><span class=o>:</span>
+    <span class=n>Base</span><span class=p>()</span> <span class=p>{</span>
+        <span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;Base Constructor1&#34;</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span> 
+        <span class=n>x</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>y</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> 
+    <span class=p>}</span>
+    <span class=n>Base</span><span class=p>(</span><span class=kt>int</span> <span class=n>x</span><span class=p>,</span> <span class=kt>int</span> <span class=n>y</span><span class=p>)</span> <span class=p>{</span> 
+        <span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;Base Constructor2&#34;</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span> 
+        <span class=k>this</span><span class=o>-&gt;</span><span class=n>x</span> <span class=o>=</span> <span class=n>x</span><span class=p>;</span> <span class=k>this</span><span class=o>-&gt;</span><span class=n>y</span> <span class=o>=</span> <span class=n>y</span><span class=p>;</span> 
+    <span class=p>}</span>
+    <span class=o>~</span><span class=n>Base</span><span class=p>()</span> <span class=p>{</span> <span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;Deconstructor&#34;</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span> <span class=p>}</span>
+    <span class=kt>int</span> <span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>;</span>
+<span class=p>};</span>
+
+<span class=k>class</span> <span class=nc>B1</span><span class=o>:</span><span class=k>public</span> <span class=n>Base</span><span class=p>{</span>
+<span class=k>public</span><span class=o>:</span>
+    <span class=n>B1</span><span class=p>()</span> <span class=p>{</span> <span class=n>z</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=p>}</span>
+    <span class=kt>int</span> <span class=n>z</span><span class=p>;</span>
+<span class=p>};</span>
+
+<span class=k>class</span> <span class=nc>B2</span><span class=o>:</span><span class=k>public</span> <span class=n>Base</span><span class=p>{</span>
+<span class=k>public</span><span class=o>:</span>
+    <span class=n>B2</span><span class=p>(</span><span class=kt>int</span> <span class=n>x</span><span class=p>,</span> <span class=kt>int</span> <span class=n>y</span><span class=p>,</span> <span class=kt>int</span> <span class=n>z</span><span class=p>)</span> <span class=o>:</span> <span class=n>Base</span><span class=p>(</span><span class=n>x</span><span class=p>,</span><span class=n>y</span><span class=p>)</span> <span class=p>{</span>
+        <span class=k>this</span><span class=o>-&gt;</span><span class=n>z</span> <span class=o>=</span> <span class=n>z</span><span class=p>;</span>
+    <span class=p>}</span>
+    <span class=c1>// 注释里这样做是不对的
+</span><span class=c1></span>    <span class=c1>// B2(int x, int y, int z) {
+</span><span class=c1></span>    <span class=c1>//     Base(x, y);
+</span><span class=c1></span>    <span class=c1>//     this-&gt;z = z;
+</span><span class=c1></span>    <span class=c1>// }
+</span><span class=c1></span>    <span class=kt>int</span> <span class=n>z</span><span class=p>;</span>
+<span class=p>};</span>
+
+<span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=n>B1</span> <span class=n>b1</span><span class=p>;</span>
+    <span class=n>B2</span> <span class=n>b2</span><span class=p>(</span><span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=mi>3</span><span class=p>);</span>
+    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=53-多继承>5.3 多继承</h3>
+<p><strong>5.3.1 构造函数调用顺序</strong></p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=o>&lt;</span><span class=err>派生类名</span><span class=o>&gt;</span><span class=p>(</span><span class=o>&lt;</span><span class=err>总参数表</span><span class=o>&gt;</span><span class=p>)</span><span class=o>:&lt;</span><span class=err>基类名</span><span class=mi>1</span><span class=o>&gt;</span><span class=p>(</span><span class=o>&lt;</span><span class=err>参数表</span><span class=mi>1</span><span class=o>&gt;</span><span class=p>)</span><span class=err>，…，</span><span class=o>&lt;</span> <span class=err>基类名</span><span class=n>n</span><span class=o>&gt;</span> <span class=p>(</span><span class=o>&lt;</span><span class=err>参数表</span><span class=n>n</span><span class=o>&gt;</span><span class=p>)</span> <span class=p>{</span>
+    <span class=o>&lt;</span><span class=err>派生类数据成员的初始化</span><span class=o>&gt;</span>
+<span class=p>};</span>
+<span class=o>&lt;</span><span class=err>总参数表</span><span class=o>&gt;</span><span class=err>必须包含完成所有基类初始化所需的参数</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>先调用所有基类的构造函数，再调用对象成员类构造函数，最后调用派生类的构造函数。</li>
+<li>处于同一层次的各基类构造函数的调用顺序取决于定义派生类时所指定的基类顺序，与派生类构造函数中所定义的成员初始化列表顺序无关。</li>
+<li>如果有多个成员类对象，则构造函数的调用顺序是对象在类中被声明的顺序，而不是它们出现在成员初始化表中的顺序。</li>
+<li>析构函数的调用顺序与构造函数的调用顺序相反</li>
+</ul>
+<p><strong>5.4.2 多重继承引起的二义性问题</strong></p>
+<ul>
+<li>两个基类有同名成员（编译出错）</li>
+<li>两个基类和派生类三者都有同名成员（派生类定义的新成员会覆盖基类成员）</li>
+<li>类C继承的类A、类B是从同一个基类派生的（会有两份拷贝）</li>
+</ul>
+<h3 id=54-虚基类>5.4 虚基类</h3>
+<p>为避免对基类成员访问的二义性问题，可以将直接基类（如A、B）的共同基类（如N）设置为虚基类，这样共同基类（N）在内存中只有一个副本存在 。</p>
+<div class="details admonition info open">
+<div class="details-summary admonition-title">
+<i class="icon fas fa-info-circle fa-fw" aria-hidden=true></i>虚拟类的理解<i class="details-icon fas fa-angle-right fa-fw" aria-hidden=true></i>
+</div>
+<div class=details-content>
+<div class=admonition-content>从最底层开始到最顶上的基类，全部的继承路径中只有一个虚基类成员的副本</div>
+</div>
+</div>
+<p><strong>5.4.1 虚基类的定义格式</strong></p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=k>class</span> <span class=err>&lt;派生类名</span><span class=o>&gt;:</span><span class=k>virtual</span> <span class=o>&lt;</span><span class=err>继承方式</span><span class=o>&gt;&lt;</span><span class=err>共同基类名</span><span class=o>&gt;</span><span class=p>;</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=c1>// 如果去掉virtual，会调用输出两次Constructor Base
+</span><span class=c1></span><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
+</span><span class=cp></span><span class=k>using</span> <span class=k>namespace</span> <span class=n>std</span><span class=p>;</span>
+
+<span class=k>class</span> <span class=nc>Base</span> <span class=p>{</span>
+<span class=k>public</span><span class=o>:</span>
+    <span class=n>Base</span><span class=p>()</span> <span class=p>{</span>
+        <span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;Constructor Base&#34;</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span>
+    <span class=p>}</span>
+    <span class=kt>int</span> <span class=n>x</span><span class=p>;</span>
+<span class=p>};</span>
+
+<span class=k>class</span> <span class=nc>A</span><span class=o>:</span><span class=k>virtual</span> <span class=k>public</span> <span class=n>Base</span> <span class=p>{</span>
+<span class=k>public</span><span class=o>:</span>
+    <span class=n>A</span><span class=p>()</span> <span class=p>{</span>
+        <span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;Constructor A&#34;</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span>
+    <span class=p>}</span>
+<span class=p>};</span>
+
+<span class=k>class</span> <span class=nc>B</span><span class=o>:</span><span class=k>virtual</span> <span class=k>public</span> <span class=n>Base</span> <span class=p>{</span>
+<span class=k>public</span><span class=o>:</span>
+    <span class=n>B</span><span class=p>()</span> <span class=p>{</span>
+        <span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;Constructor B&#34;</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span>
+    <span class=p>}</span>
+<span class=p>};</span>
+
+<span class=k>class</span> <span class=nc>C</span><span class=o>:</span><span class=k>public</span> <span class=n>A</span><span class=p>,</span> <span class=n>B</span> <span class=p>{</span>
+<span class=k>public</span><span class=o>:</span>
+    <span class=n>C</span><span class=p>()</span> <span class=p>{</span>
+        <span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;Constructor C&#34;</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span>
+    <span class=p>}</span>
+<span class=p>};</span>
+
+<span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=n>C</span> <span class=n>c</span><span class=p>;</span>
+    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+<span class=p>}</span>
+<span class=c1>// Constructor Base
+</span><span class=c1>// Constructor A
+</span><span class=c1>// Constructor B
+</span><span class=c1>// Constructor C
+</span></code></pre></td></tr></table>
+</div>
+</div><p><strong>5.4.2 虚基类的构造函数调用顺序</strong></p>
+<ul>
+<li>先调用虚基类的构造函数，再调用非虚基类的构造函数。</li>
+<li>若同一层次中包含多个虚基类，其调用顺序为定义时的顺序。</li>
+<li>若虚基类由非虚基类派生而来，则仍按先调用基类构造函数，再调用派生类构造函数的顺序。</li>
+</ul>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
+</span><span class=cp></span><span class=k>using</span> <span class=k>namespace</span> <span class=n>std</span><span class=p>;</span>
+
+<span class=k>class</span> <span class=nc>Base1</span> <span class=p>{</span>
+<span class=k>public</span><span class=o>:</span>
+    <span class=n>Base1</span><span class=p>()</span> <span class=p>{</span>
+        <span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;class Base1&#34;</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span>
+    <span class=p>}</span>
+<span class=p>};</span>
+
+<span class=k>class</span> <span class=nc>Base2</span> <span class=p>{</span>
+<span class=k>public</span><span class=o>:</span>
+    <span class=n>Base2</span><span class=p>()</span> <span class=p>{</span>
+        <span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;class Base2&#34;</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span>
+    <span class=p>}</span>
+<span class=p>};</span>
+
+<span class=k>class</span> <span class=nc>Level1</span><span class=o>:</span><span class=k>public</span> <span class=n>Base2</span><span class=p>,</span> <span class=k>virtual</span> <span class=k>public</span> <span class=n>Base1</span> <span class=p>{</span>
+<span class=k>public</span><span class=o>:</span>
+    <span class=n>Level1</span><span class=p>()</span> <span class=p>{</span>
+        <span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;class level1&#34;</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span>
+    <span class=p>}</span>
+<span class=p>};</span>
+
+<span class=k>class</span> <span class=nc>Level2</span><span class=o>:</span><span class=k>public</span> <span class=n>Base2</span><span class=p>,</span> <span class=k>virtual</span> <span class=k>public</span> <span class=n>Base1</span> <span class=p>{</span>
+<span class=k>public</span><span class=o>:</span>
+    <span class=n>Level2</span><span class=p>()</span> <span class=p>{</span>
+        <span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;class level2&#34;</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span>
+    <span class=p>}</span>
+<span class=p>};</span>
+
+<span class=k>class</span> <span class=nc>TopLevel</span><span class=o>:</span><span class=k>public</span> <span class=n>Level1</span><span class=p>,</span> <span class=k>virtual</span> <span class=k>public</span> <span class=n>Level2</span> <span class=p>{</span>
+<span class=k>public</span><span class=o>:</span>
+    <span class=n>TopLevel</span><span class=p>()</span> <span class=p>{</span>
+        <span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;class TopLevel&#34;</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span>
+    <span class=p>}</span>
+<span class=p>};</span>
+
+<span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=n>TopLevel</span> <span class=n>tl</span><span class=p>;</span>
+    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+<span class=p>}</span>
+<span class=c1>// class Base1  toplevel-&gt;level2-&gt;base1
+</span><span class=c1>// class Base2  toplevel-&gt;level2-&gt;base2
+</span><span class=c1>// class level2 toplevel-&gt;level2
+</span><span class=c1>// class Base2  toplevel-&gt;level1-&gt;base2
+</span><span class=c1>// class level1 toplevel-&gt;level1
+</span><span class=c1>// class TopLevel toplevel
+</span></code></pre></td></tr></table>
+</div>
+</div><p><strong>5.4.3 虚基类的初始化</strong></p>
+<p>如果在虚基类中定义了带参数的构造函数，则要在其<strong>所有派生类（包括直接派生类或间接派生类）中</strong>，通过构造函数的<strong>初始化表</strong>对虚基类进行初始化。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
+</span><span class=cp></span><span class=k>using</span> <span class=k>namespace</span> <span class=n>std</span><span class=p>;</span>
+
+<span class=k>class</span> <span class=nc>A</span> <span class=p>{</span>
+<span class=k>public</span><span class=o>:</span>
+    <span class=n>A</span><span class=p>(</span><span class=kt>int</span> <span class=n>i</span><span class=p>){}</span>
+<span class=p>};</span>
+
+<span class=k>class</span> <span class=nc>B</span><span class=o>:</span><span class=k>virtual</span> <span class=k>public</span> <span class=n>A</span> <span class=p>{</span>
+<span class=k>public</span><span class=o>:</span>
+    <span class=n>B</span><span class=p>(</span><span class=kt>int</span> <span class=n>n</span><span class=p>)</span><span class=o>:</span><span class=n>A</span><span class=p>(</span><span class=n>n</span><span class=p>){}</span>
+<span class=p>};</span>
+
+<span class=k>class</span> <span class=nc>C</span><span class=o>:</span><span class=k>virtual</span> <span class=k>public</span> <span class=n>A</span> <span class=p>{</span>
+<span class=k>public</span><span class=o>:</span>
+    <span class=n>C</span><span class=p>(</span><span class=kt>int</span> <span class=n>n</span><span class=p>)</span><span class=o>:</span><span class=n>A</span><span class=p>(</span><span class=n>n</span><span class=p>){}</span>
+<span class=p>};</span>
+
+<span class=k>class</span> <span class=nc>D</span><span class=o>:</span><span class=k>public</span> <span class=n>B</span><span class=p>,</span> <span class=k>public</span> <span class=n>C</span> <span class=p>{</span>
+<span class=k>public</span><span class=o>:</span>
+    <span class=n>D</span><span class=p>(</span><span class=kt>int</span> <span class=n>n</span><span class=p>)</span><span class=o>:</span><span class=n>A</span><span class=p>(</span><span class=n>n</span><span class=p>),</span><span class=n>B</span><span class=p>(</span><span class=n>n</span><span class=p>),</span><span class=n>C</span><span class=p>(</span><span class=n>n</span><span class=p>){}</span>
+<span class=p>};</span>
+
+<span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=n>D</span> <span class=n>d</span><span class=p>(</span><span class=mi>5</span><span class=p>);</span>
+    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+<span class=p>}</span> 
+</code></pre></td></tr></table>
+</div>
+</div><div class="details admonition question open">
+<div class="details-summary admonition-title">
+<i class="icon fas fa-question-circle fa-fw" aria-hidden=true></i>为什么?<i class="details-icon fas fa-angle-right fa-fw" aria-hidden=true></i>
+</div>
+<div class=details-content>
+<div class=admonition-content><p>不是很能理解为什么要这么做，每个直接或间接派生类，都要调用一次。</p>
+<p>编译器会自动优化，B，C的构造函数中不会再次调用A类的构造函数。</p>
+</div>
+</div>
+</div>
+</div><div class=post-footer id=post-footer>
+<div class=post-info>
+<div class=post-info-line>
+<div class=post-info-mod>
+<span>更新于 2022-07-11</span>
+</div></div>
+<div class=post-info-line>
+<div class=post-info-md><span>
+<a class=link-to-markdown href=/2022/07/cpp-ch5/index.md target=_blank>阅读原始文档</a>
+</span></div>
+<div class=post-info-share>
+<span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=https://zchaoyu1126.github.io/2022/07/cpp-ch5/ data-title="第五章 继承与派生"><i class="fab fa-twitter fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=https://zchaoyu1126.github.io/2022/07/cpp-ch5/><i class="fab fa-facebook-square fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 Hacker News" data-sharer=hackernews data-url=https://zchaoyu1126.github.io/2022/07/cpp-ch5/ data-title="第五章 继承与派生"><i class="fab fa-hacker-news fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 Line" data-sharer=line data-url=https://zchaoyu1126.github.io/2022/07/cpp-ch5/ data-title="第五章 继承与派生"><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@6.20.0/icons/line.svg aria-hidden=true></i></a><a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=https://zchaoyu1126.github.io/2022/07/cpp-ch5/ data-title="第五章 继承与派生" data-ralateuid=xxxx><i class="fab fa-weibo fa-fw" aria-hidden=true></i></a></span>
+</div>
+</div>
+</div>
+<div class=post-info-more>
+<section class=post-tags></section>
+<section>
+<span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span>
+</section>
+</div>
+<div class=post-nav><a href=/2022/07/cpp-ch4/ class=prev rel=prev title="第四章 运算符重载"><i class="fas fa-angle-left fa-fw" aria-hidden=true></i>第四章 运算符重载</a>
+<a href=/2022/07/cpp-ch6/ class=next rel=next title="第六章 多态性与虚函数">第六章 多态性与虚函数<i class="fas fa-angle-right fa-fw" aria-hidden=true></i></a></div>
+</div>
+<div id=comments><div id=valine class=comment></div><noscript>
+Please enable JavaScript to view the comments powered by <a href=https://valine.js.org/>Valine</a>.
+</noscript></div></article></div>
+</main><footer class=footer>
+<div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.91.2">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden=true></i> LoveIt</a>
+</div><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright fa-fw" aria-hidden=true></i><span itemprop=copyrightYear>2021 - 2022</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://github.com/zchaoyu1126 target=_blank>chao</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div>
+</div>
+</footer></div>
+<div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部>
+<i class="fas fa-arrow-up fa-fw" aria-hidden=true></i>
+</a><a href=# id=view-comments class=fixed-button title=查看评论>
+<i class="fas fa-comment fa-fw" aria-hidden=true></i>
+</a>
+</div><link rel=stylesheet href=/lib/valine/valine.min.css><script type=text/javascript src=https://cdn.jsdelivr.net/npm/valine@1.4.18/dist/Valine.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.3.1/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:50},comment:{valine:{appId:"QGzwQXOqs5JOhN4RGPOkR2mR-MdYXbMMI",appKey:"WBmoGyJtbqUswvfLh6L8iEBr",avatar:"mp",el:"#valine",emojiCDN:"https://cdn.jsdelivr.net/npm/emoji-datasource-google@14.0.0/img/google/64/",emojiMaps:{100:"1f4af.png",alien:"1f47d.png",anger:"1f4a2.png",angry:"1f620.png",anguished:"1f627.png",astonished:"1f632.png",black_heart:"1f5a4.png",blue_heart:"1f499.png",blush:"1f60a.png",bomb:"1f4a3.png",boom:"1f4a5.png",broken_heart:"1f494.png",brown_heart:"1f90e.png",clown_face:"1f921.png",cold_face:"1f976.png",cold_sweat:"1f630.png",confounded:"1f616.png",confused:"1f615.png",cry:"1f622.png",crying_cat_face:"1f63f.png",cupid:"1f498.png",dash:"1f4a8.png",disappointed:"1f61e.png",disappointed_relieved:"1f625.png",dizzy:"1f4ab.png",dizzy_face:"1f635.png",drooling_face:"1f924.png",exploding_head:"1f92f.png",expressionless:"1f611.png",face_vomiting:"1f92e.png",face_with_cowboy_hat:"1f920.png",face_with_hand_over_mouth:"1f92d.png",face_with_head_bandage:"1f915.png",face_with_monocle:"1f9d0.png",face_with_raised_eyebrow:"1f928.png",face_with_rolling_eyes:"1f644.png",face_with_symbols_on_mouth:"1f92c.png",face_with_thermometer:"1f912.png",fearful:"1f628.png",flushed:"1f633.png",frowning:"1f626.png",ghost:"1f47b.png",gift_heart:"1f49d.png",green_heart:"1f49a.png",grimacing:"1f62c.png",grin:"1f601.png",grinning:"1f600.png",hankey:"1f4a9.png",hear_no_evil:"1f649.png",heart:"2764-fe0f.png",heart_decoration:"1f49f.png",heart_eyes:"1f60d.png",heart_eyes_cat:"1f63b.png",heartbeat:"1f493.png",heartpulse:"1f497.png",heavy_heart_exclamation_mark_ornament:"2763-fe0f.png",hole:"1f573-fe0f.png",hot_face:"1f975.png",hugging_face:"1f917.png",hushed:"1f62f.png",imp:"1f47f.png",innocent:"1f607.png",japanese_goblin:"1f47a.png",japanese_ogre:"1f479.png",joy:"1f602.png",joy_cat:"1f639.png",kiss:"1f48b.png",kissing:"1f617.png",kissing_cat:"1f63d.png",kissing_closed_eyes:"1f61a.png",kissing_heart:"1f618.png",kissing_smiling_eyes:"1f619.png",laughing:"1f606.png",left_speech_bubble:"1f5e8-fe0f.png",love_letter:"1f48c.png",lying_face:"1f925.png",mask:"1f637.png",money_mouth_face:"1f911.png",nauseated_face:"1f922.png",nerd_face:"1f913.png",neutral_face:"1f610.png",no_mouth:"1f636.png",open_mouth:"1f62e.png",orange_heart:"1f9e1.png",partying_face:"1f973.png",pensive:"1f614.png",persevere:"1f623.png",pleading_face:"1f97a.png",pouting_cat:"1f63e.png",purple_heart:"1f49c.png",rage:"1f621.png",relaxed:"263a-fe0f.png",relieved:"1f60c.png",revolving_hearts:"1f49e.png",right_anger_bubble:"1f5ef-fe0f.png",robot_face:"1f916.png",rolling_on_the_floor_laughing:"1f923.png",scream:"1f631.png",scream_cat:"1f640.png",see_no_evil:"1f648.png",shushing_face:"1f92b.png",skull:"1f480.png",skull_and_crossbones:"2620-fe0f.png",sleeping:"1f634.png",sleepy:"1f62a.png",slightly_frowning_face:"1f641.png",slightly_smiling_face:"1f642.png",smile:"1f604.png",smile_cat:"1f638.png",smiley:"1f603.png",smiley_cat:"1f63a.png",smiling_face_with_3_hearts:"1f970.png",smiling_imp:"1f608.png",smirk:"1f60f.png",smirk_cat:"1f63c.png",sneezing_face:"1f927.png",sob:"1f62d.png",space_invader:"1f47e.png",sparkling_heart:"1f496.png",speak_no_evil:"1f64a.png",speech_balloon:"1f4ac.png","star-struck":"1f929.png",stuck_out_tongue:"1f61b.png",stuck_out_tongue_closed_eyes:"1f61d.png",stuck_out_tongue_winking_eye:"1f61c.png",sunglasses:"1f60e.png",sweat:"1f613.png",sweat_drops:"1f4a6.png",sweat_smile:"1f605.png",thinking_face:"1f914.png",thought_balloon:"1f4ad.png",tired_face:"1f62b.png",triumph:"1f624.png",two_hearts:"1f495.png",unamused:"1f612.png",upside_down_face:"1f643.png",weary:"1f629.png",white_frowning_face:"2639-fe0f.png",white_heart:"1f90d.png",wink:"1f609.png",woozy_face:"1f974.png",worried:"1f61f.png",yawning_face:"1f971.png",yellow_heart:"1f49b.png",yum:"1f60b.png",zany_face:"1f92a.png",zipper_mouth_face:"1f910.png",zzz:"1f4a4.png"},enableQQ:!1,highlight:!0,lang:"zh-CN",pageSize:10,placeholder:"你的评论 ...",recordIP:!0,serverURLs:"https://leancloud.hugoloveit.com",visitor:!0}}}</script><script type=text/javascript src=/js/theme.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/jquery@2.1.3/dist/jquery.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/jquery@2.1.3/dist/jquery.min.js></script>
+<script type=text/javascript src=https://cdn.jsdelivr.net/npm/jquery-backstretch@2.1.18/jquery.backstretch.min.js></script>
+<script type=text/javascript src=/js/custom.js></script></body>
+</html>
